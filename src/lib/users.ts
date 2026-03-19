@@ -44,6 +44,43 @@ export async function findUserByEmail(email: string): Promise<UserRecord | null>
   return data ? mapRow(data) : null
 }
 
+export async function createUser({
+  email,
+  name,
+  passwordHash,
+}: {
+  email: string
+  name: string
+  passwordHash: string
+}): Promise<UserRecord> {
+  const existing = await findUserByEmail(email)
+  if (existing) {
+    throw new Error('User already exists')
+  }
+
+  const now = new Date().toISOString()
+  const payload = {
+    id: randomUUID(),
+    email,
+    name,
+    password_hash: passwordHash,
+    created_at: now,
+    updated_at: now,
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .insert(payload)
+    .select('id, email, name, password_hash, created_at, updated_at')
+    .single<UserRow>()
+
+  if (error) {
+    throw new Error(`Failed to create user: ${error.message}`)
+  }
+
+  return mapRow(data)
+}
+
 export async function upsertUserByEmail({
   email,
   name,

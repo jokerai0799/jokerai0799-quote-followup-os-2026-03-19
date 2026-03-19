@@ -2,13 +2,13 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
-import { LoginForm } from './login-form'
+import { SignupForm } from './signup-form'
 
 export const metadata = {
-  title: 'Sign in | Quote Follow-Up OS',
+  title: 'Sign up | Quote Follow-Up OS',
 }
 
-export default async function LoginPage() {
+export default async function SignupPage() {
   const session = await auth()
   if (session?.user) {
     redirect('/dashboard')
@@ -16,26 +16,24 @@ export default async function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0D1520] px-4 py-12">
-      <div className="w-full max-w-md space-y-6 rounded-[2rem] border border-slate-800 bg-[#162033] p-8 shadow-[0_20px_80px_rgba(2,6,23,0.45)]">
+      <div className="w-full max-w-xl space-y-6 rounded-[2rem] border border-slate-800 bg-[#162033] p-8 shadow-[0_20px_80px_rgba(2,6,23,0.45)]">
         <div className="space-y-4 text-center">
           <div className="flex justify-center">
             <BrandLogo compact />
           </div>
           <div className="space-y-2">
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">Quote Follow-Up OS</p>
-            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Log in to your workspace</h1>
-            <p className="text-sm text-slate-400">Pick up your quote pipeline, chase list, and follow-up playbook.</p>
+            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Create your workspace account</h1>
+            <p className="text-sm text-slate-400">
+              Start with a focused quote-chasing workspace built for service businesses that need cleaner follow-up and better close discipline.
+            </p>
           </div>
         </div>
-        <LoginForm />
+        <SignupForm />
         <p className="text-center text-xs text-slate-500">
-          New here?{' '}
-          <Link href="/signup" className="text-slate-300 underline-offset-4 hover:text-white hover:underline">
-            Create an account
-          </Link>{' '}
-          or go back to the{' '}
+          By signing up, you’ll create a login for this workspace. Want to look around first?{' '}
           <Link href="/" className="text-slate-300 underline-offset-4 hover:text-white hover:underline">
-            landing page
+            Back to the overview
           </Link>
           .
         </p>

@@ -21,14 +21,14 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       <header className="border-b border-slate-800 bg-[#162033] shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)]">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-4 sm:px-6 lg:px-8 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:gap-8">
-            <BrandLogo />
+            <BrandLogo href="/dashboard" />
             <Nav />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-300">
               <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
-              {dueCount} due {dueCount === 1 ? 'today' : 'today'}
+              {dueCount} due today
             </div>
 
             <div className="hidden rounded-xl border border-slate-700 bg-slate-900/40 px-3 py-2 text-right sm:block">

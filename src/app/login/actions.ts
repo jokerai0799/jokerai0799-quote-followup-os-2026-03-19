@@ -24,7 +24,7 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
   }
 
   try {
-    await signIn('credentials', { ...parsed.data, redirectTo: '/' })
+    await signIn('credentials', { ...parsed.data, redirectTo: '/dashboard' })
     return {}
   } catch (error) {
     if (error instanceof AuthError && error.type === 'CredentialsSignin') {

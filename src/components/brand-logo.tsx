@@ -2,11 +2,12 @@ import Link from 'next/link'
 
 type BrandLogoProps = {
   compact?: boolean
+  href?: string
 }
 
-export function BrandLogo({ compact = false }: BrandLogoProps) {
+export function BrandLogo({ compact = false, href = '/' }: BrandLogoProps) {
   return (
-    <Link href="/" className="inline-flex items-center gap-3 text-white">
+    <Link href={href} className="inline-flex items-center gap-3 text-white">
       <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/8 bg-slate-900 shadow-[0_8px_30px_rgba(2,6,23,0.35)]">
         <svg viewBox="0 0 36 36" className="h-8 w-8" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="36" height="36" rx="8" fill="#1A2B42" />

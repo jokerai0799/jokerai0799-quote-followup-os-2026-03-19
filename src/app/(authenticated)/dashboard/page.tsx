@@ -3,7 +3,7 @@ import { ChaseList, QuoteTable } from '@/components/ui'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
 import { formatCurrency, getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 
-export default async function HomePage() {
+export default async function DashboardPage() {
   const quotes = await getQuotes()
   const metrics = getMetrics(quotes)
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
