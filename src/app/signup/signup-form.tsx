@@ -79,7 +79,7 @@ export function SignupForm() {
       <SubmitButton />
       <p className="text-center text-xs text-slate-500">
         Already have an account?{' '}
-        <Link href="/login" className="text-sky-400 underline-offset-4 transition hover:text-sky-300 hover:underline">
+        <Link href="/login" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
           Log in
         </Link>
       </p>

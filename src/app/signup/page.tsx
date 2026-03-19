@@ -32,8 +32,8 @@ export default async function SignupPage() {
         <SignupForm />
         <p className="text-center text-xs text-slate-500">
           By signing up, you’ll create a login for this workspace. Want to look around first?{' '}
-          <Link href="/" className="text-sky-400 underline-offset-4 transition hover:text-sky-300 hover:underline">
-            Back to the overview
+          <Link href="/" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
+            Back to homepage
           </Link>
           .
         </p>
