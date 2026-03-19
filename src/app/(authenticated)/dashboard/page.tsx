@@ -1,10 +1,22 @@
 import Link from 'next/link'
+import { auth } from '@/auth'
 import { ChaseList, QuoteTable } from '@/components/ui'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
 import { formatCurrency, getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
+import { findUserById } from '@/lib/users'
+import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
 export default async function DashboardPage() {
-  const quotes = await getQuotes()
+  const session = await auth()
+  if (!session?.user) {
+    return null
+  }
+
+  const user = await findUserById(session.user.id)
+  const workspace = user
+    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: true })
+    : null
+  const quotes = await getQuotes(session.user.id)
   const metrics = getMetrics(quotes)
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
 
@@ -13,11 +25,12 @@ export default async function DashboardPage() {
       <section className="rounded-[2rem] border border-slate-800 bg-[#0F172A] px-6 py-8 text-white shadow-xl sm:px-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Quote Follow-Up OS</p>
-            <h1 className="mt-3 font-serif text-4xl italic tracking-tight sm:text-5xl">Stop letting quotes go cold.</h1>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">{workspace?.isTemplate ? 'Preview workspace' : 'Workspace'}</p>
+            <h1 className="mt-3 font-serif text-4xl italic tracking-tight sm:text-5xl">{workspace?.workspaceName ?? 'QuoteFollowUp'}</h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-              A focused quote-chasing workspace for small service businesses. Track every quote, see who needs a follow-up today,
-              and keep the pipeline moving without dragging in a bloated CRM.
+              {workspace?.subscriptionStatus === 'active'
+                ? 'This is your live workspace. Track every quote, stay on top of follow-ups, and keep your pipeline moving.'
+                : 'You are currently in a starter workspace with sample data. When billing is wired in, this becomes the preview experience before a paid workspace is provisioned.'}
             </p>
           </div>
 
@@ -25,12 +38,12 @@ export default async function DashboardPage() {
             <div className="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Open pipeline</p>
               <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.valueAtRisk)}</p>
-              <p className="mt-2 text-sm text-slate-400">Value still live in the system.</p>
+              <p className="mt-2 text-sm text-slate-400">Value still live in this workspace.</p>
             </div>
             <div className="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Due now</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{chaseList.length}</p>
-              <p className="mt-2 text-sm text-slate-400">Quotes needing action today.</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Workspace status</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{workspace?.subscriptionStatus ?? 'legacy'}</p>
+              <p className="mt-2 text-sm text-slate-400">Provisioned per business, ready for billing integration.</p>
             </div>
             <div className="sm:col-span-2 flex flex-wrap gap-3">
               <Link

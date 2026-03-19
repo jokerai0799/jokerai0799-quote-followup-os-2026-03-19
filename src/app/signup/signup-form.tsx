@@ -11,17 +11,31 @@ export function SignupForm() {
 
   return (
     <form action={formAction} className="space-y-5">
-      <div>
-        <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="name">
-          Name
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500"
-        />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="name">
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500"
+          />
+        </div>
+        <div>
+          <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="companyName">
+            Company
+          </label>
+          <input
+            id="companyName"
+            name="companyName"
+            type="text"
+            required
+            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500"
+          />
+        </div>
       </div>
       <div>
         <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="email">
@@ -81,7 +95,7 @@ function SubmitButton() {
       className="w-full rounded-xl border border-sky-500 bg-sky-600 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={pending}
     >
-      {pending ? 'Creating account…' : 'Sign up'}
+      {pending ? 'Creating account…' : 'Start free'}
     </button>
   )
 }

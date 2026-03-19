@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import { auth } from '@/auth'
 import { QuoteTable } from '@/components/ui'
 import { getMetrics, getQuotes } from '@/lib/quotes'
 
 export default async function QuotesPage() {
-  const quotes = await getQuotes()
+  const session = await auth()
+  const quotes = await getQuotes(session?.user?.id)
   const metrics = getMetrics(quotes)
 
   return (

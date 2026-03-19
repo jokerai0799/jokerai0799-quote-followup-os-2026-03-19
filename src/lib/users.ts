@@ -8,6 +8,7 @@ export type UserRecord = {
   passwordHash: string
   createdAt: string
   updatedAt: string
+  defaultWorkspaceId?: string | null
 }
 
 type UserRow = {
@@ -17,6 +18,7 @@ type UserRow = {
   password_hash: string
   created_at: string
   updated_at: string
+  default_workspace_id?: string | null
 }
 
 function mapRow(row: UserRow): UserRecord {
@@ -27,18 +29,33 @@ function mapRow(row: UserRow): UserRecord {
     passwordHash: row.password_hash,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    defaultWorkspaceId: row.default_workspace_id ?? null,
   }
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | null> {
   const { data, error } = await supabase
     .from('users')
-    .select('id, email, name, password_hash, created_at, updated_at')
+    .select('id, email, name, password_hash, created_at, updated_at, default_workspace_id')
     .eq('email', email)
     .maybeSingle<UserRow>()
 
   if (error) {
     throw new Error(`Failed to fetch user: ${error.message}`)
+  }
+
+  return data ? mapRow(data) : null
+}
+
+export async function findUserById(id: string): Promise<UserRecord | null> {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, password_hash, created_at, updated_at, default_workspace_id')
+    .eq('id', id)
+    .maybeSingle<UserRow>()
+
+  if (error) {
+    throw new Error(`Failed to fetch user by id: ${error.message}`)
   }
 
   return data ? mapRow(data) : null
@@ -71,7 +88,7 @@ export async function createUser({
   const { data, error } = await supabase
     .from('users')
     .insert(payload)
-    .select('id, email, name, password_hash, created_at, updated_at')
+    .select('id, email, name, password_hash, created_at, updated_at, default_workspace_id')
     .single<UserRow>()
 
   if (error) {
@@ -105,7 +122,7 @@ export async function upsertUserByEmail({
   const { data, error } = await supabase
     .from('users')
     .upsert(payload, { onConflict: 'email' })
-    .select('id, email, name, password_hash, created_at, updated_at')
+    .select('id, email, name, password_hash, created_at, updated_at, default_workspace_id')
     .single<UserRow>()
 
   if (error) {

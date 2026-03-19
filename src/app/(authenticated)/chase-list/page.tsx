@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import { auth } from '@/auth'
 import { ChaseList } from '@/components/ui'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
 
 export default async function ChaseListPage() {
-  const quotes = await getQuotes()
+  const session = await auth()
+  const quotes = await getQuotes(session?.user?.id)
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
 
   return (

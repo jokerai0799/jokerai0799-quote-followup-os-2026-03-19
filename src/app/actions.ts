@@ -52,13 +52,12 @@ const quoteSchema = z.object({
   followUpOffsets: followUpSchema.default([2, 5, 9]),
 })
 
-
 async function requireSession() {
   const session = await auth()
-  if (!session?.user) {
+  if (!session?.user?.id) {
     throw new Error('Unauthorized')
   }
-  return session
+  return session as typeof session & { user: { id: string; email?: string | null; name?: string | null } }
 }
 
 function parseQuote(formData: FormData): QuoteInput {
@@ -77,23 +76,25 @@ function parseQuote(formData: FormData): QuoteInput {
   }
 }
 
-export async function createQuote(formData: FormData) {
-  await requireSession()
-  const payload = parseQuote(formData)
-  await saveQuote(payload)
-  revalidatePath('/')
+function revalidateWorkspacePaths() {
+  revalidatePath('/dashboard')
   revalidatePath('/quotes')
   revalidatePath('/chase-list')
+}
+
+export async function createQuote(formData: FormData) {
+  const session = await requireSession()
+  const payload = parseQuote(formData)
+  await saveQuote(payload, undefined, session.user.id)
+  revalidateWorkspacePaths()
   redirect('/quotes')
 }
 
 export async function updateQuote(id: string, formData: FormData) {
-  await requireSession()
+  const session = await requireSession()
   const payload = parseQuote(formData)
-  await saveQuote(payload, id)
-  revalidatePath('/')
-  revalidatePath('/quotes')
-  revalidatePath('/chase-list')
+  await saveQuote(payload, id, session.user.id)
+  revalidateWorkspacePaths()
   revalidatePath(`/quotes/${id}/edit`)
   redirect('/quotes')
 }
@@ -101,4 +102,3 @@ export async function updateQuote(id: string, formData: FormData) {
 export async function signOutAction() {
   await signOut({ redirectTo: '/login' })
 }
-

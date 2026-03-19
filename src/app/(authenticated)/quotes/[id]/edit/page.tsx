@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { auth } from '@/auth'
 import { updateQuote } from '@/app/actions'
 import { QuoteForm } from '@/components/quote-form'
 import { getQuote } from '@/lib/quotes'
 
 export default async function EditQuotePage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
   const { id } = await params
-  const quote = await getQuote(id)
+  const quote = await getQuote(id, session?.user?.id)
 
   if (!quote) {
     notFound()

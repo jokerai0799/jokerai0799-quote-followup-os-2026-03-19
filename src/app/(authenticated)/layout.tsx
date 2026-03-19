@@ -5,7 +5,9 @@ import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { BrandLogo } from '@/components/brand-logo'
 import { Nav } from '@/components/nav'
+import { findUserById } from '@/lib/users'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
+import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
 export default async function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -13,7 +15,11 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     redirect('/login')
   }
 
-  const quotes = await getQuotes()
+  const user = await findUserById(session.user.id)
+  const workspace = user
+    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: true })
+    : null
+  const quotes = await getQuotes(session.user.id)
   const dueCount = getDailyChaseList(quotes).length
 
   return (
@@ -32,9 +38,11 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 {dueCount} due today
               </div>
 
-              <div className="hidden max-w-[260px] rounded-xl border border-slate-700 bg-slate-900/40 px-3 py-2 text-right lg:block">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
-                <p className="truncate text-sm text-slate-200">{session.user.email}</p>
+              <div className="hidden max-w-[320px] rounded-xl border border-slate-700 bg-slate-900/40 px-3 py-2 text-right lg:block">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
+                  {workspace?.subscriptionStatus === 'active' ? 'Paid workspace' : 'Demo workspace'}
+                </p>
+                <p className="truncate text-sm text-slate-200">{workspace?.workspaceName ?? session.user.email}</p>
               </div>
 
               <Link

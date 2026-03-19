@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { supabase } from './supabase'
+import { ensureWorkspaceForUser, getWorkspaceContextForUser, isWorkspaceModelAvailable } from './workspaces'
 
 export const STATUSES = ['draft', 'sent', 'follow-up due', 'replied', 'won', 'lost'] as const
 export const TEMPLATE_KEYS = ['friendly', 'nudge', 'checkin'] as const
@@ -49,6 +50,7 @@ export const messageTemplates: Record<TemplateKey, string> = {
 
 type QuoteRow = {
   id: string
+  workspace_id?: string | null
   client_name: string
   contact_name: string | null
   email: string | null
@@ -93,12 +95,41 @@ function mapRow(row: QuoteRow): Quote {
   }
 }
 
-export async function getQuotes(): Promise<Quote[]> {
-  const { data, error } = await supabase
-    .from('quotes')
-    .select('id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at')
-    .order('updated_at', { ascending: false })
+async function getWorkspaceIdForUser(userId: string) {
+  if (!(await isWorkspaceModelAvailable())) {
+    return null
+  }
 
+  const existing = await getWorkspaceContextForUser(userId)
+  if (existing?.workspaceId) {
+    return existing.workspaceId
+  }
+
+  const created = await ensureWorkspaceForUser({ userId, seedStarter: true })
+  return created?.workspaceId ?? null
+}
+
+export async function getQuotes(userId?: string): Promise<Quote[]> {
+  const select = 'id, workspace_id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at'
+
+  if (userId) {
+    const workspaceId = await getWorkspaceIdForUser(userId)
+    if (workspaceId) {
+      const { data, error } = await supabase
+        .from('quotes')
+        .select(select)
+        .eq('workspace_id', workspaceId)
+        .order('updated_at', { ascending: false })
+
+      if (error) {
+        throw new Error(`Failed to fetch workspace quotes: ${error.message}`)
+      }
+
+      return (data as QuoteRow[]).map(mapRow)
+    }
+  }
+
+  const { data, error } = await supabase.from('quotes').select(select).order('updated_at', { ascending: false })
   if (error) {
     throw new Error(`Failed to fetch quotes: ${error.message}`)
   }
@@ -106,13 +137,28 @@ export async function getQuotes(): Promise<Quote[]> {
   return (data as QuoteRow[]).map(mapRow)
 }
 
-export async function getQuote(id: string): Promise<Quote | undefined> {
-  const { data, error } = await supabase
-    .from('quotes')
-    .select('id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at')
-    .eq('id', id)
-    .maybeSingle()
+export async function getQuote(id: string, userId?: string): Promise<Quote | undefined> {
+  const select = 'id, workspace_id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at'
 
+  if (userId) {
+    const workspaceId = await getWorkspaceIdForUser(userId)
+    if (workspaceId) {
+      const { data, error } = await supabase
+        .from('quotes')
+        .select(select)
+        .eq('id', id)
+        .eq('workspace_id', workspaceId)
+        .maybeSingle()
+
+      if (error) {
+        throw new Error(`Failed to fetch workspace quote: ${error.message}`)
+      }
+
+      return data ? mapRow(data as QuoteRow) : undefined
+    }
+  }
+
+  const { data, error } = await supabase.from('quotes').select(select).eq('id', id).maybeSingle()
   if (error) {
     throw new Error(`Failed to fetch quote: ${error.message}`)
   }
@@ -120,7 +166,7 @@ export async function getQuote(id: string): Promise<Quote | undefined> {
   return data ? mapRow(data as QuoteRow) : undefined
 }
 
-export async function saveQuote(input: QuoteInput, id?: string) {
+export async function saveQuote(input: QuoteInput, id?: string, userId?: string) {
   const payload = {
     id: id ?? randomUUID(),
     client_name: input.clientName,
@@ -136,10 +182,22 @@ export async function saveQuote(input: QuoteInput, id?: string) {
     follow_up_offsets: input.followUpOffsets,
   }
 
-  const { error } = id
-    ? await supabase.from('quotes').update(payload).eq('id', id)
-    : await supabase.from('quotes').insert(payload)
+  if (userId) {
+    const workspaceId = await getWorkspaceIdForUser(userId)
+    if (workspaceId) {
+      const scopedPayload = { ...payload, workspace_id: workspaceId }
+      const { error } = id
+        ? await supabase.from('quotes').update(scopedPayload).eq('id', id).eq('workspace_id', workspaceId)
+        : await supabase.from('quotes').insert(scopedPayload)
 
+      if (error) {
+        throw new Error(`Failed to save workspace quote: ${error.message}`)
+      }
+      return
+    }
+  }
+
+  const { error } = id ? await supabase.from('quotes').update(payload).eq('id', id) : await supabase.from('quotes').insert(payload)
   if (error) {
     throw new Error(`Failed to save quote: ${error.message}`)
   }

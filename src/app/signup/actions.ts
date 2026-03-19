@@ -5,11 +5,13 @@ import { AuthError } from 'next-auth'
 import { z } from 'zod'
 import { signIn } from '@/auth'
 import { createUser, findUserByEmail } from '@/lib/users'
+import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
 const signupSchema = z
   .object({
     name: z.string().trim().min(2, 'Enter your name'),
     email: z.string().trim().email('Enter a valid email'),
+    companyName: z.string().trim().min(2, 'Enter your company name'),
     password: z.string().min(8, 'Use at least 8 characters'),
     confirmPassword: z.string().min(8, 'Confirm your password'),
   })
@@ -26,6 +28,7 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
   const parsed = signupSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
+    companyName: formData.get('companyName'),
     password: formData.get('password'),
     confirmPassword: formData.get('confirmPassword'),
   })
@@ -40,10 +43,18 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
   }
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 12)
-  await createUser({
+  const user = await createUser({
     email: parsed.data.email,
     name: parsed.data.name,
     passwordHash,
+  })
+
+  await ensureWorkspaceForUser({
+    userId: user.id,
+    name: parsed.data.name,
+    email: parsed.data.email,
+    workspaceName: parsed.data.companyName,
+    seedStarter: true,
   })
 
   try {
