@@ -2,8 +2,9 @@ import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
 import bcrypt from 'bcryptjs'
-import { ensureDatabase, getDb } from '../src/lib/db'
+import { ensureDatabase } from '../src/lib/db'
 import { STATUSES, TEMPLATE_KEYS, type QuoteInput } from '../src/lib/quotes'
+import { supabase } from '../src/lib/supabase'
 import { upsertUserByEmail } from '../src/lib/users'
 
 type SeedQuote = Partial<QuoteInput> & {
@@ -26,10 +27,16 @@ async function seedUser() {
   console.log(`Seeded workspace user ${user.email}`)
 }
 
-function seedQuotesIfEmpty() {
-  const db = getDb()
-  const { count } = db.prepare('SELECT COUNT(*) as count FROM quotes').get() as { count: number }
-  if (count > 0) {
+async function seedQuotesIfEmpty() {
+  const { count, error: countError } = await supabase
+    .from('quotes')
+    .select('*', { count: 'exact', head: true })
+
+  if (countError) {
+    throw new Error(`Failed to inspect quotes table: ${countError.message}`)
+  }
+
+  if ((count ?? 0) > 0) {
     console.log('Quotes table already contains data — skipping demo import.')
     return
   }
@@ -47,62 +54,45 @@ function seedQuotesIfEmpty() {
     return
   }
 
-  const insert = db.prepare(`
-    INSERT INTO quotes (
-      id,
-      client_name,
-      contact_name,
-      email,
-      company,
-      title,
-      value,
-      status,
-      sent_date,
-      notes,
-      template_key,
-      follow_up_offsets,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `)
-
   const now = new Date().toISOString()
-  const transaction = db.transaction(() => {
-    for (const record of records) {
-      const status = STATUSES.includes((record.status ?? 'draft') as (typeof STATUSES)[number])
-        ? ((record.status ?? 'draft') as (typeof STATUSES)[number])
-        : 'draft'
-      const templateKey = TEMPLATE_KEYS.includes((record.templateKey ?? 'friendly') as (typeof TEMPLATE_KEYS)[number])
-        ? ((record.templateKey ?? 'friendly') as (typeof TEMPLATE_KEYS)[number])
-        : 'friendly'
+  const payload = records.map((record) => {
+    const status = STATUSES.includes((record.status ?? 'draft') as (typeof STATUSES)[number])
+      ? ((record.status ?? 'draft') as (typeof STATUSES)[number])
+      : 'draft'
+    const templateKey = TEMPLATE_KEYS.includes((record.templateKey ?? 'friendly') as (typeof TEMPLATE_KEYS)[number])
+      ? ((record.templateKey ?? 'friendly') as (typeof TEMPLATE_KEYS)[number])
+      : 'friendly'
 
-      insert.run(
-        record.id,
-        record.clientName ?? 'Unknown client',
-        record.contactName ?? '',
-        record.email ?? '',
-        record.company ?? '',
-        record.title ?? 'Untitled quote',
-        Number(record.value) || 0,
-        status,
-        record.sentDate || null,
-        record.notes ?? '',
-        templateKey,
-        JSON.stringify(record.followUpOffsets ?? [2, 5, 9]),
-        record.createdAt ?? now,
-        record.updatedAt ?? now,
-      )
+    return {
+      id: record.id,
+      client_name: record.clientName ?? 'Unknown client',
+      contact_name: record.contactName ?? null,
+      email: record.email ?? null,
+      company: record.company ?? null,
+      title: record.title ?? 'Untitled quote',
+      value: Number(record.value) || 0,
+      status,
+      sent_date: record.sentDate || null,
+      notes: record.notes ?? null,
+      template_key: templateKey,
+      follow_up_offsets: record.followUpOffsets ?? [2, 5, 9],
+      created_at: record.createdAt ?? now,
+      updated_at: record.updatedAt ?? now,
     }
   })
 
-  transaction()
+  const { error } = await supabase.from('quotes').insert(payload)
+  if (error) {
+    throw new Error(`Failed to import demo quotes: ${error.message}`)
+  }
+
   console.log(`Imported ${records.length} demo quotes from data/quotes.json`)
 }
 
 async function main() {
   ensureDatabase()
   await seedUser()
-  seedQuotesIfEmpty()
+  await seedQuotesIfEmpty()
 }
 
 main().catch((error) => {

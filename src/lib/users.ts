@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { getDb } from './db'
+import { supabase } from './supabase'
 
 export type UserRecord = {
   id: string
@@ -31,16 +31,17 @@ function mapRow(row: UserRow): UserRecord {
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | null> {
-  const db = getDb()
-  const row = db
-    .prepare(
-      `SELECT id, email, name, password_hash, created_at, updated_at
-       FROM users WHERE email = ?`,
-    )
-    .get(email) as UserRow | undefined
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, password_hash, created_at, updated_at')
+    .eq('email', email)
+    .maybeSingle<UserRow>()
 
-  if (!row) return null
-  return mapRow(row)
+  if (error) {
+    throw new Error(`Failed to fetch user: ${error.message}`)
+  }
+
+  return data ? mapRow(data) : null
 }
 
 export async function upsertUserByEmail({
@@ -52,40 +53,27 @@ export async function upsertUserByEmail({
   name: string
   passwordHash: string
 }): Promise<UserRecord> {
-  const db = getDb()
-  const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email) as { id: string } | undefined
   const now = new Date().toISOString()
+  const existing = await findUserByEmail(email)
 
-  if (existing) {
-    db.prepare('UPDATE users SET name = ?, password_hash = ?, updated_at = ? WHERE id = ?').run(
-      name,
-      passwordHash,
-      now,
-      existing.id,
-    )
-
-    const row = db
-      .prepare(
-        `SELECT id, email, name, password_hash, created_at, updated_at
-         FROM users WHERE id = ?`,
-      )
-      .get(existing.id) as UserRow
-
-    return mapRow(row)
+  const payload = {
+    id: existing?.id ?? randomUUID(),
+    email,
+    name,
+    password_hash: passwordHash,
+    created_at: existing?.createdAt ?? now,
+    updated_at: now,
   }
 
-  const id = randomUUID()
-  db.prepare(
-    `INSERT INTO users (id, email, name, password_hash, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-  ).run(id, email, name, passwordHash, now, now)
+  const { data, error } = await supabase
+    .from('users')
+    .upsert(payload, { onConflict: 'email' })
+    .select('id, email, name, password_hash, created_at, updated_at')
+    .single<UserRow>()
 
-  const row = db
-    .prepare(
-      `SELECT id, email, name, password_hash, created_at, updated_at
-       FROM users WHERE id = ?`,
-    )
-    .get(id) as UserRow
+  if (error) {
+    throw new Error(`Failed to upsert user: ${error.message}`)
+  }
 
-  return mapRow(row)
+  return mapRow(data)
 }

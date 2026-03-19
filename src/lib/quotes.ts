@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { getDb } from './db'
+import { supabase } from './supabase'
 
 export const STATUSES = ['draft', 'sent', 'follow-up due', 'replied', 'won', 'lost'] as const
 export const TEMPLATE_KEYS = ['friendly', 'nudge', 'checkin'] as const
@@ -54,20 +54,25 @@ type QuoteRow = {
   email: string | null
   company: string | null
   title: string
-  value: number
+  value: number | string
   status: QuoteStatus
   sent_date: string | null
   notes: string | null
   template_key: TemplateKey
-  follow_up_offsets: string
+  follow_up_offsets: number[] | string
   created_at: string
   updated_at: string
 }
 
-const baseSelect = `
-  SELECT id, client_name, contact_name, email, company, title, value, status,
-         sent_date, notes, template_key, follow_up_offsets, created_at, updated_at
-  FROM quotes`
+function normalizeOffsets(value: QuoteRow['follow_up_offsets']): number[] {
+  if (Array.isArray(value)) return value.map(Number)
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed.map(Number) : [2, 5, 9]
+  } catch {
+    return [2, 5, 9]
+  }
+}
 
 function mapRow(row: QuoteRow): Quote {
   return {
@@ -82,107 +87,62 @@ function mapRow(row: QuoteRow): Quote {
     sentDate: row.sent_date ?? null,
     notes: row.notes ?? '',
     templateKey: row.template_key,
-    followUpOffsets: JSON.parse(row.follow_up_offsets) as number[],
+    followUpOffsets: normalizeOffsets(row.follow_up_offsets),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
 }
 
 export async function getQuotes(): Promise<Quote[]> {
-  const db = getDb()
-  const rows = db.prepare(`${baseSelect} ORDER BY updated_at DESC`).all() as QuoteRow[]
-  return rows.map(mapRow)
+  const { data, error } = await supabase
+    .from('quotes')
+    .select('id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at')
+    .order('updated_at', { ascending: false })
+
+  if (error) {
+    throw new Error(`Failed to fetch quotes: ${error.message}`)
+  }
+
+  return (data as QuoteRow[]).map(mapRow)
 }
 
 export async function getQuote(id: string): Promise<Quote | undefined> {
-  const db = getDb()
-  const row = db.prepare(`${baseSelect} WHERE id = ?`).get(id) as QuoteRow | undefined
-  if (!row) return undefined
-  return mapRow(row)
+  const { data, error } = await supabase
+    .from('quotes')
+    .select('id, client_name, contact_name, email, company, title, value, status, sent_date, notes, template_key, follow_up_offsets, created_at, updated_at')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error(`Failed to fetch quote: ${error.message}`)
+  }
+
+  return data ? mapRow(data as QuoteRow) : undefined
 }
 
 export async function saveQuote(input: QuoteInput, id?: string) {
-  const db = getDb()
-  const now = new Date().toISOString()
   const payload = {
-    ...input,
-    sentDate: input.sentDate || null,
-    followUpOffsets: JSON.stringify(input.followUpOffsets),
+    id: id ?? randomUUID(),
+    client_name: input.clientName,
+    contact_name: input.contactName || null,
+    email: input.email || null,
+    company: input.company || null,
+    title: input.title,
+    value: input.value,
+    status: input.status,
+    sent_date: input.sentDate || null,
+    notes: input.notes || null,
+    template_key: input.templateKey,
+    follow_up_offsets: input.followUpOffsets,
   }
 
-  if (id) {
-    const existing = db.prepare('SELECT id FROM quotes WHERE id = ?').get(id) as { id: string } | undefined
-    if (!existing) {
-      throw new Error('Quote not found')
-    }
+  const { error } = id
+    ? await supabase.from('quotes').update(payload).eq('id', id)
+    : await supabase.from('quotes').insert(payload)
 
-    db.prepare(
-      `UPDATE quotes SET
-        client_name = ?,
-        contact_name = ?,
-        email = ?,
-        company = ?,
-        title = ?,
-        value = ?,
-        status = ?,
-        sent_date = ?,
-        notes = ?,
-        template_key = ?,
-        follow_up_offsets = ?,
-        updated_at = ?
-      WHERE id = ?`
-    ).run(
-      payload.clientName,
-      payload.contactName,
-      payload.email,
-      payload.company,
-      payload.title,
-      payload.value,
-      payload.status,
-      payload.sentDate,
-      payload.notes,
-      payload.templateKey,
-      payload.followUpOffsets,
-      now,
-      id
-    )
-    return
+  if (error) {
+    throw new Error(`Failed to save quote: ${error.message}`)
   }
-
-  const newId = randomUUID()
-  db.prepare(
-    `INSERT INTO quotes (
-      id,
-      client_name,
-      contact_name,
-      email,
-      company,
-      title,
-      value,
-      status,
-      sent_date,
-      notes,
-      template_key,
-      follow_up_offsets,
-      created_at,
-      updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(
-    newId,
-    payload.clientName,
-    payload.contactName,
-    payload.email,
-    payload.company,
-    payload.title,
-    payload.value,
-    payload.status,
-    payload.sentDate,
-    payload.notes,
-    payload.templateKey,
-    payload.followUpOffsets,
-    now,
-    now
-  )
 }
 
 export function buildFollowUpSchedule(sentDate: string | null, offsets: number[]) {

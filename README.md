@@ -2,7 +2,7 @@
 
 Quote Follow-Up OS is a lightweight Next.js workspace for small service businesses that lose revenue when sent quotes go cold.
 
-This build focuses on one job: **track quotes, surface who needs chasing today, and keep follow-ups consistent** — now with basic workspace auth and durable local persistence.
+This build focuses on one job: **track quotes, surface who needs chasing today, and keep follow-ups consistent** — now with basic workspace auth and hosted Supabase persistence.
 
 ## Core features
 
@@ -16,13 +16,13 @@ This build focuses on one job: **track quotes, surface who needs chasing today, 
 - daily chase list with ready-to-use follow-up copy
 - default follow-up playbook
 - settings page for workspace operating notes
-- SQLite persistence at `data/quotes.sqlite` (seeded from `data/quotes.json`)
+- Supabase Postgres persistence (seeded from `data/quotes.json`)
 
 ## Stack
 
 - Next.js 16 App Router
 - NextAuth.js 5 (Credentials provider)
-- SQLite (better-sqlite3)
+- Supabase Postgres
 - Server Components + Server Actions
 - TypeScript + Zod validation
 - Tailwind CSS 4
@@ -31,9 +31,10 @@ This build focuses on one job: **track quotes, surface who needs chasing today, 
 
 ```bash
 cd /root/.openclaw/workspace/projects/quote-followup-os
-cp .env.example .env   # set AUTH_SECRET + workspace credentials
+cp .env.example .env   # set AUTH_SECRET + Supabase credentials + workspace bootstrap login
 npm install
-npm run db:migrate     # creates data/quotes.sqlite
+npm run db:migrate     # prints the Supabase SQL schema path
+# run supabase/schema.sql once in the Supabase SQL editor
 npm run db:seed        # seeds the workspace user + demo quotes (if table empty)
 npm run dev
 ```
@@ -42,13 +43,13 @@ Then open <http://localhost:3000> and sign in using the credentials you set in `
 
 ## Database + migrations
 
-- `npm run db:migrate` runs the built-in migration that bootstraps the `users` and `quotes` tables (schema lives in `src/lib/db.ts`).
+- `npm run db:migrate` points you at `supabase/schema.sql`, which should be run once in the Supabase SQL editor.
 - `npm run db:seed` ensures a workspace user exists (values pulled from `.env`) and, if the `quotes` table is empty, imports demo records from `data/quotes.json`.
-- Runtime data lives in `data/quotes.sqlite`. The JSON file is now only a seed source and can be replaced with fresh demo data as needed.
+- Runtime data lives in Supabase. The JSON file is now only a seed source and can be replaced with fresh demo data as needed.
 
 ## Authentication
 
-- Credentials are stored in SQLite with bcrypt hashes. Update `.env` with `AUTH_EMAIL`, `AUTH_PASSWORD`, and `AUTH_NAME`, then rerun `npm run db:seed` to rotate the login.
+- Credentials are stored in Supabase with bcrypt hashes. Update `.env` with `AUTH_EMAIL`, `AUTH_PASSWORD`, and `AUTH_NAME`, then rerun `npm run db:seed` to rotate the login.
 - Routes are protected through server-side auth checks in the authenticated app layout; unauthenticated users are redirected to `/login`.
 
 ## Notes
