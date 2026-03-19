@@ -1,7 +1,7 @@
 import { STATUSES, TEMPLATE_KEYS, type Quote } from '@/lib/quotes'
 
 type QuoteFormProps = {
-  action: (formData: FormData) => void
+  action: (formData: FormData) => void | Promise<void>
   quote?: Quote
   submitLabel: string
 }
@@ -49,14 +49,14 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
         </label>
         <label className="block text-sm font-medium text-zinc-700">
           Sent date
-          <input className={fieldClass} name="sentDate" type="date" defaultValue={quote?.sentDate} />
+          <input className={fieldClass} name="sentDate" type="date" defaultValue={quote?.sentDate ?? ""} />
         </label>
         <label className="block text-sm font-medium text-zinc-700">
           Follow-up cadence (days)
           <input
             className={fieldClass}
             name="followUpOffsets"
-            defaultValue={quote?.followUpOffsets.join(', ') ?? '2, 5, 9'}
+            defaultValue={quote?.followUpOffsets?.join(', ') ?? '2, 5, 9'}
             placeholder="2, 5, 9"
           />
         </label>
@@ -72,7 +72,7 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
         </label>
         <label className="block text-sm font-medium text-zinc-700 md:col-span-2">
           Notes
-          <textarea className={`${fieldClass} min-h-32`} name="notes" defaultValue={quote?.notes} />
+          <textarea className={`${fieldClass} min-h-32`} name="notes" defaultValue={quote?.notes ?? ""} />
         </label>
       </div>
 

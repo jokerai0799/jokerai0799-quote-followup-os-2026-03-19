@@ -2,59 +2,84 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { saveQuote, STATUSES, TEMPLATE_KEYS, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
+import { z } from 'zod'
+import { auth, signOut } from '@/auth'
+import { saveQuote, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
 
-function readOffsets(raw: FormDataEntryValue | null) {
-  return String(raw ?? '2,5,9')
+const statusEnum = z.enum([...STATUSES] as [QuoteStatus, ...QuoteStatus[]])
+const templateEnum = z.enum([...TEMPLATE_KEYS] as [TemplateKey, ...TemplateKey[]])
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const followUpSchema = z.preprocess((value) => {
+  const parsed = String(value ?? '')
     .split(',')
-    .map((value) => Number.parseInt(value.trim(), 10))
-    .filter((value) => Number.isFinite(value) && value > 0)
+    .map((item) => Number.parseInt(item.trim(), 10))
+    .filter((num) => Number.isFinite(num) && num > 0)
+  return parsed.length ? parsed : undefined
+}, z.array(z.number().int().positive()).min(1))
+
+const quoteSchema = z.object({
+  clientName: z.string().trim().min(1, 'Client name is required'),
+  contactName: z
+    .string()
+    .optional()
+    .transform((value) => (value ?? '').trim()),
+  email: z
+    .string()
+    .optional()
+    .transform((value) => (value ?? '').trim())
+    .refine((value) => !value || emailRegex.test(value), 'Email must be valid'),
+  company: z
+    .string()
+    .optional()
+    .transform((value) => (value ?? '').trim()),
+  title: z.string().trim().min(1, 'Quote title is required'),
+  value: z.coerce.number().nonnegative({ message: 'Value must be zero or greater' }),
+  status: statusEnum.default('draft'),
+  sentDate: z
+    .string()
+    .optional()
+    .transform((value) => {
+      const trimmed = (value ?? '').trim()
+      return trimmed ? trimmed : null
+    }),
+  notes: z
+    .string()
+    .optional()
+    .transform((value) => (value ?? '').trim()),
+  templateKey: templateEnum.default('friendly'),
+  followUpOffsets: followUpSchema.default([2, 5, 9]),
+})
+
+
+async function requireSession() {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('Unauthorized')
+  }
+  return session
 }
 
-function normalizeStatus(raw: FormDataEntryValue | null): QuoteStatus {
-  const value = String(raw ?? 'draft') as QuoteStatus
-  return STATUSES.includes(value) ? value : 'draft'
-}
-
-function normalizeTemplate(raw: FormDataEntryValue | null): TemplateKey {
-  const value = String(raw ?? 'friendly') as TemplateKey
-  return TEMPLATE_KEYS.includes(value) ? value : 'friendly'
-}
-
-function validate(formData: FormData) {
-  const clientName = String(formData.get('clientName') ?? '').trim()
-  const contactName = String(formData.get('contactName') ?? '').trim()
-  const email = String(formData.get('email') ?? '').trim()
-  const company = String(formData.get('company') ?? '').trim()
-  const title = String(formData.get('title') ?? '').trim()
-  const value = Number(formData.get('value') ?? 0)
-  const status = normalizeStatus(formData.get('status'))
-  const sentDate = String(formData.get('sentDate') ?? '').trim()
-  const notes = String(formData.get('notes') ?? '').trim()
-  const templateKey = normalizeTemplate(formData.get('templateKey'))
-  const followUpOffsets = readOffsets(formData.get('followUpOffsets'))
-
-  if (!clientName || !title || !Number.isFinite(value) || value < 0) {
-    throw new Error('Client name, quote title, and a valid value are required.')
+function parseQuote(formData: FormData): QuoteInput {
+  const payload = Object.fromEntries(formData.entries())
+  const parsed = quoteSchema.safeParse(payload)
+  if (!parsed.success) {
+    throw new Error(parsed.error.issues[0]?.message ?? 'Invalid quote payload')
   }
 
   return {
-    clientName,
-    contactName,
-    email,
-    company,
-    title,
-    value,
-    status,
-    sentDate,
-    notes,
-    templateKey,
-    followUpOffsets: followUpOffsets.length ? followUpOffsets : [2, 5, 9],
+    ...parsed.data,
+    contactName: parsed.data.contactName ?? '',
+    email: parsed.data.email ?? '',
+    company: parsed.data.company ?? '',
+    notes: parsed.data.notes ?? '',
   }
 }
 
 export async function createQuote(formData: FormData) {
-  const payload = validate(formData)
+  await requireSession()
+  const payload = parseQuote(formData)
   await saveQuote(payload)
   revalidatePath('/')
   revalidatePath('/quotes')
@@ -63,7 +88,8 @@ export async function createQuote(formData: FormData) {
 }
 
 export async function updateQuote(id: string, formData: FormData) {
-  const payload = validate(formData)
+  await requireSession()
+  const payload = parseQuote(formData)
   await saveQuote(payload, id)
   revalidatePath('/')
   revalidatePath('/quotes')
@@ -71,3 +97,8 @@ export async function updateQuote(id: string, formData: FormData) {
   revalidatePath(`/quotes/${id}/edit`)
   redirect('/quotes')
 }
+
+export async function signOutAction() {
+  await signOut({ redirectTo: '/login' })
+}
+

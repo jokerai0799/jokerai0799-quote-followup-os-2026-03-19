@@ -1,11 +1,12 @@
 # Quote Follow-Up OS
 
-Quote Follow-Up OS is a lightweight Next.js MVP for small service businesses that lose revenue when sent quotes go cold.
+Quote Follow-Up OS is a lightweight Next.js workspace for small service businesses that lose revenue when sent quotes go cold.
 
-This build focuses on one job: **track quotes, surface who needs chasing today, and keep follow-ups consistent**.
+This build focuses on one job: **track quotes, surface who needs chasing today, and keep follow-ups consistent** — now with basic workspace auth and durable local persistence.
 
-## MVP features
+## Core features
 
+- password-gated workspace (NextAuth credentials flow + middleware protection)
 - dashboard with open quote value, won revenue, due follow-ups, and reply-rate signal
 - quote inbox / pipeline table
 - add and edit quote records
@@ -13,37 +14,50 @@ This build focuses on one job: **track quotes, surface who needs chasing today, 
 - automatic follow-up schedule generated from the sent date
 - daily chase list with ready-to-use follow-up copy
 - default follow-up playbook
-- local JSON persistence in `data/quotes.json`
-- reset demo data action
+- SQLite persistence at `data/quotes.sqlite` (seeded from `data/quotes.json`)
 
 ## Stack
 
 - Next.js 16 App Router
-- TypeScript
+- NextAuth.js 5 (Credentials provider)
+- SQLite (better-sqlite3)
+- Server Components + Server Actions
+- TypeScript + Zod validation
 - Tailwind CSS 4
-- Server Actions
-- local file persistence for demoability
 
-## Run locally
+## Setup
 
 ```bash
 cd /root/.openclaw/workspace/projects/quote-followup-os
+cp .env.example .env   # set AUTH_SECRET + workspace credentials
 npm install
+npm run db:migrate     # creates data/quotes.sqlite
+npm run db:seed        # seeds the workspace user + demo quotes (if table empty)
 npm run dev
 ```
 
-Then open <http://localhost:3000>.
+Then open <http://localhost:3000> and sign in using the credentials you set in `.env` (defaults: `founder@example.com` / `change-me`).
+
+## Database + migrations
+
+- `npm run db:migrate` runs the built-in migration that bootstraps the `users` and `quotes` tables (schema lives in `src/lib/db.ts`).
+- `npm run db:seed` ensures a workspace user exists (values pulled from `.env`) and, if the `quotes` table is empty, imports demo records from `data/quotes.json`.
+- Runtime data lives in `data/quotes.sqlite`. The JSON file is now only a seed source and can be replaced with fresh demo data as needed.
+
+## Authentication
+
+- Credentials are stored in SQLite with bcrypt hashes. Update `.env` with `AUTH_EMAIL`, `AUTH_PASSWORD`, and `AUTH_NAME`, then rerun `npm run db:seed` to rotate the login.
+- Routes are protected through server-side auth checks in the authenticated app layout; unauthenticated users are redirected to `/login`.
 
 ## Notes
 
 - This is intentionally **not** a full CRM or field-service suite.
 - No Vercel deployment is included.
 - No external messaging delivery is wired in yet; follow-up copy is generated and displayed in-app.
-- Data is stored locally in `data/quotes.json` so the app can be demoed and iterated quickly.
 
 ## Next sensible steps
 
-1. add auth and multi-user workspaces
+1. extend auth into multi-user workspaces and per-user quote ownership
 2. add timeline/event log per quote
 3. add email send + send history
 4. add CSV import / QuickBooks / Jobber ingestion
