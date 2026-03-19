@@ -44,3 +44,6 @@ data/*.sqlite
 data/*.db
 data/*.sqlite3
 !/.env.example
+
+data/*.sqlite-shm
+data/*.sqlite-wal
