@@ -35,7 +35,7 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
         </label>
         <label className="block text-sm font-medium text-zinc-700">
           Value (GBP)
-          <input className={fieldClass} name="value" type="number" min="0" step="100" defaultValue={quote?.value} required />
+          <input className={fieldClass} name="value" type="number" min="0" step="0.01" inputMode="decimal" defaultValue={quote?.value} required />
         </label>
         <label className="block text-sm font-medium text-zinc-700">
           Status
@@ -60,16 +60,22 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
             placeholder="2, 5, 9"
           />
         </label>
-        <label className="block text-sm font-medium text-zinc-700 md:col-span-2">
-          Message template
-          <select className={fieldClass} name="templateKey" defaultValue={quote?.templateKey ?? 'friendly'}>
-            {TEMPLATE_KEYS.map((template) => (
-              <option key={template} value={template}>
-                {template}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 md:col-span-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500">Follow-up preference</p>
+          <p className="mt-2 text-sm text-zinc-600">
+            This only sets the default tone for suggested chase messages later. Saving this quote does not send anything.
+          </p>
+          <label className="mt-4 block text-sm font-medium text-zinc-700">
+            Default follow-up style
+            <select className={fieldClass} name="templateKey" defaultValue={quote?.templateKey ?? 'friendly'}>
+              {TEMPLATE_KEYS.map((template) => (
+                <option key={template} value={template}>
+                  {template}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <label className="block text-sm font-medium text-zinc-700 md:col-span-2">
           Notes
           <textarea className={`${fieldClass} min-h-32`} name="notes" defaultValue={quote?.notes ?? ""} />
@@ -77,7 +83,7 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
       </div>
 
       <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
-        <p className="text-sm text-zinc-500">Tip: set a sent date to generate the chase schedule automatically.</p>
+        <p className="text-sm text-zinc-500">Tip: set a sent date to generate the chase schedule automatically. Saving here only stores quote details.</p>
         <button className="rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800" type="submit">
           {submitLabel}
         </button>
