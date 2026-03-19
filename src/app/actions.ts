@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { auth, signOut } from '@/auth'
-import { saveQuote, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
+import { saveQuote, setQuoteStatus, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
 
 const statusEnum = z.enum([...STATUSES] as [QuoteStatus, ...QuoteStatus[]])
 const templateEnum = z.enum([...TEMPLATE_KEYS] as [TemplateKey, ...TemplateKey[]])
@@ -97,6 +97,13 @@ export async function updateQuote(id: string, formData: FormData) {
   revalidateWorkspacePaths()
   revalidatePath(`/quotes/${id}/edit`)
   redirect('/quotes')
+}
+
+export async function updateQuoteStatusAction(id: string, status: QuoteStatus) {
+  const session = await requireSession()
+  await setQuoteStatus(id, status, session.user.id)
+  revalidateWorkspacePaths()
+  revalidatePath(`/quotes/${id}/edit`)
 }
 
 export async function signOutAction() {

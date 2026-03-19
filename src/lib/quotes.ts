@@ -203,6 +203,29 @@ export async function saveQuote(input: QuoteInput, id?: string, userId?: string)
   }
 }
 
+export async function setQuoteStatus(id: string, status: QuoteStatus, userId?: string) {
+  if (userId) {
+    const workspaceId = await getWorkspaceIdForUser(userId)
+    if (workspaceId) {
+      const { error } = await supabase
+        .from('quotes')
+        .update({ status })
+        .eq('id', id)
+        .eq('workspace_id', workspaceId)
+
+      if (error) {
+        throw new Error(`Failed to update workspace quote status: ${error.message}`)
+      }
+      return
+    }
+  }
+
+  const { error } = await supabase.from('quotes').update({ status }).eq('id', id)
+  if (error) {
+    throw new Error(`Failed to update quote status: ${error.message}`)
+  }
+}
+
 export function buildFollowUpSchedule(sentDate: string | null, offsets: number[]) {
   if (!sentDate) return []
 

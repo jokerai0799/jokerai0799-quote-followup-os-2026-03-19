@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { QuoteQuickActions } from '@/components/quote-quick-actions'
 import { formatCurrency, formatDate, getChaseState, renderTemplate, type Quote, type QuoteStatus } from '@/lib/quotes'
 
 export function StatusBadge({ status }: { status: QuoteStatus }) {
@@ -59,9 +60,19 @@ export function QuoteTable({ quotes }: { quotes: Quote[] }) {
                   {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
                 </td>
                 <td className="px-4 py-4 text-right">
-                  <Link className="font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
-                    Edit
-                  </Link>
+                  <div className="flex flex-col items-end gap-2">
+                    <Link className="font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
+                      Edit
+                    </Link>
+                    <QuoteQuickActions
+                      quoteId={quote.id}
+                      quoteTitle={quote.title}
+                      quoteEmail={quote.email}
+                      status={quote.status}
+                      message={renderTemplate(quote)}
+                      compact
+                    />
+                  </div>
                 </td>
               </tr>
             )
@@ -92,6 +103,15 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
                 <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Suggested message</p>
                 <p className="mt-2 rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-700">{renderTemplate(quote)}</p>
               </div>
+            </div>
+            <div className="mt-4 border-t border-zinc-100 pt-4">
+              <QuoteQuickActions
+                quoteId={quote.id}
+                quoteTitle={quote.title}
+                quoteEmail={quote.email}
+                status={quote.status}
+                message={renderTemplate(quote)}
+              />
             </div>
           </div>
         )
