@@ -34,19 +34,21 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
             </div>
 
             <div className="flex flex-wrap items-center gap-3 xl:justify-end">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] !text-white text-white">
+              <div className="hidden rounded-full border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white lg:inline-flex lg:items-center lg:gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
                 {dueCount} due today
               </div>
 
-              <div className="hidden min-w-[240px] rounded-xl border border-slate-500 bg-slate-900/55 px-4 py-2 lg:block">
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] !text-white/80 text-white/80">Current workspace</p>
-                <p className="truncate text-sm font-semibold !text-white text-white">{displayWorkspaceName}</p>
-              </div>
+              <Link
+                href="/settings"
+                className="hidden rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex"
+              >
+                {displayWorkspaceName}
+              </Link>
 
               <Link
                 href="/quotes/new"
-                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] !text-white text-white transition hover:border-sky-400 hover:bg-sky-500"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500"
               >
                 New quote
               </Link>
@@ -54,7 +56,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-500 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] !text-white text-white transition hover:border-slate-300 hover:bg-white/5"
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-500 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-slate-300 hover:bg-white/5"
                 >
                   Sign out
                 </button>

@@ -286,15 +286,32 @@ export function formatDate(date: string | null | undefined) {
 export function getMetrics(quotes: Quote[]) {
   const chaseable = quotes.filter((quote) => !['won', 'lost'].includes(quote.status))
   const overdueFollowUps = quotes.filter((quote) => getChaseState(quote).overdue)
+  const wonQuotes = quotes.filter((quote) => quote.status === 'won')
+  const lostQuotes = quotes.filter((quote) => quote.status === 'lost')
+  const closedQuotes = [...wonQuotes, ...lostQuotes]
   const valueAtRisk = chaseable.reduce((sum, quote) => sum + quote.value, 0)
-  const wonRevenue = quotes.filter((quote) => quote.status === 'won').reduce((sum, quote) => sum + quote.value, 0)
+  const wonRevenue = wonQuotes.reduce((sum, quote) => sum + quote.value, 0)
 
   return {
     totalQuotes: quotes.length,
     valueAtRisk,
     wonRevenue,
     overdueCount: overdueFollowUps.length,
+    wonCount: wonQuotes.length,
+    lostCount: lostQuotes.length,
+    winRate: closedQuotes.length ? Math.round((wonQuotes.length / closedQuotes.length) * 100) : 0,
   }
+}
+
+export function getStatusBreakdown(quotes: Quote[]) {
+  return STATUSES.map((status) => {
+    const matching = quotes.filter((quote) => quote.status === status)
+    return {
+      status,
+      count: matching.length,
+      value: matching.reduce((sum, quote) => sum + quote.value, 0),
+    }
+  })
 }
 
 export function getDailyChaseList(quotes: Quote[]) {

@@ -98,6 +98,15 @@ export async function createUser({
   return mapRow(data)
 }
 
+export async function updateUserName(id: string, name: string) {
+  const trimmed = name.trim()
+  const { error } = await supabase.from('users').update({ name: trimmed, updated_at: new Date().toISOString() }).eq('id', id)
+
+  if (error) {
+    throw new Error(`Failed to update user name: ${error.message}`)
+  }
+}
+
 export async function upsertUserByEmail({
   email,
   name,

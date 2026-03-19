@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { ChaseList, QuoteTable } from '@/components/ui'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
-import { formatCurrency, getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
+import { formatCurrency, getDailyChaseList, getMetrics, getQuotes, getStatusBreakdown } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
 
@@ -20,6 +20,7 @@ export default async function DashboardPage() {
   const quotes = await getQuotes(session.user.id)
   const metrics = getMetrics(quotes)
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
+  const statusBreakdown = getStatusBreakdown(quotes)
   const isEmptyWorkspace = quotes.length === 0
 
   return (
@@ -84,6 +85,24 @@ export default async function DashboardPage() {
         <>
           <DashboardMetrics {...metrics} />
 
+          <section className="grid gap-4 lg:grid-cols-3">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Conversion</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-950">{metrics.winRate}%</p>
+              <p className="mt-2 text-sm text-slate-500">Current win rate from closed quotes</p>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Closed quotes</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-950">{metrics.wonCount + metrics.lostCount}</p>
+              <p className="mt-2 text-sm text-slate-500">{metrics.wonCount} won · {metrics.lostCount} lost</p>
+            </div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Follow-up load</p>
+              <p className="mt-2 text-3xl font-semibold text-slate-950">{chaseList.length}</p>
+              <p className="mt-2 text-sm text-slate-500">Quotes due or overdue right now</p>
+            </div>
+          </section>
+
           <section className="grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
             <div className="space-y-6">
               <div className="flex items-end justify-between gap-4">
@@ -99,6 +118,18 @@ export default async function DashboardPage() {
             </div>
 
             <aside className="space-y-4">
+              <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Pipeline mix</p>
+                <div className="mt-4 space-y-3">
+                  {statusBreakdown.filter((item) => item.count > 0).map((item) => (
+                    <div key={item.status} className="flex items-center justify-between gap-4 text-sm">
+                      <span className="text-slate-600">{item.status}</span>
+                      <span className="font-medium text-slate-950">{item.count} · {formatCurrency(item.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <div>
                 <h2 className="text-2xl font-semibold text-slate-950">Today’s chase list</h2>
                 <p className="text-sm text-slate-500">Ready-to-send nudges for quotes that need attention now.</p>

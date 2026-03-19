@@ -14,8 +14,17 @@ type WorkspaceRow = {
 
 type MembershipRow = {
   workspace_id: string
+  user_id: string
   role: string
   created_at: string
+}
+
+export type WorkspaceMember = {
+  userId: string
+  name: string
+  email: string
+  role: string
+  joinedAt: string
 }
 
 type SubscriptionRow = {
@@ -110,7 +119,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
 
   const { data: membership, error: membershipError } = await supabase
     .from('workspace_memberships')
-    .select('workspace_id, role, created_at')
+    .select('workspace_id, user_id, role, created_at')
     .eq('user_id', userId)
     .order('created_at', { ascending: true })
     .limit(1)
@@ -146,6 +155,47 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     subscriptionStatus: subscription?.status ?? 'demo',
     planName: subscription?.plan_name ?? null,
   }
+}
+
+export async function getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMember[]> {
+  const { data: memberships, error: membershipError } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id, user_id, role, created_at')
+    .eq('workspace_id', workspaceId)
+    .order('created_at', { ascending: true })
+
+  if (membershipError) {
+    throw new Error(`Failed to fetch workspace members: ${membershipError.message}`)
+  }
+
+  if (!memberships?.length) {
+    return []
+  }
+
+  const userIds = memberships.map((membership) => membership.user_id)
+  const { data: users, error: usersError } = await supabase
+    .from('users')
+    .select('id, name, email')
+    .in('id', userIds)
+
+  if (usersError) {
+    throw new Error(`Failed to fetch workspace users: ${usersError.message}`)
+  }
+
+  const userMap = new Map((users ?? []).map((user) => [user.id, user]))
+
+  return memberships.flatMap((membership) => {
+    const user = userMap.get(membership.user_id)
+    if (!user) return []
+
+    return [{
+      userId: membership.user_id,
+      name: user.name,
+      email: user.email,
+      role: membership.role,
+      joinedAt: membership.created_at,
+    }]
+  })
 }
 
 export async function seedStarterQuotesForWorkspace(workspaceId: string) {
@@ -198,6 +248,15 @@ export async function seedStarterQuotesForWorkspace(workspaceId: string) {
   const { error } = await supabase.from('quotes').insert(payload)
   if (error) {
     throw new Error(`Failed to seed starter workspace quotes: ${error.message}`)
+  }
+}
+
+export async function renameWorkspace(workspaceId: string, name: string) {
+  const trimmed = name.trim()
+  const { error } = await supabase.from('workspaces').update({ name: trimmed }).eq('id', workspaceId)
+
+  if (error) {
+    throw new Error(`Failed to rename workspace: ${error.message}`)
   }
 }
 

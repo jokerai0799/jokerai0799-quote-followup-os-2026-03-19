@@ -5,18 +5,20 @@ type DashboardMetricsProps = {
   valueAtRisk: number
   wonRevenue: number
   overdueCount: number
+  winRate: number
 }
 
-export function DashboardMetrics({ totalQuotes, valueAtRisk, wonRevenue, overdueCount }: DashboardMetricsProps) {
+export function DashboardMetrics({ totalQuotes, valueAtRisk, wonRevenue, overdueCount, winRate }: DashboardMetricsProps) {
   const cards = [
     { label: 'Open pipeline', value: formatCurrency(valueAtRisk), hint: 'Quotes still in play' },
     { label: 'Won revenue', value: formatCurrency(wonRevenue), hint: 'Closed business so far' },
     { label: 'Quotes tracked', value: String(totalQuotes), hint: 'All records in workspace' },
+    { label: 'Win rate', value: `${winRate}%`, hint: 'Won vs lost closed quotes' },
     { label: 'Needs attention', value: String(overdueCount), hint: 'Overdue follow-ups' },
   ]
 
   return (
-    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
       {cards.map((card) => (
         <div key={card.label} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">{card.label}</p>

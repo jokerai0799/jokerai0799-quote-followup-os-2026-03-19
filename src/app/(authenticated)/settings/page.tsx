@@ -1,54 +1,152 @@
-import { SUPABASE_PROJECT_REF, SUPABASE_URL } from '@/lib/db'
+import { auth } from '@/auth'
+import { updateProfileAction, updateWorkspaceAction } from './actions'
+import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
+import { findUserById } from '@/lib/users'
+import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
 
-const settings = [
-  ['Auth model', 'NextAuth credentials with per-user workspace provisioning'],
-  ['Persistence', 'Supabase Postgres'],
-  ['Supabase project ref', SUPABASE_PROJECT_REF],
-  ['Supabase URL', SUPABASE_URL],
-  ['Workspace model', 'Users, workspaces, memberships, subscriptions, quotes'],
-  ['Starter data', 'Seeded into each new workspace from data/quotes.json'],
-  ['Default cadence', '2, 5, 9 days'],
+const recommendations = [
+  {
+    title: 'Invite teammates and roles',
+    verdict: 'Yes — makes sense soon',
+    body: 'Useful once real businesses start using the product together. Add after the core owner workflow feels finished.',
+  },
+  {
+    title: 'Email send history and delivery tracking',
+    verdict: 'Yes — after in-app sending exists',
+    body: 'Worth adding, but only once quotes and follow-ups can actually be sent from inside the product rather than copied out manually.',
+  },
+  {
+    title: 'Analytics by source, service type, and win rate',
+    verdict: 'Yes — high value',
+    body: 'Very relevant to the product. This helps users see what work converts, what services perform best, and where leads are coming from.',
+  },
 ]
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return null
+  }
+
+  const [user, workspace, quotes] = await Promise.all([
+    findUserById(session.user.id),
+    ensureWorkspaceForUser({ userId: session.user.id, seedStarter: false }),
+    getQuotes(session.user.id),
+  ])
+
+  const members = workspace ? await getWorkspaceMembers(workspace.workspaceId) : []
+  const metrics = getMetrics(quotes)
+  const dueToday = getDailyChaseList(quotes).length
+
   return (
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Settings</p>
-        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace configuration</h2>
+        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace settings</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          This build now targets a hosted Supabase backend and is being reshaped toward a multi-workspace SaaS model instead of a single flat dataset.
+          Manage the name people see, confirm account details, and keep a clear view of where the product should grow next.
         </p>
       </div>
 
-      <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-        <div className="divide-y divide-slate-200">
-          {settings.map(([label, value]) => (
-            <div key={label} className="grid gap-2 px-6 py-4 md:grid-cols-[220px_1fr] md:gap-6">
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">{label}</p>
-              <p className="break-all text-sm text-slate-700">{value}</p>
-            </div>
-          ))}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.workspaceName ?? 'Your Workspace'}</p>
+          <p className="mt-2 text-sm text-slate-500">Current workspace name</p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Plan</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.planName ?? 'Demo'}</p>
+          <p className="mt-2 text-sm text-slate-500">Current plan status</p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Quotes tracked</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{metrics.totalQuotes}</p>
+          <p className="mt-2 text-sm text-slate-500">Records in this workspace</p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Due today</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{dueToday}</p>
+          <p className="mt-2 text-sm text-slate-500">Quotes needing follow-up now</p>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-950">Operational notes</h3>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-            <li>Run the latest <span className="font-mono">supabase/schema.sql</span> in the Supabase SQL editor to enable workspaces.</li>
-            <li>Keep <span className="font-mono">SUPABASE_SECRET_KEY</span> server-side only.</li>
-            <li>Run <span className="font-mono">npm run db:seed</span> after schema updates to provision the bootstrap workspace and starter data.</li>
-          </ul>
+        <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
+          <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
+          <label className="mt-5 block text-sm font-medium text-slate-700">
+            Name
+            <input
+              name="workspaceName"
+              defaultValue={workspace?.workspaceName ?? ''}
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
+              required
+            />
+          </label>
+          <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+            Save workspace
+          </button>
+        </form>
+
+        <form action={updateProfileAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
+          <h3 className="mt-2 text-xl font-semibold text-slate-950">Profile</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">Keep the account details clean for this workspace owner.</p>
+          <label className="mt-5 block text-sm font-medium text-slate-700">
+            Name
+            <input
+              name="name"
+              defaultValue={user?.name ?? ''}
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
+              required
+            />
+          </label>
+          <label className="mt-4 block text-sm font-medium text-slate-700">
+            Email
+            <input
+              value={user?.email ?? ''}
+              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none"
+              disabled
+              readOnly
+            />
+          </label>
+          <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+            Save profile
+          </button>
+        </form>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
+          <h3 className="mt-2 text-2xl font-semibold text-slate-950">Workspace people</h3>
+          <div className="mt-5 space-y-3">
+            {members.map((member) => (
+              <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div>
+                  <p className="font-medium text-slate-950">{member.name}</p>
+                  <p className="text-sm text-slate-500">{member.email}</p>
+                </div>
+                <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h3 className="text-lg font-semibold text-slate-950">Next sensible upgrades</h3>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-slate-600">
-            <li>Billing integration that turns demo workspaces into paid workspaces</li>
-            <li>Invite teammates and per-user roles inside a workspace</li>
-            <li>Email send history and delivery tracking</li>
-            <li>Analytics by source, service type, and win rate</li>
-          </ul>
+
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Product direction</p>
+          <h3 className="mt-2 text-2xl font-semibold text-slate-950">What makes sense next</h3>
+          <div className="mt-5 space-y-4">
+            {recommendations.map((item) => (
+              <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-sky-700">{item.verdict}</p>
+                <h4 className="mt-2 text-lg font-semibold text-slate-950">{item.title}</h4>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
