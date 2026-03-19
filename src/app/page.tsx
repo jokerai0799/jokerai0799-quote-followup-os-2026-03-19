@@ -132,7 +132,7 @@ export default async function MarketingHomePage() {
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
             <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace can look like before you create yours.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              This demo preview is intentionally light and clean so you can see how statuses, tables, and pipeline cards read in the real product style. After signup, your own workspace starts empty.
+              Explore the product layout, see how quote statuses stand out, and get a clear feel for how the workspace is designed to work day to day.
             </p>
           </div>
 
