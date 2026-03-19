@@ -79,7 +79,7 @@ export function SignupForm() {
       <SubmitButton />
       <p className="text-center text-xs text-slate-500">
         Already have an account?{' '}
-        <Link href="/login" className="text-slate-300 underline-offset-4 hover:text-white hover:underline">
+        <Link href="/login" className="text-sky-400 underline-offset-4 transition hover:text-sky-300 hover:underline">
           Log in
         </Link>
       </p>
@@ -95,7 +95,7 @@ function SubmitButton() {
       className="w-full rounded-xl border border-sky-500 bg-sky-600 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.2em] text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={pending}
     >
-      {pending ? 'Creating account…' : 'Start free'}
+      {pending ? 'Creating account…' : 'Create account'}
     </button>
   )
 }

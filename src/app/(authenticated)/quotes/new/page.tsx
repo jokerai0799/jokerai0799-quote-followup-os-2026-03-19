@@ -1,23 +1,26 @@
 import Link from 'next/link'
-import { createQuote } from '@/app/actions'
 import { QuoteForm } from '@/components/quote-form'
+import { createQuote } from '@/app/actions'
+
+export const metadata = {
+  title: 'New quote | QuoteFollowUp',
+}
 
 export default function NewQuotePage() {
   return (
-    <section className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+    <section className="space-y-6">
+      <div className="flex flex-col gap-4 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-zinc-950">Add quote</h2>
-          <p className="text-sm text-zinc-500">Create a new quote record and start tracking its follow-up cadence.</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Quotes</p>
+          <h2 className="mt-2 text-3xl font-semibold text-slate-950">Add a new quote</h2>
+          <p className="mt-2 max-w-2xl text-sm text-slate-500">Capture the quote once, then let the dashboard and chase list do the follow-up work.</p>
         </div>
-        <Link
-          href="/quotes"
-          className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-zinc-950 hover:text-zinc-950"
-        >
+        <Link href="/quotes" className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
           Back to quotes
         </Link>
       </div>
-      <QuoteForm action={createQuote} submitLabel="Create quote" />
+
+      <QuoteForm action={createQuote} submitLabel="Save quote" />
     </section>
   )
 }

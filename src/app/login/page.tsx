@@ -30,12 +30,12 @@ export default async function LoginPage() {
         <LoginForm />
         <p className="text-center text-xs text-slate-500">
           New here?{' '}
-          <Link href="/signup" className="text-slate-300 underline-offset-4 hover:text-white hover:underline">
-            Create an account
+          <Link href="/signup" className="text-sky-400 underline-offset-4 transition hover:text-sky-300 hover:underline">
+            Create account
           </Link>{' '}
           or go back to the{' '}
-          <Link href="/" className="text-slate-300 underline-offset-4 hover:text-white hover:underline">
-            landing page
+          <Link href="/" className="text-sky-400 underline-offset-4 transition hover:text-sky-300 hover:underline">
+            overview
           </Link>
           .
         </p>
