@@ -29,7 +29,9 @@ export function BrandLogo({ compact = false, href = '/' }: BrandLogoProps) {
           <span className="whitespace-nowrap font-serif text-[1.15rem] italic tracking-[-0.02em] text-slate-50 sm:text-[1.22rem]">
             Quote<span className="mx-1 inline-block h-[3px] w-[3px] rounded-full bg-sky-500 align-middle opacity-85" />FollowUp
           </span>
-          <span className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.28em] text-sky-500 sm:text-[0.62rem]">For trades & service businesses</span>
+          <span className="mt-1 font-mono text-[0.62rem] uppercase tracking-[0.24em] text-sky-300 sm:text-[0.68rem]">
+            For trades & service businesses
+          </span>
         </span>
       ) : null}
     </Link>
