@@ -136,7 +136,20 @@ export default async function MarketingHomePage() {
             </p>
           </div>
 
-          <div className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] sm:p-8">
+          <div className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_80px_rgba(15,23,42,0.08)]">
+            <div className="border-b border-sky-100 bg-gradient-to-r from-sky-600 via-blue-500 to-cyan-400 px-6 py-5 text-white sm:px-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-100/90">Demo workspace</p>
+                  <h3 className="mt-2 text-2xl font-semibold tracking-tight">How the product looks in use</h3>
+                </div>
+                <p className="max-w-xl text-sm text-sky-50/90">
+                  A clean quote pipeline, readable status colours, and a chase list that is easy to scan at a glance.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-8">
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Open pipeline</p>
@@ -220,6 +233,7 @@ export default async function MarketingHomePage() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </section>
