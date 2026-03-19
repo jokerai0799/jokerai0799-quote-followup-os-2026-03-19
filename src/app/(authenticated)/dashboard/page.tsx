@@ -74,7 +74,7 @@ export default async function DashboardPage() {
               Add your first quote to populate the dashboard, chase list, and follow-up metrics.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800">
+              <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800 !text-white">
                 Add first quote
               </Link>
             </div>
