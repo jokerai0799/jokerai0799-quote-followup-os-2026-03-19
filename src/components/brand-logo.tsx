@@ -7,8 +7,8 @@ type BrandLogoProps = {
 
 export function BrandLogo({ compact = false, href = '/' }: BrandLogoProps) {
   return (
-    <Link href={href} className="inline-flex items-center gap-3 text-white">
-      <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/8 bg-slate-900 shadow-[0_8px_30px_rgba(2,6,23,0.35)]">
+    <Link href={href} className="inline-flex shrink-0 items-center gap-3 text-white">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/8 bg-slate-900 shadow-[0_8px_30px_rgba(2,6,23,0.35)]">
         <svg viewBox="0 0 36 36" className="h-8 w-8" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="36" height="36" rx="8" fill="#1A2B42" />
           <rect width="36" height="36" rx="8" fill="none" stroke="white" strokeWidth="0.8" opacity="0.08" />
@@ -25,11 +25,11 @@ export function BrandLogo({ compact = false, href = '/' }: BrandLogoProps) {
         </svg>
       </span>
       {!compact ? (
-        <span className="flex flex-col leading-none">
-          <span className="font-serif text-[1.3rem] italic tracking-[-0.02em] text-slate-50">
+        <span className="flex min-w-0 flex-col leading-none">
+          <span className="whitespace-nowrap font-serif text-[1.15rem] italic tracking-[-0.02em] text-slate-50 sm:text-[1.22rem]">
             Quote<span className="mx-1 inline-block h-[3px] w-[3px] rounded-full bg-sky-500 align-middle opacity-85" />Follow-Up
           </span>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.35em] text-sky-700">OS · Workspace</span>
+          <span className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.28em] text-sky-500 sm:text-[0.62rem]">OS · Workspace</span>
         </span>
       ) : null}
     </Link>

@@ -35,7 +35,7 @@ export default async function DashboardPage() {
             <div className="sm:col-span-2 flex flex-wrap gap-3">
               <Link
                 href="/quotes/new"
-                className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+                className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-200 !text-slate-950"
               >
                 Add quote
               </Link>
