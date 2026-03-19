@@ -5,22 +5,22 @@ import { BrandLogo } from '@/components/brand-logo'
 const features = [
   {
     title: 'Track every quote in one place',
-    body: 'See value, status, contact, sent date, and next follow-up without juggling spreadsheets, WhatsApp chats, and memory.',
+    body: 'See quote value, status, contact details, sent date, and next follow-up without juggling spreadsheets, inboxes, and memory.',
   },
   {
-    title: 'Know who needs chasing today',
-    body: 'The daily chase list surfaces exactly which quotes need action now, with suggested message copy ready to go.',
+    title: 'Know exactly who to chase today',
+    body: 'The daily chase list shows which quotes need attention now, with message prompts ready so your team can act quickly.',
   },
   {
-    title: 'Run a lightweight sales system',
-    body: 'Give small service businesses a practical quote follow-up workflow without dropping them into a bloated CRM.',
+    title: 'Turn more estimates into booked work',
+    body: 'Build a repeatable follow-up process for your trade or service business without paying for a bloated CRM you do not need.',
   },
 ]
 
 const workflow = [
-  'Send quotes faster with a consistent cadence',
-  'Spot overdue follow-ups before revenue goes cold',
-  'Keep the pipeline visible for owners and operators',
+  'Track sent quotes and their next follow-up date',
+  'See overdue and due-today quotes instantly',
+  'Keep your pipeline moving without guesswork',
 ]
 
 export default async function MarketingHomePage() {
@@ -42,20 +42,19 @@ export default async function MarketingHomePage() {
               href={session?.user ? '/dashboard' : '/signup'}
               className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
             >
-              Sign up
+              Start free
             </Link>
           </div>
         </header>
 
         <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Quote Follow-Up OS</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">QuoteFollowUp</p>
             <h1 className="mt-4 font-serif text-5xl italic tracking-tight text-slate-50 sm:text-6xl">
-              Stop losing work because nobody followed up.
+              Quote follow-up software for trades and service businesses
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Quote Follow-Up OS helps small service businesses track sent quotes, chase the right prospects at the right time,
-              and turn follow-up into a repeatable operating system instead of guesswork.
+              Track every quote, follow up on time, and turn more estimates into booked work with a simple system built for small service teams.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -63,7 +62,7 @@ export default async function MarketingHomePage() {
                 href={session?.user ? '/dashboard' : '/signup'}
                 className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
               >
-                {session?.user ? 'Open workspace' : 'Sign up'}
+                {session?.user ? 'Open workspace' : 'Start free'}
               </Link>
               <Link
                 href={session?.user ? '/dashboard' : '/login'}
@@ -79,7 +78,7 @@ export default async function MarketingHomePage() {
               <div className="rounded-2xl border border-white/8 bg-slate-950/35 p-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">What it gives you</p>
                 <p className="mt-2 text-2xl font-semibold text-white">A real quote pipeline</p>
-                <p className="mt-2 text-sm text-slate-400">Not just a sheet of names and vague reminders.</p>
+                <p className="mt-2 text-sm text-slate-400">Not just a list of names and reminders buried in messages.</p>
               </div>
               <div className="rounded-2xl border border-white/8 bg-slate-950/35 p-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Best for</p>
@@ -103,11 +102,11 @@ export default async function MarketingHomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="max-w-2xl">
+        <div className="max-w-3xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What we offer</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">A focused quote follow-up system for teams that need revenue discipline.</h2>
+          <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">A focused quote follow-up system for businesses that want better follow-through and more booked work.</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
-            This is built for operators who send quotes regularly but still lose deals because follow-up is inconsistent, invisible, or left too late.
+            QuoteFollowUp is built for operators who send estimates regularly but still lose jobs because follow-up is inconsistent, invisible, or left too late.
           </p>
         </div>
 
@@ -125,17 +124,17 @@ export default async function MarketingHomePage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">See the product, then decide if it fits how you sell.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">See what QuoteFollowUp does, then start using it when the workflow fits how you sell.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Prospects can learn what the product does first, then either create an account or log into an existing workspace.
+              Prospects can understand the product first, then create an account or log into an existing workspace.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href={session?.user ? '/dashboard' : '/login'} className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
               Log in
             </Link>
-            <Link href={session?.user ? '/dashboard' : '/signup'} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
-              Sign up
+            <Link href={session?.user ? '/dashboard' : '/signup'} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+              Start free
             </Link>
           </div>
         </div>

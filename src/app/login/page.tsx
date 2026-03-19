@@ -5,7 +5,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { LoginForm } from './login-form'
 
 export const metadata = {
-  title: 'Sign in | Quote Follow-Up OS',
+  title: 'Log in | QuoteFollowUp',
 }
 
 export default async function LoginPage() {
@@ -22,7 +22,7 @@ export default async function LoginPage() {
             <BrandLogo compact />
           </div>
           <div className="space-y-2">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">Quote Follow-Up OS</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">QuoteFollowUp</p>
             <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Log in to your workspace</h1>
             <p className="text-sm text-slate-400">Pick up your quote pipeline, chase list, and follow-up playbook.</p>
           </div>

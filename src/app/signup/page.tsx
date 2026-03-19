@@ -5,7 +5,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { SignupForm } from './signup-form'
 
 export const metadata = {
-  title: 'Sign up | Quote Follow-Up OS',
+  title: 'Sign up | QuoteFollowUp',
 }
 
 export default async function SignupPage() {
@@ -22,10 +22,10 @@ export default async function SignupPage() {
             <BrandLogo compact />
           </div>
           <div className="space-y-2">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">Quote Follow-Up OS</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">QuoteFollowUp</p>
             <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Create your workspace account</h1>
             <p className="text-sm text-slate-400">
-              Start with a focused quote-chasing workspace built for service businesses that need cleaner follow-up and better close discipline.
+              Start with quote follow-up software built for trades and service businesses that need cleaner follow-up and more booked work.
             </p>
           </div>
         </div>

@@ -15,8 +15,8 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Quote Follow-Up OS',
-  description: 'A lightweight quote chasing dashboard for small service businesses.',
+  title: 'QuoteFollowUp',
+  description: 'Quote follow-up software for trades and service businesses.',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
