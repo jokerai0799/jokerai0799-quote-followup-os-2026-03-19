@@ -7,7 +7,7 @@ import { BrandLogo } from '@/components/brand-logo'
 import { Nav } from '@/components/nav'
 import { findUserById } from '@/lib/users'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
-import { ensureWorkspaceForUser } from '@/lib/workspaces'
+import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
 
 export default async function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -19,6 +19,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const workspace = user
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: false })
     : null
+  const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)
   const dueCount = getDailyChaseList(quotes).length
 
@@ -28,7 +29,13 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-6">
-              <BrandLogo href="/dashboard" />
+              <div className="flex items-center gap-3">
+                <BrandLogo href="/dashboard" compact showTagline={false} />
+                <div className="hidden sm:block">
+                  <p className="font-serif text-xl italic tracking-tight text-white">QuoteFollowUp</p>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-sky-200">Workspace</p>
+                </div>
+              </div>
               <Nav />
             </div>
 
@@ -39,8 +46,8 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
               </div>
 
               <div className="hidden min-w-[240px] rounded-xl border border-slate-600 bg-slate-900/55 px-4 py-2 lg:block">
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Workspace</p>
-                <p className="truncate text-sm font-semibold text-white">{workspace?.workspaceName ?? session.user.email}</p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Current workspace</p>
+                <p className="truncate text-sm font-semibold text-white">{displayWorkspaceName}</p>
               </div>
 
               <Link

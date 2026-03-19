@@ -3,9 +3,10 @@ import Link from 'next/link'
 type BrandLogoProps = {
   compact?: boolean
   href?: string
+  showTagline?: boolean
 }
 
-export function BrandLogo({ compact = false, href = '/' }: BrandLogoProps) {
+export function BrandLogo({ compact = false, href = '/', showTagline = true }: BrandLogoProps) {
   return (
     <Link href={href} className="inline-flex shrink-0 items-center gap-3 text-white">
       <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/8 bg-slate-900 shadow-[0_8px_30px_rgba(2,6,23,0.35)]">

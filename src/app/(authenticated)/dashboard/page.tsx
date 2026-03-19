@@ -4,7 +4,7 @@ import { ChaseList, QuoteTable } from '@/components/ui'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
 import { formatCurrency, getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'
-import { ensureWorkspaceForUser } from '@/lib/workspaces'
+import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -16,6 +16,7 @@ export default async function DashboardPage() {
   const workspace = user
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: false })
     : null
+  const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)
   const metrics = getMetrics(quotes)
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Workspace</p>
-            <h1 className="mt-3 font-serif text-4xl italic tracking-tight sm:text-5xl">{workspace?.workspaceName ?? 'QuoteFollowUp'}</h1>
+            <h1 className="mt-3 font-serif text-4xl italic tracking-tight sm:text-5xl">{displayWorkspaceName}</h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
               {isEmptyWorkspace
                 ? 'This is your clean workspace. Add your first quote to start building your pipeline and chase list.'
@@ -42,9 +43,9 @@ export default async function DashboardPage() {
               <p className="mt-2 text-sm text-slate-400">Value still live in this workspace.</p>
             </div>
             <div className="rounded-2xl border border-slate-700 bg-slate-900/50 p-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Workspace status</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{workspace?.subscriptionStatus ?? 'demo'}</p>
-              <p className="mt-2 text-sm text-slate-400">Clean workspace now, billing and provisioning next.</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Quotes tracked</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{metrics.totalQuotes}</p>
+              <p className="mt-2 text-sm text-slate-400">All records in this workspace.</p>
             </div>
             <div className="sm:col-span-2 flex flex-wrap gap-3">
               <Link

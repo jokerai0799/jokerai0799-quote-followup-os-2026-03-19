@@ -23,8 +23,8 @@ export function Nav() {
             key={item.href}
             href={item.href}
             className={active
-              ? 'rounded-lg bg-sky-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white'
-              : 'rounded-lg px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300 transition hover:bg-white/5 hover:text-white'}
+              ? 'rounded-lg bg-sky-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-white'
+              : 'rounded-lg px-3 py-2 font-mono text-[11px] uppercase tracking-[0.12em] text-slate-200 transition hover:bg-white/5 hover:text-white'}
           >
             {item.label}
           </Link>

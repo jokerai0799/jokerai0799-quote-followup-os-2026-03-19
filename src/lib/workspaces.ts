@@ -40,6 +40,24 @@ export type WorkspaceContext = {
   planName: string | null
 }
 
+export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user?: { name?: string | null; email?: string | null } | null) {
+  if (!workspace) {
+    return user?.name?.trim() ? `${user.name.trim()} Workspace` : 'Your Workspace'
+  }
+
+  if (workspace.isTemplate || workspace.workspaceName === 'Demo Workspace') {
+    if (user?.name?.trim()) {
+      return `${user.name.trim()} Workspace`
+    }
+    if (user?.email?.trim()) {
+      return `${user.email.split('@')[0]} Workspace`
+    }
+    return 'Your Workspace'
+  }
+
+  return workspace.workspaceName
+}
+
 let workspaceModelAvailableCache: boolean | null = null
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
