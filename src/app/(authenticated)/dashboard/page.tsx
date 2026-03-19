@@ -66,19 +66,16 @@ export default async function DashboardPage() {
       </section>
 
       {isEmptyWorkspace ? (
-        <section className="rounded-[2rem] border border-dashed border-slate-300 bg-white p-8 shadow-sm">
+        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Fresh workspace</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">You are starting with a clean slate.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Add your first quote to populate the dashboard, chase list, and follow-up metrics. The public demo shows what a filled workspace can look like.
+              Add your first quote to populate the dashboard, chase list, and follow-up metrics.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800">
                 Add first quote
-              </Link>
-              <Link href="/#demo" className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
-                View public demo
               </Link>
             </div>
           </div>
