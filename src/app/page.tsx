@@ -201,7 +201,7 @@ export default async function MarketingHomePage() {
             <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
               View demo
             </Link>
-            <Link href={session?.user ? '/dashboard' : '/signup'} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+            <Link href={session?.user ? '/dashboard' : '/signup'} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
               {session?.user ? 'Open workspace' : 'Create workspace'}
             </Link>
           </div>
