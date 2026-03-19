@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import fs from 'node:fs'
 import path from 'node:path'
+import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { ensureDatabase } from '../src/lib/db'
 import { STATUSES, TEMPLATE_KEYS, type QuoteInput } from '../src/lib/quotes'
@@ -11,6 +12,12 @@ type SeedQuote = Partial<QuoteInput> & {
   id: string
   createdAt?: string
   updatedAt?: string
+}
+
+const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
+function normalizeId(id?: string) {
+  return id && uuidPattern.test(id) ? id : randomUUID()
 }
 
 async function seedUser() {
@@ -64,7 +71,7 @@ async function seedQuotesIfEmpty() {
       : 'friendly'
 
     return {
-      id: record.id,
+      id: normalizeId(record.id),
       client_name: record.clientName ?? 'Unknown client',
       contact_name: record.contactName ?? null,
       email: record.email ?? null,
