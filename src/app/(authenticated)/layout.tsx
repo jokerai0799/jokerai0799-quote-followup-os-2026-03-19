@@ -33,29 +33,27 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
             </div>
 
             <div className="flex flex-wrap items-center gap-3 xl:justify-end">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-emerald-200">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-emerald-100">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
                 {dueCount} due today
               </div>
 
-              <div className="hidden min-w-[220px] rounded-xl border border-slate-600 bg-slate-900/60 px-3 py-2 text-left lg:block">
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
-                  {workspace?.subscriptionStatus === 'active' ? 'Paid workspace' : 'Workspace'}
-                </p>
-                <p className="truncate text-sm font-medium text-white">{workspace?.workspaceName ?? session.user.email}</p>
+              <div className="hidden min-w-[240px] rounded-xl border border-slate-600 bg-slate-900/55 px-4 py-2 lg:block">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400">Workspace</p>
+                <p className="truncate text-sm font-semibold text-white">{workspace?.workspaceName ?? session.user.email}</p>
               </div>
 
               <Link
                 href="/quotes/new"
-                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition hover:border-sky-400 hover:bg-sky-500"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500"
               >
-                + New Quote
+                New quote
               </Link>
 
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-600 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-white transition hover:border-slate-400 hover:bg-white/5"
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-600 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-slate-400 hover:bg-white/5"
                 >
                   Sign out
                 </button>

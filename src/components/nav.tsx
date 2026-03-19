@@ -15,7 +15,7 @@ export function Nav() {
   const pathname = usePathname()
 
   return (
-    <nav className="flex flex-wrap items-center gap-1.5 lg:gap-2">
+    <nav className="flex flex-wrap items-center gap-2">
       {items.map((item) => {
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
         return (
@@ -23,8 +23,8 @@ export function Nav() {
             key={item.href}
             href={item.href}
             className={active
-              ? 'rounded-lg bg-sky-500/12 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-sky-200 lg:text-[11px]'
-              : 'rounded-lg px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-400 transition hover:bg-sky-500/5 hover:text-slate-200 lg:text-[11px]'}
+              ? 'rounded-lg bg-sky-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white'
+              : 'rounded-lg px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-300 transition hover:bg-white/5 hover:text-white'}
           >
             {item.label}
           </Link>

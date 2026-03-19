@@ -126,63 +126,99 @@ export default async function MarketingHomePage() {
         </div>
       </section>
 
-      <section id="demo" className="border-y border-slate-200 bg-[#0F172A] text-white scroll-mt-24">
+      <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-300">Product demo</p>
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-white">See what the workspace can look like before you create yours.</h2>
-            <p className="mt-4 text-base leading-7 text-slate-300">
-              This demo preview shows the kind of quote dashboard, chase list, and pipeline visibility a live workspace can give you. After signup, your own workspace starts clean.
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
+            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace can look like before you create yours.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              This demo preview is intentionally light and clean so you can see how statuses, tables, and pipeline cards read in the real product style. After signup, your own workspace starts empty.
             </p>
           </div>
 
-          <div className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-[#162033] shadow-[0_20px_80px_rgba(2,6,23,0.4)]">
-            <div className="border-b border-white/10 px-6 py-5">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-sky-300">Demo workspace</p>
-                  <h3 className="mt-2 text-3xl font-semibold text-white">Sample quote pipeline</h3>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Open pipeline</p>
-                    <p className="mt-1 text-xl font-semibold text-white">£3,380</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Due today</p>
-                    <p className="mt-1 text-xl font-semibold text-white">2</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-slate-950/35 px-4 py-3">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Won revenue</p>
-                    <p className="mt-1 text-xl font-semibold text-white">£1,450</p>
-                  </div>
-                </div>
+          <div className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] sm:p-8">
+            <div className="grid gap-4 lg:grid-cols-3">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Open pipeline</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">£3,380</p>
+                <p className="mt-2 text-sm text-slate-500">Quotes still in play</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Due today</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">2</p>
+                <p className="mt-2 text-sm text-slate-500">Quotes needing action now</p>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Won revenue</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">£1,450</p>
+                <p className="mt-2 text-sm text-slate-500">Closed business so far</p>
               </div>
             </div>
 
-            <div className="overflow-x-auto px-6 py-6">
-              <table className="min-w-full divide-y divide-white/10 text-sm">
-                <thead className="text-left text-slate-400">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Client</th>
-                    <th className="px-4 py-3 font-medium">Quote</th>
-                    <th className="px-4 py-3 font-medium">Value</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Next follow-up</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {demoRows.map(([client, title, value, status, next]) => (
-                    <tr key={client}>
-                      <td className="px-4 py-4 text-white">{client}</td>
-                      <td className="px-4 py-4 text-slate-200">{title}</td>
-                      <td className="px-4 py-4 text-slate-200">{value}</td>
-                      <td className="px-4 py-4 text-slate-200">{status}</td>
-                      <td className="px-4 py-4 text-slate-200">{next}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="mt-8 grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
+              <div className="space-y-4">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Pipeline</p>
+                  <h3 className="mt-2 text-2xl font-semibold text-slate-950">Sample quote table</h3>
+                </div>
+                <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-sm">
+                  <table className="min-w-full divide-y divide-slate-200 text-sm">
+                    <thead className="bg-slate-50 text-left text-slate-500">
+                      <tr>
+                        <th className="px-4 py-3 font-medium">Client</th>
+                        <th className="px-4 py-3 font-medium">Quote</th>
+                        <th className="px-4 py-3 font-medium">Value</th>
+                        <th className="px-4 py-3 font-medium">Status</th>
+                        <th className="px-4 py-3 font-medium">Next follow-up</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {demoRows.map(([client, title, value, status, next]) => (
+                        <tr key={client}>
+                          <td className="px-4 py-4 font-medium text-slate-950">{client}</td>
+                          <td className="px-4 py-4 text-slate-700">{title}</td>
+                          <td className="px-4 py-4 font-medium text-slate-900">{value}</td>
+                          <td className="px-4 py-4">
+                            <span
+                              className={
+                                status === 'Sent'
+                                  ? 'inline-flex rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700'
+                                  : status === 'Follow-up due'
+                                    ? 'inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800'
+                                    : 'inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700'
+                              }
+                            >
+                              {status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 text-slate-700">{next}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Today’s chase list</p>
+                  <h3 className="mt-2 text-2xl font-semibold text-slate-950">Clean and easy to scan</h3>
+                </div>
+                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="font-medium text-slate-950">Reed Electrical</p>
+                  <p className="mt-1 text-sm text-slate-500">Consumer unit upgrade · £980</p>
+                  <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    Due today — send a quick nudge to keep the job moving.
+                  </p>
+                </div>
+                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="font-medium text-slate-950">Jones Property Lets</p>
+                  <p className="mt-1 text-sm text-slate-500">Boiler replacement quote · £2,400</p>
+                  <p className="mt-4 rounded-2xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
+                    Follow-up due tomorrow — check they received the quote and answer any questions.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
