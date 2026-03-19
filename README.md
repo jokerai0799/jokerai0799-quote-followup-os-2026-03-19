@@ -6,14 +6,16 @@ This build focuses on one job: **track quotes, surface who needs chasing today, 
 
 ## Core features
 
-- password-gated workspace (NextAuth credentials flow + middleware protection)
-- dashboard with open quote value, won revenue, due follow-ups, and reply-rate signal
+- password-gated workspace (NextAuth credentials flow with server-side protected layout)
+- branded operator shell with custom logo, nav header, and due-today status strip
+- dashboard with open quote value, won revenue, due follow-ups, and pipeline visibility
 - quote inbox / pipeline table
 - add and edit quote records
 - statuses: `draft`, `sent`, `follow-up due`, `replied`, `won`, `lost`
 - automatic follow-up schedule generated from the sent date
 - daily chase list with ready-to-use follow-up copy
 - default follow-up playbook
+- settings page for workspace operating notes
 - SQLite persistence at `data/quotes.sqlite` (seeded from `data/quotes.json`)
 
 ## Stack

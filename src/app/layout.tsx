@@ -1,33 +1,28 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { DM_Mono, Instrument_Serif } from 'next/font/google'
+import './globals.css'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const instrumentSerif = Instrument_Serif({
+  variable: '--font-brand-serif',
+  subsets: ['latin'],
+  weight: '400',
+})
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const dmMono = DM_Mono({
+  variable: '--font-brand-mono',
+  subsets: ['latin'],
+  weight: ['400', '500'],
+})
 
 export const metadata: Metadata = {
-  title: "Quote Follow-Up OS",
-  description: "A lightweight quote chasing dashboard for small service businesses.",
-};
+  title: 'Quote Follow-Up OS',
+  description: 'A lightweight quote chasing dashboard for small service businesses.',
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${instrumentSerif.variable} ${dmMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-slate-100 text-slate-950">{children}</body>
     </html>
-  );
+  )
 }
