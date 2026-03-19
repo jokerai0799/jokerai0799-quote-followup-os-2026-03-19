@@ -61,7 +61,7 @@ export default async function MarketingHomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href={session?.user ? '/dashboard' : '/signup'}
-                className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
+                className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
               >
                 {session?.user ? 'Open workspace' : 'Sign up'}
               </Link>
