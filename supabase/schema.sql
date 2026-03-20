@@ -118,31 +118,6 @@ create trigger trg_quotes_updated_at
 before update on public.quotes
 for each row execute function public.set_updated_at();
 
-do $$
-declare
-  legacy_workspace_id uuid;
-begin
-  if exists (select 1 from public.users) then
-    insert into public.workspaces (name, slug, is_template)
-    values ('Demo Workspace', 'demo-workspace', true)
-    on conflict (slug) do update set name = excluded.name
-    returning id into legacy_workspace_id;
-
-    insert into public.subscriptions (workspace_id, status, plan_name, monthly_price_gbp)
-    values (legacy_workspace_id, 'demo', 'Demo', 0)
-    on conflict (workspace_id) do nothing;
-
-    insert into public.workspace_memberships (workspace_id, user_id, role)
-    select legacy_workspace_id, u.id, 'owner'
-    from public.users u
-    on conflict (workspace_id, user_id) do nothing;
-
-    update public.users
-    set default_workspace_id = legacy_workspace_id
-    where default_workspace_id is null;
-
-    update public.quotes
-    set workspace_id = legacy_workspace_id
-    where workspace_id is null;
-  end if;
-end $$;
+-- No demo workspace bootstrap here.
+-- Production workspaces are provisioned per user by application logic,
+-- so new accounts always start with a clean private workspace.

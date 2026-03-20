@@ -105,7 +105,7 @@ async function getWorkspaceIdForUser(userId: string) {
     return existing.workspaceId
   }
 
-  const created = await ensureWorkspaceForUser({ userId, seedStarter: true })
+  const created = await ensureWorkspaceForUser({ userId, seedStarter: false })
   return created?.workspaceId ?? null
 }
 

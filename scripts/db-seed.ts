@@ -46,8 +46,8 @@ async function main() {
       userId: user.id,
       name: user.name,
       email: user.email,
-      workspaceName: 'Demo Workspace',
-      seedStarter: true,
+      workspaceName: 'Workspace Owner Workspace',
+      seedStarter: false,
     })
     console.log(`Ensured workspace ${workspace?.workspaceName ?? 'unknown'} for ${user.email}`)
     return
