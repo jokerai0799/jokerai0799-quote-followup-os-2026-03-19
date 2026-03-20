@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   const user = await findUserById(session.user.id)
   const workspace = user
-    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: false })
+    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email })
     : null
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)

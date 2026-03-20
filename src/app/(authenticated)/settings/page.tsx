@@ -22,7 +22,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   const { billing } = await searchParams
   const [user, workspace, quotes] = await Promise.all([
     findUserById(session.user.id),
-    ensureWorkspaceForUser({ userId: session.user.id, seedStarter: false }),
+    ensureWorkspaceForUser({ userId: session.user.id }),
     getQuotes(session.user.id),
   ])
 
