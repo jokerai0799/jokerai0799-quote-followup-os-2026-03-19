@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
 import { updateProfileAction, updateWorkspaceAction } from './actions'
+import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
@@ -49,7 +50,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.workspaceName ?? 'Your Workspace'}</p>
@@ -73,6 +74,29 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Billing</p>
+          <h3 className="mt-2 text-xl font-semibold text-slate-950">{BILLING_MODEL_COPY.title}</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.summary}</p>
+          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Launch price</p>
+              <p className="mt-2 text-2xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
+              <p className="mt-2 text-sm text-slate-600">One paid workspace covers the owner and their teammates.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Signup</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.signup}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Teammates</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.teammate}</p>
+            </div>
+          </div>
+          <div className="mt-5 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
+            Competitor signal: Housecall Pro starts around $59/month, Tradify UK is about £34–£44 per user/month, and Fergus starts around $53/month. A focused QuoteFollowUp launch price of <span className="font-semibold">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</span> per workspace is positioned lower and easier to say yes to.
+          </div>
+        </div>
         <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
           <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>

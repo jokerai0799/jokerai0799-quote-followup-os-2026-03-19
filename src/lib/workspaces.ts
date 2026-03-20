@@ -31,6 +31,7 @@ type SubscriptionRow = {
   workspace_id: string
   status: string
   plan_name: string | null
+  monthly_price_gbp: number
 }
 
 type SeedQuote = Partial<QuoteInput> & {
@@ -47,6 +48,7 @@ export type WorkspaceContext = {
   role: string
   subscriptionStatus: string
   planName: string | null
+  monthlyPriceGbp: number
 }
 
 export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user?: { name?: string | null; email?: string | null } | null) {
@@ -133,7 +135,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
     supabase.from('workspaces').select('id, name, slug, is_template, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
-    supabase.from('subscriptions').select('workspace_id, status, plan_name').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
+    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
   if (workspaceError) {
@@ -152,6 +154,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     role: membership.role,
     subscriptionStatus: subscription?.status ?? 'demo',
     planName: subscription?.plan_name ?? null,
+    monthlyPriceGbp: subscription?.monthly_price_gbp ?? 0,
   }
 }
 
@@ -348,5 +351,6 @@ export async function ensureWorkspaceForUser({
     role: 'owner',
     subscriptionStatus: 'demo',
     planName: 'Demo',
+    monthlyPriceGbp: 0,
   } satisfies WorkspaceContext
 }
