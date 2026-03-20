@@ -36,7 +36,8 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   const metrics = getMetrics(quotes)
   const dueToday = getDailyChaseList(quotes).length
   const showUpgradeHighlight = billing === 'upgrade' || trial.expired || trial.canceled
-  const canManageMembers = workspace?.role === 'owner' && !trial.expired && !trial.canceled
+  const isOwner = workspace?.role === 'owner'
+  const canManageMembers = isOwner && !trial.expired && !trial.canceled
   const showLockedState = trial.expired || trial.canceled
   const paidThroughLabel = trial.paidThrough
     ? new Date(trial.paidThrough).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -128,18 +129,29 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           </div>
         ) : (
           <>
-            <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
-              <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
-              <label className="mt-5 block text-sm font-medium text-slate-700">
-                Name
-                <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
-              </label>
-              <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-                Save workspace
-              </button>
-            </form>
+            {isOwner ? (
+              <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
+                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
+                <label className="mt-5 block text-sm font-medium text-slate-700">
+                  Name
+                  <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
+                </label>
+                <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+                  Save workspace
+                </button>
+              </form>
+            ) : (
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
+                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Only the workspace owner can rename this workspace.</p>
+                <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                  {workspace?.workspaceName ?? 'Workspace'}
+                </div>
+              </div>
+            )}
 
             <form action={updateProfileAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
@@ -194,7 +206,17 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           </div>
         ) : null}
 
-        <AddTeammateForm disabled={showLockedState} />
+        {isOwner ? (
+          <AddTeammateForm disabled={showLockedState} />
+        ) : (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Team access</p>
+            <h3 className="mt-2 text-xl font-semibold text-slate-950">Add teammate to workspace</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Only the workspace owner can add or remove teammates.
+            </p>
+          </div>
+        )}
 
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>

@@ -72,11 +72,7 @@ export async function updateWorkspaceAction(formData: FormData) {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid workspace payload')
   }
 
-  const workspace = await getWorkspaceContextForUser(userId)
-  if (!workspace) {
-    throw new Error('Workspace not found')
-  }
-
+  const workspace = await requireOwnerWorkspace(userId)
   await renameWorkspace(workspace.workspaceId, parsed.data.workspaceName)
   revalidatePath('/settings')
   revalidatePath('/dashboard')
@@ -95,10 +91,7 @@ export async function addTeammateAction(_prevState: AddTeammateState, formData: 
     return { error: parsed.error.issues[0]?.message ?? 'Invalid teammate details' }
   }
 
-  const workspace = await getWorkspaceContextForUser(userId)
-  if (!workspace) {
-    return { error: 'Workspace not found' }
-  }
+  const workspace = await requireOwnerWorkspace(userId)
 
   const teammate = await findUserByEmail(parsed.data.email)
   if (!teammate) {
