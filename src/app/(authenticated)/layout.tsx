@@ -21,7 +21,9 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     : null
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)
-  const dueCount = getDailyChaseList(quotes).length
+  const dueQuotes = getDailyChaseList(quotes).map(({ quote }) => quote)
+  const dueCount = dueQuotes.length
+  const chaseSignature = dueQuotes.map((quote) => `${quote.id}:${quote.updatedAt}`).join('|') || 'empty'
 
   return (
     <main className="min-h-screen bg-slate-100">
@@ -30,7 +32,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
               <BrandLogo href="/dashboard" showTagline={false} />
-              <Nav />
+              <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
             </div>
 
             <div className="flex flex-wrap items-center gap-3 xl:justify-end">
