@@ -1,9 +1,8 @@
-import Link from 'next/link'
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
 import { RemoveMemberButton } from './remove-member-button'
-import { cancelSubscriptionAction, updateProfileAction, updateWorkspaceAction } from './actions'
-import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { cancelSubscriptionAction, startSubscriptionCheckoutAction, updateProfileAction, updateWorkspaceAction } from './actions'
+import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
@@ -110,11 +109,11 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                     ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.`
                     : 'This workspace is on an active paid plan.'}
             {(trial.expired || trial.canceled) && workspace?.role === 'owner' ? (
-              <div className="mt-4">
-                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium !text-white text-white transition hover:bg-rose-500" target="_blank" rel="noreferrer">
+              <form action={startSubscriptionCheckoutAction} className="mt-4">
+                <button type="submit" className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-rose-500">
                   {BILLING_MODEL_COPY.cta}
-                </Link>
-              </div>
+                </button>
+              </form>
             ) : null}
           </div>
         </div>
@@ -197,11 +196,11 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 </button>
               </form>
             ) : trial.cancelScheduled || trial.canceled ? (
-              <div className="mt-5">
-                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-900 transition hover:border-slate-400 hover:bg-slate-50">
+              <form action={startSubscriptionCheckoutAction} className="mt-5">
+                <button type="submit" className="inline-flex rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-900 transition hover:border-slate-400 hover:bg-slate-50">
                   Restart subscription
-                </Link>
-              </div>
+                </button>
+              </form>
             ) : null}
           </div>
         ) : null}

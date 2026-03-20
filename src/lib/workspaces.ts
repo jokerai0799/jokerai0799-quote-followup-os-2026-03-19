@@ -33,6 +33,9 @@ type SubscriptionRow = {
   status: string
   plan_name: string | null
   monthly_price_gbp: number
+  provider?: string | null
+  provider_customer_id?: string | null
+  provider_subscription_id?: string | null
   current_period_end: string | null
   cancel_at_period_end: boolean | null
   canceled_at: string | null
@@ -50,6 +53,9 @@ export type WorkspaceContext = {
   subscriptionStatus: string
   planName: string | null
   monthlyPriceGbp: number
+  provider?: string | null
+  providerCustomerId?: string | null
+  providerSubscriptionId?: string | null
   currentPeriodEnd: string | null
   cancelAtPeriodEnd: boolean
   canceledAt: string | null
@@ -136,7 +142,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
     supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
-    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
+    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, provider, provider_customer_id, provider_subscription_id, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
   if (workspaceError) {
@@ -159,6 +165,9 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     subscriptionStatus: subscription?.status ?? 'trialing',
     planName: subscription?.plan_name ?? null,
     monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
+    provider: subscription?.provider ?? null,
+    providerCustomerId: subscription?.provider_customer_id ?? null,
+    providerSubscriptionId: subscription?.provider_subscription_id ?? null,
     currentPeriodEnd: subscription?.current_period_end ?? null,
     cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
     canceledAt: subscription?.canceled_at ?? null,
@@ -190,7 +199,7 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
   const workspaceIds = membershipList.map((entry) => entry.workspace_id)
   const [{ data: workspaces, error: workspaceError }, { data: subscriptions, error: subscriptionError }] = await Promise.all([
     supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
-    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').in('workspace_id', workspaceIds).returns<SubscriptionRow[]>(),
+    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, provider, provider_customer_id, provider_subscription_id, current_period_end, cancel_at_period_end, canceled_at').in('workspace_id', workspaceIds).returns<SubscriptionRow[]>(),
   ])
 
   if (workspaceError) {
@@ -221,6 +230,9 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
       subscriptionStatus: subscription?.status ?? 'trialing',
       planName: subscription?.plan_name ?? null,
       monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
+      provider: subscription?.provider ?? null,
+      providerCustomerId: subscription?.provider_customer_id ?? null,
+      providerSubscriptionId: subscription?.provider_subscription_id ?? null,
       currentPeriodEnd: subscription?.current_period_end ?? null,
       cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
       canceledAt: subscription?.canceled_at ?? null,
@@ -317,26 +329,50 @@ export async function renameWorkspace(workspaceId: string, name: string) {
   }
 }
 
-export async function cancelWorkspaceSubscription(workspaceId: string, currentPeriodEnd?: string | null) {
-  const now = new Date()
-  const fallbackPeriodEnd = new Date(now)
-  fallbackPeriodEnd.setUTCMonth(fallbackPeriodEnd.getUTCMonth() + 1)
-
+export async function syncWorkspaceSubscription(workspaceId: string, subscription: {
+  status: string
+  planName?: string | null
+  monthlyPriceGbp?: number | null
+  provider?: string | null
+  providerCustomerId?: string | null
+  providerSubscriptionId?: string | null
+  currentPeriodEnd?: string | null
+  cancelAtPeriodEnd?: boolean | null
+  canceledAt?: string | null
+}) {
   const { error } = await supabase
     .from('subscriptions')
-    .update({
-      status: 'active',
-      plan_name: 'Active plan',
-      monthly_price_gbp: WORKSPACE_MONTHLY_PRICE_GBP,
-      cancel_at_period_end: true,
-      canceled_at: now.toISOString(),
-      current_period_end: currentPeriodEnd ?? fallbackPeriodEnd.toISOString(),
-    })
-    .eq('workspace_id', workspaceId)
+    .upsert({
+      workspace_id: workspaceId,
+      status: subscription.status,
+      plan_name: subscription.planName ?? null,
+      monthly_price_gbp: subscription.monthlyPriceGbp ?? WORKSPACE_MONTHLY_PRICE_GBP,
+      provider: subscription.provider ?? 'stripe',
+      provider_customer_id: subscription.providerCustomerId ?? null,
+      provider_subscription_id: subscription.providerSubscriptionId ?? null,
+      current_period_end: subscription.currentPeriodEnd ?? null,
+      cancel_at_period_end: subscription.cancelAtPeriodEnd ?? false,
+      canceled_at: subscription.canceledAt ?? null,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'workspace_id' })
 
   if (error) {
-    throw new Error(`Failed to cancel workspace subscription: ${error.message}`)
+    throw new Error(`Failed to sync workspace subscription: ${error.message}`)
   }
+}
+
+export async function cancelWorkspaceSubscription(workspaceId: string) {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('workspace_id, status, plan_name, monthly_price_gbp, provider, provider_customer_id, provider_subscription_id, current_period_end, cancel_at_period_end, canceled_at')
+    .eq('workspace_id', workspaceId)
+    .maybeSingle<SubscriptionRow>()
+
+  if (error) {
+    throw new Error(`Failed to fetch workspace subscription: ${error.message}`)
+  }
+
+  return data ?? null
 }
 
 export async function addWorkspaceMember(workspaceId: string, userId: string, role: 'admin' | 'member') {
@@ -493,6 +529,9 @@ export async function ensureWorkspaceForUser({
     status: 'trialing',
     plan_name: '7-day trial',
     monthly_price_gbp: 0,
+    provider: 'stripe',
+    provider_customer_id: null,
+    provider_subscription_id: null,
     current_period_end: null,
     cancel_at_period_end: false,
     canceled_at: null,
@@ -516,6 +555,9 @@ export async function ensureWorkspaceForUser({
     subscriptionStatus: 'trialing',
     planName: '7-day trial',
     monthlyPriceGbp: 29.99,
+    provider: 'stripe',
+    providerCustomerId: null,
+    providerSubscriptionId: null,
     currentPeriodEnd: null,
     cancelAtPeriodEnd: false,
     canceledAt: null,

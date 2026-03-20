@@ -3,11 +3,12 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
+import { startSubscriptionCheckoutAction } from '@/app/(authenticated)/settings/actions'
 import { BrandLogo } from '@/components/brand-logo'
 import { ChaseNotificationStrip } from '@/components/chase-notification-strip'
 import { Nav } from '@/components/nav'
 import { WorkspaceSwitcher } from '@/components/workspace-switcher'
-import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
@@ -95,9 +96,11 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                   Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
                 </div>
                 {workspace?.role === 'owner' ? (
-                  <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium !text-white text-white transition hover:bg-rose-500" target="_blank" rel="noreferrer">
-                    {BILLING_MODEL_COPY.cta}
-                  </Link>
+                  <form action={startSubscriptionCheckoutAction}>
+                    <button type="submit" className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-rose-500">
+                      {BILLING_MODEL_COPY.cta}
+                    </button>
+                  </form>
                 ) : null}
               </div>
             </div>

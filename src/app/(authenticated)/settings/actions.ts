@@ -1,11 +1,14 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { auth } from '@/auth'
 import { assertWorkspaceWriteAccess } from '@/lib/access'
-import { findUserByEmail, updateUserName } from '@/lib/users'
-import { addWorkspaceMember, cancelWorkspaceSubscription, getWorkspaceContextForUser, getWorkspaceMembers, removeWorkspaceMember, renameWorkspace } from '@/lib/workspaces'
+import { WORKSPACE_MONTHLY_PRICE_GBP } from '@/lib/billing'
+import { getStripeClient, STRIPE_PRICE_ID, toWorkspaceSubscriptionStatus } from '@/lib/stripe'
+import { findUserByEmail, findUserById, updateUserName } from '@/lib/users'
+import { addWorkspaceMember, cancelWorkspaceSubscription, getWorkspaceContextForUser, getWorkspaceMembers, removeWorkspaceMember, renameWorkspace, syncWorkspaceSubscription } from '@/lib/workspaces'
 
 const profileSchema = z.object({
   name: z.string().trim().min(2, 'Enter your name'),
@@ -139,6 +142,43 @@ export async function removeTeammateAction(_prevState: RemoveMemberState, formDa
   return { success: `${target.email} removed from workspace.` }
 }
 
+export async function startSubscriptionCheckoutAction() {
+  const userId = await requireUserId()
+  const workspace = await requireOwnerWorkspace(userId)
+  const user = await findUserById(userId)
+
+  if (!user?.email) {
+    throw new Error('Workspace owner email not found')
+  }
+
+  const stripe = getStripeClient()
+  const session = await stripe.checkout.sessions.create({
+    mode: 'subscription',
+    success_url: 'https://quotefollowup.online/settings?billing=success',
+    cancel_url: 'https://quotefollowup.online/settings?billing=cancel',
+    line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+    allow_promotion_codes: true,
+    customer_email: user.email,
+    subscription_data: {
+      metadata: {
+        workspaceId: workspace.workspaceId,
+        ownerUserId: userId,
+      },
+      trial_period_days: 7,
+    },
+    metadata: {
+      workspaceId: workspace.workspaceId,
+      ownerUserId: userId,
+    },
+  })
+
+  if (!session.url) {
+    throw new Error('Stripe checkout session did not return a URL')
+  }
+
+  redirect(session.url)
+}
+
 export async function cancelSubscriptionAction() {
   const userId = await requireUserId()
   const workspace = await requireOwnerWorkspace(userId)
@@ -147,7 +187,28 @@ export async function cancelSubscriptionAction() {
     throw new Error('No active subscription to cancel')
   }
 
-  await cancelWorkspaceSubscription(workspace.workspaceId, workspace.currentPeriodEnd)
+  const currentSubscription = await cancelWorkspaceSubscription(workspace.workspaceId)
+  if (!currentSubscription?.provider_subscription_id) {
+    throw new Error('This workspace does not have a linked Stripe subscription yet')
+  }
+
+  const stripe = getStripeClient()
+  const subscription = await stripe.subscriptions.update(currentSubscription.provider_subscription_id, {
+    cancel_at_period_end: true,
+  })
+
+  await syncWorkspaceSubscription(workspace.workspaceId, {
+    status: toWorkspaceSubscriptionStatus(subscription.status),
+    planName: subscription.status === 'trialing' ? '7-day trial' : 'Active plan',
+    monthlyPriceGbp: WORKSPACE_MONTHLY_PRICE_GBP,
+    provider: 'stripe',
+    providerCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id ?? null,
+    providerSubscriptionId: subscription.id,
+    currentPeriodEnd: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : workspace.currentPeriodEnd,
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
+  })
+
   revalidatePath('/settings')
   revalidatePath('/dashboard')
   revalidatePath('/quotes')

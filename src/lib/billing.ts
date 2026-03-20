@@ -1,5 +1,4 @@
 export const WORKSPACE_MONTHLY_PRICE_GBP = 29.99
-export const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/5kQdRb8cu2vb22X4vb8Ra01'
 
 export function formatMonthlyPriceGbp(price: number) {
   return `£${price.toFixed(2)}/month`
