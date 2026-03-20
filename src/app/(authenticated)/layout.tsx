@@ -78,10 +78,10 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
         <div className="space-y-6">
           {trial.activeTrial ? (
             <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950 shadow-sm">
-              <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in your workspace trial.</span>{' '}
+              <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.</span>{' '}
               {workspace?.role === 'owner'
                 ? `You’ll move to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
-                : 'The workspace owner will be able to upgrade before the trial ends.'}
+                : 'The workspace owner can upgrade before the trial ends. Your personal workspace billing does not affect access while you are working inside this workspace.'}
             </div>
           ) : null}
 

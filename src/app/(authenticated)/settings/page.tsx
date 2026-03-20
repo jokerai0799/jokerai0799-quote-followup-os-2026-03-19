@@ -49,7 +49,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Settings</p>
         <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace and account</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Update your workspace details, manage team access, and review billing and next steps.
+          Update your workspace details, manage team access, and review how billing applies to the workspace you are currently in.
         </p>
       </div>
 
@@ -85,7 +85,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Launch price</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-              <p className="mt-2 text-sm text-slate-600">One paid workspace covers the owner and their teammates.</p>
+              <p className="mt-2 text-sm text-slate-600">One paid workspace covers the owner and any invited teammates working inside this workspace.</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Signup</p>
@@ -107,7 +107,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 : trial.expired
                   ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
                   : trial.activeTrial
-                    ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
+                    ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.`
                     : 'This workspace is on an active paid plan.'}
             {(trial.expired || trial.canceled) && workspace?.role === 'owner' ? (
               <div className="mt-4">
@@ -221,7 +221,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
           <h3 className="mt-2 text-2xl font-semibold text-slate-950">Team members</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace. The owner can remove members at any time.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace. Invited members can use this workspace under its subscription, and the owner can remove members at any time.</p>
           <div className="mt-5 space-y-3">
             {members.map((member) => (
               <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
