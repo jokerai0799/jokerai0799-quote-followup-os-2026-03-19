@@ -95,7 +95,10 @@ export default async function QuotesPage({ searchParams }: PageProps) {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Tracked</p>
             <p className="mt-1 text-xl font-semibold text-slate-950">{filteredQuotes.length}</p>
           </div>
-          <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium !text-white text-white transition hover:bg-slate-800">
+          <Link
+            href="/quotes/new"
+            className="inline-flex items-center justify-center rounded-xl border border-sky-500 bg-sky-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(14,165,233,0.22)] transition hover:border-sky-400 hover:bg-sky-500"
+          >
             Add quote
           </Link>
         </div>

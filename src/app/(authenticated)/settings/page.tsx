@@ -95,26 +95,40 @@ export default async function SettingsPage({ searchParams }: PageProps) {
               <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.teammate}</p>
             </div>
           </div>
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <span className="font-medium">Billing status:</span>{' '}
-            {trial.canceled
-              ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.canceledOwner : BILLING_MODEL_COPY.canceledMember)
-              : trial.cancelScheduled
-                ? (paidThroughLabel
-                    ? `This subscription is set to end on ${paidThroughLabel}. Full access stays active until then.`
-                    : 'This subscription is set to end at the close of the current billing period. Full access stays active until then.')
-                : trial.expired
-                  ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
-                  : trial.activeTrial
-                    ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.`
-                    : 'This workspace is on an active paid plan.'}
-            {(trial.expired || trial.canceled) && workspace?.role === 'owner' ? (
-              <form action={startSubscriptionCheckoutAction} className="mt-4">
-                <button type="submit" className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-rose-500">
-                  {BILLING_MODEL_COPY.cta}
-                </button>
-              </form>
+          <div className="mt-4 space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            {workspace?.role === 'owner' && workspace?.subscriptionStatus !== 'active' ? (
+              <div className="flex flex-col gap-3 rounded-2xl border border-sky-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-medium text-slate-950">Ready to activate this workspace?</p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Start the subscription flow now and keep this workspace active for you and your team.
+                  </p>
+                </div>
+                <form action={startSubscriptionCheckoutAction}>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center rounded-xl border border-sky-500 bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
+                  >
+                    Subscribe now
+                  </button>
+                </form>
+              </div>
             ) : null}
+
+            <div>
+              <span className="font-medium">Billing status:</span>{' '}
+              {trial.canceled
+                ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.canceledOwner : BILLING_MODEL_COPY.canceledMember)
+                : trial.cancelScheduled
+                  ? (paidThroughLabel
+                      ? `This subscription is set to end on ${paidThroughLabel}. Full access stays active until then.`
+                      : 'This subscription is set to end at the close of the current billing period. Full access stays active until then.')
+                  : trial.expired
+                    ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
+                    : trial.activeTrial
+                      ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.`
+                      : 'This workspace is on an active paid plan.'}
+            </div>
           </div>
         </div>
 
