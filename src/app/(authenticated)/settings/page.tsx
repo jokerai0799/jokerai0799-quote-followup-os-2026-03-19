@@ -119,7 +119,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 : 'This workspace is on an active paid plan.'}
             {trial.expired && workspace?.role === 'owner' ? (
               <div className="mt-4">
-                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" target="_blank" rel="noreferrer">
+                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium !text-white text-white transition hover:bg-rose-500" target="_blank" rel="noreferrer">
                   {BILLING_MODEL_COPY.cta}
                 </Link>
               </div>

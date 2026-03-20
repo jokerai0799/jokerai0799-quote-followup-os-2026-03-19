@@ -33,30 +33,38 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       <header className="border-b border-slate-800 bg-[#162033] text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)]">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
+            <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-center xl:gap-8">
               <BrandLogo href="/dashboard" showTagline={false} />
-              <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
+              <div className="min-w-0">
+                <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 xl:justify-end">
-              <div className="hidden rounded-full border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.16em] text-white lg:inline-flex lg:items-center lg:gap-2">
+            <div className="flex flex-wrap items-center gap-2.5 xl:flex-nowrap xl:justify-end">
+              <div className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-medium text-emerald-100 lg:inline-flex">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
                 {dueCount} due today
               </div>
 
               <Link
                 href="/settings"
-                className="hidden min-w-[148px] items-center justify-center rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium leading-none text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex"
+                className="hidden max-w-[180px] items-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-white/90 transition hover:border-white/20 hover:bg-white/10 hover:text-white lg:inline-flex"
               >
-                <span className="max-w-[160px] truncate">{displayWorkspaceName}</span>
+                <span className="truncate">{displayWorkspaceName}</span>
               </Link>
 
-              <Link href="/quotes/new" className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500">
+              <Link
+                href="/quotes/new"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
+              >
                 New quote
               </Link>
 
               <form action={signOutAction}>
-                <button type="submit" className="inline-flex items-center justify-center rounded-lg border border-slate-500 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-slate-300 hover:bg-white/5">
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white"
+                >
                   Sign out
                 </button>
               </form>
@@ -84,7 +92,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                   Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
                 </div>
                 {workspace?.role === 'owner' ? (
-                  <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" target="_blank" rel="noreferrer">
+                  <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium !text-white text-white transition hover:bg-rose-500" target="_blank" rel="noreferrer">
                     {BILLING_MODEL_COPY.cta}
                   </Link>
                 ) : null}
