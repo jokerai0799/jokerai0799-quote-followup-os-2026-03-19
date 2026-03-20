@@ -26,12 +26,17 @@ const recommendations = [
   },
 ]
 
-export default async function SettingsPage() {
+type PageProps = {
+  searchParams: Promise<{ billing?: string }>
+}
+
+export default async function SettingsPage({ searchParams }: PageProps) {
   const session = await auth()
   if (!session?.user?.id) {
     return null
   }
 
+  const { billing } = await searchParams
   const [user, workspace, quotes] = await Promise.all([
     findUserById(session.user.id),
     ensureWorkspaceForUser({ userId: session.user.id, seedStarter: false }),
@@ -42,6 +47,7 @@ export default async function SettingsPage() {
   const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
   const metrics = getMetrics(quotes)
   const dueToday = getDailyChaseList(quotes).length
+  const showUpgradeHighlight = billing === 'upgrade' || trial.expired
 
   return (
     <section className="space-y-6">
@@ -82,7 +88,7 @@ export default async function SettingsPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+        <div className={`rounded-3xl border bg-white p-6 shadow-sm lg:col-span-2 ${showUpgradeHighlight ? 'border-amber-300 ring-2 ring-amber-200' : 'border-slate-200'}`}>
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Billing</p>
           <h3 className="mt-2 text-xl font-semibold text-slate-950">{BILLING_MODEL_COPY.title}</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.summary}</p>
@@ -107,11 +113,11 @@ export default async function SettingsPage() {
           <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
             <span className="font-medium">Trial status:</span>{' '}
             {trial.expired
-              ? BILLING_MODEL_COPY.expiredOwner
+              ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
               : trial.activeTrial
                 ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
                 : 'This workspace is on an active paid plan.'}
-            {trial.expired ? (
+            {trial.expired && workspace?.role === 'owner' ? (
               <div className="mt-4">
                 <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" target="_blank" rel="noreferrer">
                   {BILLING_MODEL_COPY.cta}
@@ -121,40 +127,52 @@ export default async function SettingsPage() {
           </div>
         </div>
 
-        <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
-          <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
-          <label className="mt-5 block text-sm font-medium text-slate-700">
-            Name
-            <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
-          </label>
-          <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-            Save workspace
-          </button>
-        </form>
+        {trial.expired ? (
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace access</p>
+            <h3 className="mt-2 text-xl font-semibold text-slate-950">Read-only until upgraded</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Quote editing, new quotes, team changes, and workspace updates are paused until this workspace is upgraded.
+            </p>
+          </div>
+        ) : (
+          <>
+            <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
+              <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
+              <label className="mt-5 block text-sm font-medium text-slate-700">
+                Name
+                <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
+              </label>
+              <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+                Save workspace
+              </button>
+            </form>
 
-        <form action={updateProfileAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
-          <h3 className="mt-2 text-xl font-semibold text-slate-950">Profile</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Keep the account details clean for this workspace owner.</p>
-          <label className="mt-5 block text-sm font-medium text-slate-700">
-            Name
-            <input name="name" defaultValue={user?.name ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
-          </label>
-          <label className="mt-4 block text-sm font-medium text-slate-700">
-            Email
-            <input value={user?.email ?? ''} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none" disabled readOnly />
-          </label>
-          <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-            Save profile
-          </button>
-        </form>
+            <form action={updateProfileAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
+              <h3 className="mt-2 text-xl font-semibold text-slate-950">Profile</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">Keep the account details clean for this workspace owner.</p>
+              <label className="mt-5 block text-sm font-medium text-slate-700">
+                Name
+                <input name="name" defaultValue={user?.name ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
+              </label>
+              <label className="mt-4 block text-sm font-medium text-slate-700">
+                Email
+                <input value={user?.email ?? ''} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none" disabled readOnly />
+              </label>
+              <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+                Save profile
+              </button>
+            </form>
+          </>
+        )}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-4">
-          <AddTeammateForm />
+          <AddTeammateForm disabled={trial.expired} />
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>

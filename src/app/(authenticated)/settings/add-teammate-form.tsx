@@ -5,7 +5,7 @@ import { addTeammateAction, type AddTeammateState } from './actions'
 
 const initialState: AddTeammateState = {}
 
-export function AddTeammateForm() {
+export function AddTeammateForm({ disabled = false }: { disabled?: boolean }) {
   const [state, formAction] = useFormState(addTeammateAction, initialState)
 
   return (
@@ -16,39 +16,47 @@ export function AddTeammateForm() {
         This adds an existing account to your workspace. It does not change your own profile details.
       </p>
 
-      <label className="mt-5 block text-sm font-medium text-slate-700">
-        Teammate email
-        <input
-          name="email"
-          type="email"
-          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
-          placeholder="name@company.com"
-          required
-        />
-      </label>
+      {disabled ? (
+        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          Upgrade this workspace first to manage team access.
+        </div>
+      ) : (
+        <>
+          <label className="mt-5 block text-sm font-medium text-slate-700">
+            Teammate email
+            <input
+              name="email"
+              type="email"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
+              placeholder="name@company.com"
+              required
+            />
+          </label>
 
-      <label className="mt-4 block text-sm font-medium text-slate-700">
-        Role
-        <select
-          name="role"
-          defaultValue="member"
-          className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
-        >
-          <option value="member">Member</option>
-          <option value="admin">Admin</option>
-        </select>
-      </label>
+          <label className="mt-4 block text-sm font-medium text-slate-700">
+            Role
+            <select
+              name="role"
+              defaultValue="member"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
+            >
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
 
-      <p className="mt-4 text-xs leading-5 text-slate-500">
-        If they do not have an account yet, ask them to sign up first. Full email invite flow can come next.
-      </p>
+          <p className="mt-4 text-xs leading-5 text-slate-500">
+            If they do not have an account yet, ask them to sign up first. Full email invite flow can come next.
+          </p>
 
-      {state.error ? <p className="mt-4 text-sm text-rose-600">{state.error}</p> : null}
-      {state.success ? <p className="mt-4 text-sm text-emerald-600">{state.success}</p> : null}
+          {state.error ? <p className="mt-4 text-sm text-rose-600">{state.error}</p> : null}
+          {state.success ? <p className="mt-4 text-sm text-emerald-600">{state.success}</p> : null}
 
-      <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-        Add teammate to workspace
-      </button>
+          <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
+            Add teammate to workspace
+          </button>
+        </>
+      )}
     </form>
   )
 }

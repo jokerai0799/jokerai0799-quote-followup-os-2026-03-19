@@ -39,10 +39,10 @@ export default async function MarketingHomePage() {
           <BrandLogo />
           <div className="flex items-center gap-3">
             <Link
-              href={session?.user ? '/dashboard' : '/login'}
+              href={session?.user ? '#demo' : '/login'}
               className="rounded-xl border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
             >
-              {session?.user ? 'Open workspace' : 'Log in'}
+              {session?.user ? 'View demo' : 'Log in'}
             </Link>
             <Link
               href={session?.user ? '/dashboard' : '/signup'}

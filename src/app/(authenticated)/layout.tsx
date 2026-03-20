@@ -44,8 +44,11 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 {dueCount} due today
               </div>
 
-              <Link href="/settings" className="hidden rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex">
-                {displayWorkspaceName}
+              <Link
+                href="/settings"
+                className="hidden min-w-[148px] items-center justify-center rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium leading-none text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex"
+              >
+                <span className="max-w-[160px] truncate">{displayWorkspaceName}</span>
               </Link>
 
               <Link href="/quotes/new" className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500">

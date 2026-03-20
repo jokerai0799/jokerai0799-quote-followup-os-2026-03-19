@@ -93,7 +93,7 @@ export default async function QuotesPage({ searchParams }: PageProps) {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Tracked</p>
             <p className="mt-1 text-xl font-semibold text-slate-950">{filteredQuotes.length}</p>
           </div>
-          <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-slate-800">
+          <Link href="/quotes/new" className="rounded-xl bg-slate-950 px-4 py-3 text-sm font-medium !text-white text-white transition hover:bg-slate-800">
             Add quote
           </Link>
         </div>
