@@ -10,6 +10,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: 'QuoteFollowUp',
     description: 'Quote follow-up software for trades and service businesses.',
+    robots: {
+      index: false,
+      follow: false,
+    },
     openGraph: {
       title: 'QuoteFollowUp',
       description: 'Quote follow-up software for trades and service businesses.',
