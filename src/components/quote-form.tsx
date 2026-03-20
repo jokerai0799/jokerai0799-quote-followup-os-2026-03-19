@@ -47,19 +47,32 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
             ))}
           </select>
         </label>
-        <label className="block text-sm font-medium text-zinc-700">
-          Sent date
-          <input className={fieldClass} name="sentDate" type="date" defaultValue={quote?.sentDate ?? ""} />
-        </label>
-        <label className="block text-sm font-medium text-zinc-700">
-          Follow-up cadence (days)
-          <input
-            className={fieldClass}
-            name="followUpOffsets"
-            defaultValue={quote?.followUpOffsets?.join(', ') ?? '2, 5, 9'}
-            placeholder="2, 5, 9"
-          />
-        </label>
+        <div className="md:col-span-2 grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-zinc-700">
+            Sent date
+            <input className={fieldClass} name="sentDate" type="date" defaultValue={quote?.sentDate ?? ""} />
+          </label>
+          <label className="block text-sm font-medium text-zinc-700">
+            Follow-up cadence (days)
+            <input
+              className={fieldClass}
+              name="followUpOffsets"
+              defaultValue={quote?.followUpOffsets?.join(', ') ?? '2, 5, 9'}
+              placeholder="2, 5, 9"
+            />
+          </label>
+          {!quote ? (
+            <label className="md:col-span-2 flex items-start gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+              <input name="markDueNow" type="checkbox" className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-400" />
+              <span>
+                <span className="block font-medium text-zinc-900">Needs follow-up now</span>
+                <span className="mt-1 block text-zinc-600">
+                  Use this when backfilling an older quote and you want it to appear on today’s chase list even if you do not know the exact sent date.
+                </span>
+              </span>
+            </label>
+          ) : null}
+        </div>
         <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 md:col-span-2">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500">Follow-up preference</p>
           <p className="mt-2 text-sm text-zinc-600">
@@ -83,7 +96,7 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
       </div>
 
       <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
-        <p className="text-sm text-zinc-500">Tip: set a sent date to generate the chase schedule automatically. Saving here only stores quote details.</p>
+        <p className="text-sm text-zinc-500">Tip: set a sent date to generate the chase schedule automatically, or use “Needs follow-up now” when backfilling older quotes.</p>
         <button className="rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800" type="submit">
           {submitLabel}
         </button>
