@@ -1,30 +1,13 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
-import { updateProfileAction, updateWorkspaceAction } from './actions'
+import { RemoveMemberButton } from './remove-member-button'
+import { cancelSubscriptionAction, updateProfileAction, updateWorkspaceAction } from './actions'
 import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
-
-const recommendations = [
-  {
-    title: 'Invite teammates and roles',
-    verdict: 'Yes — makes sense soon',
-    body: 'Useful once real businesses start using the product together. Add after the core owner workflow feels finished.',
-  },
-  {
-    title: 'Email send history and delivery tracking',
-    verdict: 'Yes — after in-app sending exists',
-    body: 'Worth adding, but only once quotes and follow-ups can actually be sent from inside the product rather than copied out manually.',
-  },
-  {
-    title: 'Analytics by source, service type, and win rate',
-    verdict: 'Yes — high value',
-    body: 'Very relevant to the product. This helps users see what work converts, what services perform best, and where leads are coming from.',
-  },
-]
 
 type PageProps = {
   searchParams: Promise<{ billing?: string }>
@@ -44,10 +27,20 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   ])
 
   const members = workspace ? await getWorkspaceMembers(workspace.workspaceId) : []
-  const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
+  const trial = getTrialState({
+    createdAt: workspace?.createdAt,
+    subscriptionStatus: workspace?.subscriptionStatus,
+    currentPeriodEnd: workspace?.currentPeriodEnd,
+    cancelAtPeriodEnd: workspace?.cancelAtPeriodEnd,
+  })
   const metrics = getMetrics(quotes)
   const dueToday = getDailyChaseList(quotes).length
-  const showUpgradeHighlight = billing === 'upgrade' || trial.expired
+  const showUpgradeHighlight = billing === 'upgrade' || trial.expired || trial.canceled
+  const canManageMembers = workspace?.role === 'owner' && !trial.expired && !trial.canceled
+  const showLockedState = trial.expired || trial.canceled
+  const paidThroughLabel = trial.paidThrough
+    ? new Date(trial.paidThrough).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+    : null
 
   return (
     <section className="space-y-6">
@@ -59,16 +52,11 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace</p>
-          <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.workspaceName ?? 'Your Workspace'}</p>
-          <p className="mt-2 text-sm text-slate-500">Current workspace name</p>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Plan</p>
-          <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.planName ?? 'Demo'}</p>
-          <p className="mt-2 text-sm text-slate-500">{trial.expired ? 'Trial ended' : trial.activeTrial ? 'Trial in progress' : 'Active billing'}</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{trial.canceled ? 'Canceled' : trial.cancelScheduled ? 'Cancels at period end' : trial.expired ? 'Trial ended' : trial.activeTrial ? 'Trial mode' : workspace?.planName ?? 'Active plan'}</p>
+          <p className="mt-2 text-sm text-slate-500">{trial.canceled ? 'Subscription has ended for this workspace' : trial.cancelScheduled ? (paidThroughLabel ? `Access remains active until ${paidThroughLabel}` : 'Access remains active until the current billing period ends') : trial.expired ? 'Upgrade needed to keep using this workspace' : trial.activeTrial ? '7-day trial in progress' : 'Active billing'}</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Monthly plan</p>
@@ -107,17 +95,20 @@ export default async function SettingsPage({ searchParams }: PageProps) {
               <p className="mt-2 text-sm leading-6 text-slate-600">{BILLING_MODEL_COPY.teammate}</p>
             </div>
           </div>
-          <div className="mt-5 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
-            Competitor signal: Housecall Pro starts around $59/month, Tradify UK is about £34–£44 per user/month, and Fergus starts around $53/month. A focused QuoteFollowUp launch price of <span className="font-semibold">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</span> per workspace is positioned lower and easier to say yes to.
-          </div>
           <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-            <span className="font-medium">Trial status:</span>{' '}
-            {trial.expired
-              ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
-              : trial.activeTrial
-                ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
-                : 'This workspace is on an active paid plan.'}
-            {trial.expired && workspace?.role === 'owner' ? (
+            <span className="font-medium">Billing status:</span>{' '}
+            {trial.canceled
+              ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.canceledOwner : BILLING_MODEL_COPY.canceledMember)
+              : trial.cancelScheduled
+                ? (paidThroughLabel
+                    ? `This subscription is set to end on ${paidThroughLabel}. Full access stays active until then.`
+                    : 'This subscription is set to end at the close of the current billing period. Full access stays active until then.')
+                : trial.expired
+                  ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
+                  : trial.activeTrial
+                    ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
+                    : 'This workspace is on an active paid plan.'}
+            {(trial.expired || trial.canceled) && workspace?.role === 'owner' ? (
               <div className="mt-4">
                 <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-rose-700 bg-rose-600 px-4 py-2.5 text-sm font-medium !text-white text-white transition hover:bg-rose-500" target="_blank" rel="noreferrer">
                   {BILLING_MODEL_COPY.cta}
@@ -127,12 +118,12 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        {trial.expired ? (
+        {showLockedState ? (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace access</p>
-            <h3 className="mt-2 text-xl font-semibold text-slate-950">Read-only until upgraded</h3>
+            <h3 className="mt-2 text-xl font-semibold text-slate-950">Read-only until billing is active</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Quote editing, new quotes, team changes, and workspace updates are paused until this workspace is upgraded.
+              Quote editing, new quotes, team changes, and workspace updates are paused until this workspace has an active subscription.
             </p>
           </div>
         ) : (
@@ -170,37 +161,56 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         )}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-4">
-          <AddTeammateForm disabled={trial.expired} />
-
+      <div className="space-y-4">
+        {workspace?.role === 'owner' ? (
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
-            <h3 className="mt-2 text-2xl font-semibold text-slate-950">Team members</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace.</p>
-            <div className="mt-5 space-y-3">
-              {members.map((member) => (
-                <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <div>
-                    <p className="font-medium text-slate-950">{member.name}</p>
-                    <p className="text-sm text-slate-500">{member.email}</p>
-                  </div>
-                  <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
-                </div>
-              ))}
-            </div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Subscription</p>
+            <h3 className="mt-2 text-2xl font-semibold text-slate-950">Manage subscription</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              {trial.activeTrial
+                ? 'You are still in trial mode, so there is no paid subscription to cancel yet.'
+                : trial.canceled
+                  ? 'This workspace subscription has already ended.'
+                  : trial.cancelScheduled
+                    ? (paidThroughLabel ? `Cancellation is scheduled. Access stays active until ${paidThroughLabel}.` : 'Cancellation is scheduled for the end of the current billing period.')
+                    : 'Canceling now will keep access active until the end of the current billing period.'}
+            </p>
+            {workspace.subscriptionStatus === 'active' && !trial.cancelScheduled ? (
+              <form action={cancelSubscriptionAction} className="mt-5">
+                <button
+                  type="submit"
+                  className="inline-flex rounded-xl border border-rose-300 bg-rose-50 px-4 py-2.5 text-sm font-medium text-rose-700 transition hover:border-rose-400 hover:bg-rose-100"
+                >
+                  {BILLING_MODEL_COPY.cancelCta}
+                </button>
+              </form>
+            ) : trial.cancelScheduled || trial.canceled ? (
+              <div className="mt-5">
+                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-900 transition hover:border-slate-400 hover:bg-slate-50">
+                  Restart subscription
+                </Link>
+              </div>
+            ) : null}
           </div>
-        </div>
+        ) : null}
+
+        <AddTeammateForm disabled={showLockedState} />
 
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Roadmap</p>
-          <h3 className="mt-2 text-2xl font-semibold text-slate-950">What we should build next</h3>
-          <div className="mt-5 space-y-4">
-            {recommendations.map((item) => (
-              <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-sky-700">{item.verdict}</p>
-                <h4 className="mt-2 text-lg font-semibold text-slate-950">{item.title}</h4>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.body}</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
+          <h3 className="mt-2 text-2xl font-semibold text-slate-950">Team members</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace. The owner can remove members at any time.</p>
+          <div className="mt-5 space-y-3">
+            {members.map((member) => (
+              <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div>
+                  <p className="font-medium text-slate-950">{member.name}</p>
+                  <p className="text-sm text-slate-500">{member.email}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
+                  {member.role !== 'owner' ? <RemoveMemberButton memberUserId={member.userId} disabled={!canManageMembers} /> : null}
+                </div>
               </div>
             ))}
           </div>

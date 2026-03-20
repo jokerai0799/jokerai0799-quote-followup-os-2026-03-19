@@ -242,9 +242,9 @@ export default async function MarketingHomePage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Explore the demo first, then create a clean workspace for your own business.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">View the demo, then create your own workspace when you’re ready.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Public visitors can review the demo preview before creating an account. After signup, your workspace starts empty so your real data stays separate.
+              You can look through the demo first. When you sign up, you get your own separate workspace to add real quotes, contacts, and follow-ups.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

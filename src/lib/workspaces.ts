@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { WORKSPACE_MONTHLY_PRICE_GBP } from './billing'
 import { supabase } from './supabase'
 import { STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from './quotes'
 
@@ -32,6 +33,9 @@ type SubscriptionRow = {
   status: string
   plan_name: string | null
   monthly_price_gbp: number
+  current_period_end: string | null
+  cancel_at_period_end: boolean | null
+  canceled_at: string | null
 }
 
 type SeedQuote = Partial<QuoteInput> & {
@@ -49,6 +53,9 @@ export type WorkspaceContext = {
   subscriptionStatus: string
   planName: string | null
   monthlyPriceGbp: number
+  currentPeriodEnd: string | null
+  cancelAtPeriodEnd: boolean
+  canceledAt: string | null
   createdAt: string
 }
 
@@ -136,7 +143,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
     supabase.from('workspaces').select('id, name, slug, is_template, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
-    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
+    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
   if (workspaceError) {
@@ -156,6 +163,9 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     subscriptionStatus: subscription?.status ?? 'demo',
     planName: subscription?.plan_name ?? null,
     monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
+    currentPeriodEnd: subscription?.current_period_end ?? null,
+    cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
+    canceledAt: subscription?.canceled_at ?? null,
     createdAt: workspace.created_at,
   }
 }
@@ -263,6 +273,28 @@ export async function renameWorkspace(workspaceId: string, name: string) {
   }
 }
 
+export async function cancelWorkspaceSubscription(workspaceId: string, currentPeriodEnd?: string | null) {
+  const now = new Date()
+  const fallbackPeriodEnd = new Date(now)
+  fallbackPeriodEnd.setUTCMonth(fallbackPeriodEnd.getUTCMonth() + 1)
+
+  const { error } = await supabase
+    .from('subscriptions')
+    .update({
+      status: 'active',
+      plan_name: 'Active plan',
+      monthly_price_gbp: WORKSPACE_MONTHLY_PRICE_GBP,
+      cancel_at_period_end: true,
+      canceled_at: now.toISOString(),
+      current_period_end: currentPeriodEnd ?? fallbackPeriodEnd.toISOString(),
+    })
+    .eq('workspace_id', workspaceId)
+
+  if (error) {
+    throw new Error(`Failed to cancel workspace subscription: ${error.message}`)
+  }
+}
+
 export async function addWorkspaceMember(workspaceId: string, userId: string, role: 'admin' | 'member') {
   const { error } = await supabase
     .from('workspace_memberships')
@@ -270,6 +302,18 @@ export async function addWorkspaceMember(workspaceId: string, userId: string, ro
 
   if (error) {
     throw new Error(`Failed to add workspace member: ${error.message}`)
+  }
+}
+
+export async function removeWorkspaceMember(workspaceId: string, userId: string) {
+  const { error } = await supabase
+    .from('workspace_memberships')
+    .delete()
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', userId)
+
+  if (error) {
+    throw new Error(`Failed to remove workspace member: ${error.message}`)
   }
 }
 
@@ -333,6 +377,9 @@ export async function ensureWorkspaceForUser({
     status: 'trialing',
     plan_name: '7-day trial',
     monthly_price_gbp: 0,
+    current_period_end: null,
+    cancel_at_period_end: false,
+    canceled_at: null,
   }, { onConflict: 'workspace_id' })).error
 
   if (subscriptionError) {
@@ -354,6 +401,9 @@ export async function ensureWorkspaceForUser({
     subscriptionStatus: 'trialing',
     planName: '7-day trial',
     monthlyPriceGbp: 29.99,
+    currentPeriodEnd: null,
+    cancelAtPeriodEnd: false,
+    canceledAt: null,
     createdAt: workspace.created_at,
   } satisfies WorkspaceContext
 }

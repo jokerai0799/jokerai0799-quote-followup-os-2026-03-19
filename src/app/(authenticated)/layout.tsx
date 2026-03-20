@@ -22,7 +22,12 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: false })
     : null
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
-  const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
+  const trial = getTrialState({
+    createdAt: workspace?.createdAt,
+    subscriptionStatus: workspace?.subscriptionStatus,
+    currentPeriodEnd: workspace?.currentPeriodEnd,
+    cancelAtPeriodEnd: workspace?.cancelAtPeriodEnd,
+  })
   const quotes = await getQuotes(session.user.id)
   const dueQuotes = getDailyChaseList(quotes).map(({ quote }) => quote)
   const dueCount = dueQuotes.length
@@ -84,11 +89,22 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
             </div>
           ) : null}
 
-          {trial.expired ? (
+          {trial.cancelScheduled ? (
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
+              <span className="font-medium">Subscription ends at period end.</span>{' '}
+              Access stays active until {trial.paidThrough ? new Date(trial.paidThrough).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'the current billing period ends'}.
+            </div>
+          ) : null}
+
+          {trial.expired || trial.canceled ? (
             <div className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <span className="font-medium">{workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember}</span>{' '}
+                  <span className="font-medium">
+                    {trial.canceled
+                      ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.canceledOwner : BILLING_MODEL_COPY.canceledMember)
+                      : (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)}
+                  </span>{' '}
                   Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
                 </div>
                 {workspace?.role === 'owner' ? (

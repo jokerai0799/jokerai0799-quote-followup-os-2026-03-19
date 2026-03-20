@@ -4,12 +4,18 @@ import { getWorkspaceContextForUser } from '@/lib/workspaces'
 
 export async function getWorkspaceAccessState(userId: string) {
   const workspace = await getWorkspaceContextForUser(userId)
-  const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
+  const trial = getTrialState({
+    createdAt: workspace?.createdAt,
+    subscriptionStatus: workspace?.subscriptionStatus,
+    currentPeriodEnd: workspace?.currentPeriodEnd,
+    cancelAtPeriodEnd: workspace?.cancelAtPeriodEnd,
+  })
+  const locked = (trial.expired && workspace?.subscriptionStatus !== 'active') || trial.canceled
 
   return {
     workspace,
     trial,
-    expired: trial.expired && workspace?.subscriptionStatus !== 'active',
+    expired: locked,
   }
 }
 

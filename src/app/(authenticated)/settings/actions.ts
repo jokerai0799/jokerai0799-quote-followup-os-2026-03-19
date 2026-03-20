@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { auth } from '@/auth'
 import { assertWorkspaceWriteAccess } from '@/lib/access'
 import { findUserByEmail, updateUserName } from '@/lib/users'
-import { addWorkspaceMember, getWorkspaceContextForUser, getWorkspaceMembers, renameWorkspace } from '@/lib/workspaces'
+import { addWorkspaceMember, cancelWorkspaceSubscription, getWorkspaceContextForUser, getWorkspaceMembers, removeWorkspaceMember, renameWorkspace } from '@/lib/workspaces'
 
 const profileSchema = z.object({
   name: z.string().trim().min(2, 'Enter your name'),
@@ -23,6 +23,22 @@ const teammateSchema = z.object({
 export type AddTeammateState = {
   error?: string
   success?: string
+}
+
+export type RemoveMemberState = {
+  error?: string
+  success?: string
+}
+
+async function requireOwnerWorkspace(userId: string) {
+  const workspace = await getWorkspaceContextForUser(userId)
+  if (!workspace) {
+    throw new Error('Workspace not found')
+  }
+  if (workspace.role !== 'owner') {
+    throw new Error('Only the workspace owner can manage members')
+  }
+  return workspace
 }
 
 async function requireUserId() {
@@ -98,4 +114,49 @@ export async function addTeammateAction(_prevState: AddTeammateState, formData: 
   revalidatePath('/settings')
 
   return { success: `${teammate.email} added to workspace as ${parsed.data.role}.` }
+}
+
+export async function removeTeammateAction(_prevState: RemoveMemberState, formData: FormData): Promise<RemoveMemberState> {
+  const userId = await requireUserId()
+  await assertWorkspaceWriteAccess(userId)
+  const workspace = await requireOwnerWorkspace(userId)
+
+  const memberUserId = String(formData.get('memberUserId') ?? '').trim()
+  if (!memberUserId) {
+    return { error: 'Member not found' }
+  }
+
+  if (memberUserId === userId) {
+    return { error: 'You cannot remove the workspace owner.' }
+  }
+
+  const members = await getWorkspaceMembers(workspace.workspaceId)
+  const target = members.find((member) => member.userId === memberUserId)
+  if (!target) {
+    return { error: 'Member not found' }
+  }
+
+  if (target.role === 'owner') {
+    return { error: 'You cannot remove the workspace owner.' }
+  }
+
+  await removeWorkspaceMember(workspace.workspaceId, memberUserId)
+  revalidatePath('/settings')
+
+  return { success: `${target.email} removed from workspace.` }
+}
+
+export async function cancelSubscriptionAction() {
+  const userId = await requireUserId()
+  const workspace = await requireOwnerWorkspace(userId)
+
+  if (workspace.subscriptionStatus !== 'active') {
+    throw new Error('No active subscription to cancel')
+  }
+
+  await cancelWorkspaceSubscription(workspace.workspaceId, workspace.currentPeriodEnd)
+  revalidatePath('/settings')
+  revalidatePath('/dashboard')
+  revalidatePath('/quotes')
+  revalidatePath('/chase-list')
 }
