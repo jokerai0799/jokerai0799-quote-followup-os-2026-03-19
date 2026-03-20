@@ -28,7 +28,7 @@ export const metadata: Metadata = {
       {
         url: '/og-homepage.jpg',
         width: 1280,
-        height: 719,
+        height: 551,
         alt: 'QuoteFollowUp homepage preview',
       },
     ],
