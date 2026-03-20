@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://quotefollowup.online'),
   title: 'QuoteFollowUp',
   description: 'Quote follow-up software for trades and service businesses.',
+  alternates: {
+    canonical: 'https://quotefollowup.online',
+  },
   openGraph: {
     title: 'QuoteFollowUp',
     description: 'Quote follow-up software for trades and service businesses.',
