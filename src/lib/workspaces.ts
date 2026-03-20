@@ -49,6 +49,7 @@ export type WorkspaceContext = {
   subscriptionStatus: string
   planName: string | null
   monthlyPriceGbp: number
+  createdAt: string
 }
 
 export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user?: { name?: string | null; email?: string | null } | null) {
@@ -155,6 +156,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     subscriptionStatus: subscription?.status ?? 'demo',
     planName: subscription?.plan_name ?? null,
     monthlyPriceGbp: subscription?.monthly_price_gbp ?? 0,
+    createdAt: workspace.created_at,
   }
 }
 
@@ -349,8 +351,9 @@ export async function ensureWorkspaceForUser({
     slug: workspace.slug,
     isTemplate: workspace.is_template,
     role: 'owner',
-    subscriptionStatus: 'demo',
-    planName: 'Demo',
-    monthlyPriceGbp: 0,
+    subscriptionStatus: 'trialing',
+    planName: '7-day trial',
+    monthlyPriceGbp: 29,
+    createdAt: workspace.created_at,
   } satisfies WorkspaceContext
 }

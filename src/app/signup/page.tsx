@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
+import { createSignupChallenge } from '@/lib/signup-guard'
 import { SignupForm } from './signup-form'
 
 export const metadata = {
@@ -13,6 +14,8 @@ export default async function SignupPage() {
   if (session?.user) {
     redirect('/dashboard')
   }
+
+  const challenge = createSignupChallenge()
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0D1520] px-4 py-12">
@@ -27,9 +30,12 @@ export default async function SignupPage() {
             <p className="text-sm text-slate-400">
               Start with quote follow-up software built for trades and service businesses that need cleaner follow-up and more booked work.
             </p>
+            <p className="text-xs text-sky-300/90">Start with a 7-day workspace trial, then upgrade only if you want to keep using your own workspace.</p>
           </div>
         </div>
-        <SignupForm />
+
+        <SignupForm challengeCode={challenge.code} challengeToken={challenge.token} issuedAt={challenge.issuedAt} />
+
         <p className="text-center text-xs text-slate-500">
           By signing up, you’ll create a login for this workspace. Want to look around first?{' '}
           <Link href="/" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">

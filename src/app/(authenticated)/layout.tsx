@@ -5,8 +5,10 @@ import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { BrandLogo } from '@/components/brand-logo'
 import { Nav } from '@/components/nav'
-import { findUserById } from '@/lib/users'
+import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
+import { getTrialState } from '@/lib/trial'
+import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
 
 export default async function AuthenticatedLayout({ children }: { children: ReactNode }) {
@@ -20,6 +22,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email, seedStarter: false })
     : null
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
+  const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
   const quotes = await getQuotes(session.user.id)
   const dueQuotes = getDailyChaseList(quotes).map(({ quote }) => quote)
   const dueCount = dueQuotes.length
@@ -41,25 +44,16 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 {dueCount} due today
               </div>
 
-              <Link
-                href="/settings"
-                className="hidden rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex"
-              >
+              <Link href="/settings" className="hidden rounded-lg border border-slate-500 bg-slate-900/55 px-3 py-2 text-sm font-medium text-white transition hover:border-slate-300 hover:bg-slate-900 lg:inline-flex">
                 {displayWorkspaceName}
               </Link>
 
-              <Link
-                href="/quotes/new"
-                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500"
-              >
+              <Link href="/quotes/new" className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-sky-400 hover:bg-sky-500">
                 New quote
               </Link>
 
               <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-500 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-slate-300 hover:bg-white/5"
-                >
+                <button type="submit" className="inline-flex items-center justify-center rounded-lg border border-slate-500 bg-transparent px-4 py-2 font-mono text-[11px] uppercase tracking-[0.16em] text-white transition hover:border-slate-300 hover:bg-white/5">
                   Sign out
                 </button>
               </form>
@@ -69,7 +63,23 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       </header>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="space-y-6">{children}</div>
+        <div className="space-y-6">
+          {trial.activeTrial ? (
+            <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950 shadow-sm">
+              <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in your workspace trial.</span>{' '}
+              {workspace?.role === 'owner'
+                ? `You’ll move to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
+                : 'The workspace owner will be able to upgrade before the trial ends.'}
+            </div>
+          ) : null}
+          {trial.expired ? (
+            <div className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
+              <span className="font-medium">{workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember}</span>{' '}
+              Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
+            </div>
+          ) : null}
+          {children}
+        </div>
       </div>
     </main>
   )

@@ -3,6 +3,7 @@ import { AddTeammateForm } from './add-teammate-form'
 import { updateProfileAction, updateWorkspaceAction } from './actions'
 import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
+import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
 
@@ -37,6 +38,7 @@ export default async function SettingsPage() {
   ])
 
   const members = workspace ? await getWorkspaceMembers(workspace.workspaceId) : []
+  const trial = getTrialState({ createdAt: workspace?.createdAt, subscriptionStatus: workspace?.subscriptionStatus })
   const metrics = getMetrics(quotes)
   const dueToday = getDailyChaseList(quotes).length
 
@@ -46,7 +48,7 @@ export default async function SettingsPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Settings</p>
         <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace and account</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Update your workspace details, manage team access, and review what should be built next.
+          Update your workspace details, manage team access, and review billing and next steps.
         </p>
       </div>
 
@@ -59,7 +61,12 @@ export default async function SettingsPage() {
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Plan</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.planName ?? 'Demo'}</p>
-          <p className="mt-2 text-sm text-slate-500">Current plan status</p>
+          <p className="mt-2 text-sm text-slate-500">{trial.expired ? 'Trial ended' : trial.activeTrial ? 'Trial in progress' : 'Active billing'}</p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Monthly plan</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
+          <p className="mt-2 text-sm text-slate-500">Recommended launch price per workspace</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Quotes tracked</p>
@@ -96,19 +103,23 @@ export default async function SettingsPage() {
           <div className="mt-5 rounded-2xl border border-sky-200 bg-sky-50 p-4 text-sm text-sky-900">
             Competitor signal: Housecall Pro starts around $59/month, Tradify UK is about £34–£44 per user/month, and Fergus starts around $53/month. A focused QuoteFollowUp launch price of <span className="font-semibold">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</span> per workspace is positioned lower and easier to say yes to.
           </div>
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            <span className="font-medium">Trial status:</span>{' '}
+            {trial.expired
+              ? BILLING_MODEL_COPY.expiredOwner
+              : trial.activeTrial
+                ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
+                : 'This workspace is on an active paid plan.'}
+          </div>
         </div>
+
         <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
           <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
           <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
           <label className="mt-5 block text-sm font-medium text-slate-700">
             Name
-            <input
-              name="workspaceName"
-              defaultValue={workspace?.workspaceName ?? ''}
-              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
-              required
-            />
+            <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
           </label>
           <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
             Save workspace
@@ -121,21 +132,11 @@ export default async function SettingsPage() {
           <p className="mt-2 text-sm leading-6 text-slate-600">Keep the account details clean for this workspace owner.</p>
           <label className="mt-5 block text-sm font-medium text-slate-700">
             Name
-            <input
-              name="name"
-              defaultValue={user?.name ?? ''}
-              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500"
-              required
-            />
+            <input name="name" defaultValue={user?.name ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
           </label>
           <label className="mt-4 block text-sm font-medium text-slate-700">
             Email
-            <input
-              value={user?.email ?? ''}
-              className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none"
-              disabled
-              readOnly
-            />
+            <input value={user?.email ?? ''} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none" disabled readOnly />
           </label>
           <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
             Save profile
@@ -149,8 +150,8 @@ export default async function SettingsPage() {
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
-            <h3 className="mt-2 text-2xl font-semibold text-slate-950">People in this workspace</h3>
-            <p className="mt-2 text-sm leading-6 text-slate-600">This is everyone who currently has access to this workspace.</p>
+            <h3 className="mt-2 text-2xl font-semibold text-slate-950">Team members</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace.</p>
             <div className="mt-5 space-y-3">
               {members.map((member) => (
                 <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
@@ -166,7 +167,7 @@ export default async function SettingsPage() {
         </div>
 
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Planned features</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Roadmap</p>
           <h3 className="mt-2 text-2xl font-semibold text-slate-950">What we should build next</h3>
           <div className="mt-5 space-y-4">
             {recommendations.map((item) => (
