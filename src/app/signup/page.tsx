@@ -9,13 +9,14 @@ export const metadata = {
   title: 'Sign up | QuoteFollowUp',
 }
 
-export default async function SignupPage() {
+export default async function SignupPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const session = await auth()
   if (session?.user) {
     redirect('/dashboard')
   }
 
   const challenge = createSignupChallenge()
+  const { ref } = await searchParams
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0D1520] px-4 py-12">
@@ -34,7 +35,7 @@ export default async function SignupPage() {
           </div>
         </div>
 
-        <SignupForm challengeCode={challenge.code} challengeToken={challenge.token} issuedAt={challenge.issuedAt} />
+        <SignupForm challengeCode={challenge.code} challengeToken={challenge.token} issuedAt={challenge.issuedAt} referralCode={ref ?? ''} />
 
         <p className="text-center text-xs text-slate-500">
           By signing up, you’ll create a login for this workspace. Want to look around first?{' '}

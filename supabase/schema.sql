@@ -15,6 +15,8 @@ create table if not exists public.workspaces (
   slug text not null unique,
   is_template boolean not null default false,
   owner_user_id uuid references public.users(id) on delete set null,
+  referral_code text,
+  referred_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -75,7 +77,7 @@ create table if not exists public.quotes (
   company text,
   title text not null,
   value numeric(12,2) not null default 0,
-  status text not null check (status in ('draft', 'sent', 'follow-up due', 'replied', 'won', 'lost')),
+  status text not null check (status in ('draft', 'sent', 'due', 'replied', 'won', 'lost')),
   sent_date date,
   notes text,
   template_key text not null check (template_key in ('friendly', 'nudge', 'checkin')),
@@ -85,7 +87,15 @@ create table if not exists public.quotes (
 );
 
 alter table public.users add column if not exists default_workspace_id uuid references public.workspaces(id) on delete set null;
+alter table public.workspaces add column if not exists referral_code text;
+alter table public.workspaces add column if not exists referred_at timestamptz;
 alter table public.quotes add column if not exists workspace_id uuid references public.workspaces(id) on delete cascade;
+alter table public.quotes drop constraint if exists quotes_status_check;
+alter table public.quotes add constraint quotes_status_check check (status in ('draft', 'sent', 'due', 'replied', 'won', 'lost'));
+
+update public.quotes
+set status = 'due'
+where status = 'follow-up due';
 
 create index if not exists idx_quotes_workspace_id on public.quotes(workspace_id);
 create index if not exists idx_quotes_status on public.quotes(status);
@@ -93,6 +103,7 @@ create index if not exists idx_quotes_sent_date on public.quotes(sent_date);
 create index if not exists idx_quotes_updated_at on public.quotes(updated_at desc);
 create index if not exists idx_workspace_memberships_user_id on public.workspace_memberships(user_id);
 create index if not exists idx_users_default_workspace_id on public.users(default_workspace_id);
+create index if not exists idx_workspaces_referral_code on public.workspaces(referral_code);
 
 create or replace function public.set_updated_at()
 returns trigger

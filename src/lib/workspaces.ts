@@ -8,6 +8,8 @@ type WorkspaceRow = {
   slug: string
   is_template: boolean
   owner_user_id?: string | null
+  referral_code?: string | null
+  referred_at?: string | null
   created_at: string
 }
 
@@ -42,6 +44,8 @@ export type WorkspaceContext = {
   slug: string
   isTemplate: boolean
   ownerUserId?: string | null
+  referralCode?: string | null
+  referredAt?: string | null
   role: string
   subscriptionStatus: string
   planName: string | null
@@ -131,7 +135,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
   }
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
-    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
+    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
     supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
@@ -149,6 +153,8 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     slug: workspace.slug,
     isTemplate: workspace.is_template,
     ownerUserId: workspace.owner_user_id ?? null,
+    referralCode: workspace.referral_code ?? null,
+    referredAt: workspace.referred_at ?? null,
     role: membership.role,
     subscriptionStatus: subscription?.status ?? 'trialing',
     planName: subscription?.plan_name ?? null,
@@ -183,7 +189,7 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
 
   const workspaceIds = membershipList.map((entry) => entry.workspace_id)
   const [{ data: workspaces, error: workspaceError }, { data: subscriptions, error: subscriptionError }] = await Promise.all([
-    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
+    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
     supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').in('workspace_id', workspaceIds).returns<SubscriptionRow[]>(),
   ])
 
@@ -209,6 +215,8 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
       slug: workspace.slug,
       isTemplate: workspace.is_template,
       ownerUserId: workspace.owner_user_id ?? null,
+      referralCode: workspace.referral_code ?? null,
+      referredAt: workspace.referred_at ?? null,
       role: membership.role,
       subscriptionStatus: subscription?.status ?? 'trialing',
       planName: subscription?.plan_name ?? null,
@@ -219,6 +227,44 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
       createdAt: workspace.created_at,
     }]
   })
+}
+
+export async function getReferralWorkspaceStats(referralCode: string) {
+  const normalizedCode = referralCode.trim()
+  if (!normalizedCode) {
+    return { totalWorkspaces: 0, activePaidWorkspaces: 0, trialingWorkspaces: 0, canceledWorkspaces: 0 }
+  }
+
+  const { data: workspaces, error: workspacesError } = await supabase
+    .from('workspaces')
+    .select('id')
+    .eq('referral_code', normalizedCode)
+
+  if (workspacesError) {
+    throw new Error(`Failed to fetch referred workspaces: ${workspacesError.message}`)
+  }
+
+  const workspaceIds = (workspaces ?? []).map((workspace) => workspace.id)
+  if (!workspaceIds.length) {
+    return { totalWorkspaces: 0, activePaidWorkspaces: 0, trialingWorkspaces: 0, canceledWorkspaces: 0 }
+  }
+
+  const { data: subscriptions, error: subscriptionsError } = await supabase
+    .from('subscriptions')
+    .select('workspace_id, status')
+    .in('workspace_id', workspaceIds)
+
+  if (subscriptionsError) {
+    throw new Error(`Failed to fetch referral subscriptions: ${subscriptionsError.message}`)
+  }
+
+  const statuses = subscriptions ?? []
+  return {
+    totalWorkspaces: workspaceIds.length,
+    activePaidWorkspaces: statuses.filter((subscription) => subscription.status === 'active').length,
+    trialingWorkspaces: statuses.filter((subscription) => subscription.status === 'trialing').length,
+    canceledWorkspaces: statuses.filter((subscription) => subscription.status === 'canceled').length,
+  }
 }
 
 export async function getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMember[]> {
@@ -391,11 +437,13 @@ export async function ensureWorkspaceForUser({
   name,
   email,
   workspaceName,
+  referralCode,
 }: {
   userId: string
   name?: string | null
   email?: string | null
   workspaceName?: string
+  referralCode?: string | null
 }) {
   const existing = await getWorkspaceContextForUser(userId)
   if (existing) {
@@ -410,6 +458,8 @@ export async function ensureWorkspaceForUser({
   const slugBase = slugify(finalWorkspaceName)
   const slug = `${slugBase}-${randomUUID().slice(0, 8)}`
 
+  const normalizedReferralCode = referralCode?.trim() ? referralCode.trim() : null
+
   const { data: workspace, error: workspaceError } = await supabase
     .from('workspaces')
     .insert({
@@ -418,6 +468,8 @@ export async function ensureWorkspaceForUser({
       slug,
       is_template: false,
       owner_user_id: userId,
+      referral_code: normalizedReferralCode,
+      referred_at: normalizedReferralCode ? new Date().toISOString() : null,
     })
     .select('id, name, slug, is_template, created_at')
     .single<WorkspaceRow>()
@@ -458,6 +510,8 @@ export async function ensureWorkspaceForUser({
     slug: workspace.slug,
     isTemplate: workspace.is_template,
     ownerUserId: userId,
+    referralCode: normalizedReferralCode,
+    referredAt: normalizedReferralCode ? new Date().toISOString() : null,
     role: 'owner',
     subscriptionStatus: 'trialing',
     planName: '7-day trial',

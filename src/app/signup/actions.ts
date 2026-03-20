@@ -15,6 +15,7 @@ const signupSchema = z
     companyName: z.string().trim().min(2, 'Enter your company name'),
     password: z.string().min(8, 'Use at least 8 characters'),
     confirmPassword: z.string().min(8, 'Confirm your password'),
+    referralCode: z.string().trim().max(64).optional().transform((value) => value?.trim() || ''),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -32,6 +33,7 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
     companyName: formData.get('companyName'),
     password: formData.get('password'),
     confirmPassword: formData.get('confirmPassword'),
+    referralCode: formData.get('referralCode'),
   })
 
   if (!parsed.success) {
@@ -66,6 +68,7 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
     name: parsed.data.name,
     email: parsed.data.email,
     workspaceName: parsed.data.companyName,
+    referralCode: parsed.data.referralCode || null,
   })
 
   try {
