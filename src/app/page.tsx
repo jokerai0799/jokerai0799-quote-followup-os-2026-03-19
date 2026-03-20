@@ -29,8 +29,15 @@ const demoRows = [
   ['Walker Homes', 'Kitchen repaint and touch-ups', '£1,450', 'Won', '—'],
 ]
 
-export default async function MarketingHomePage() {
+function withRef(path: string, ref?: string) {
+  if (!ref) return path
+  const separator = path.includes('?') ? '&' : '?'
+  return `${path}${separator}ref=${encodeURIComponent(ref)}`
+}
+
+export default async function MarketingHomePage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const session = await auth()
+  const { ref } = await searchParams
 
   return (
     <main className="min-h-screen bg-slate-100 text-slate-950">
@@ -39,13 +46,13 @@ export default async function MarketingHomePage() {
           <BrandLogo />
           <div className="flex items-center gap-3">
             <Link
-              href={session?.user ? '#demo' : '/login'}
+              href={session?.user ? '#demo' : withRef('/login', ref)}
               className="rounded-xl border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
             >
               {session?.user ? 'View demo' : 'Log in'}
             </Link>
             <Link
-              href={session?.user ? '/dashboard' : '/signup'}
+              href={session?.user ? '/dashboard' : withRef('/signup', ref)}
               className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
             >
               {session?.user ? 'Open workspace' : 'Sign up'}
@@ -65,7 +72,7 @@ export default async function MarketingHomePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href={session?.user ? '/dashboard' : '/signup'}
+                href={session?.user ? '/dashboard' : withRef('/signup', ref)}
                 className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
               >
                 {session?.user ? 'Open workspace' : 'Create workspace'}
@@ -251,7 +258,7 @@ export default async function MarketingHomePage() {
             <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
               View demo
             </Link>
-            <Link href={session?.user ? '/dashboard' : '/signup'} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
+            <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
               {session?.user ? 'Open workspace' : 'Create workspace'}
             </Link>
           </div>

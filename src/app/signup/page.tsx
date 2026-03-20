@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
-import { createSignupChallenge } from '@/lib/signup-guard'
 import { SignupForm } from './signup-form'
 
 export const metadata = {
@@ -15,7 +14,6 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
     redirect('/dashboard')
   }
 
-  const challenge = createSignupChallenge()
   const { ref } = await searchParams
 
   return (
@@ -35,11 +33,11 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
           </div>
         </div>
 
-        <SignupForm challengeCode={challenge.code} challengeToken={challenge.token} issuedAt={challenge.issuedAt} referralCode={ref ?? ''} />
+        <SignupForm referralCode={ref ?? ''} />
 
         <p className="text-center text-xs text-slate-500">
           By signing up, you’ll create a login for this workspace. Want to look around first?{' '}
-          <Link href="/" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
+          <Link href={ref ? `/?ref=${encodeURIComponent(ref)}` : '/'} className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
             Back to homepage
           </Link>
           .

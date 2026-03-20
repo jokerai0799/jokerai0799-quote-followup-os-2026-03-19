@@ -8,8 +8,15 @@ export const metadata = {
   title: 'Log in | QuoteFollowUp',
 }
 
-export default async function LoginPage() {
+function withRef(path: string, ref?: string) {
+  if (!ref) return path
+  const separator = path.includes('?') ? '&' : '?'
+  return `${path}${separator}ref=${encodeURIComponent(ref)}`
+}
+
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const session = await auth()
+  const { ref } = await searchParams
   if (session?.user) {
     redirect('/dashboard')
   }
@@ -30,11 +37,11 @@ export default async function LoginPage() {
         <LoginForm />
         <p className="text-center text-xs text-slate-500">
           New here?{' '}
-          <Link href="/signup" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
+          <Link href={withRef('/signup', ref)} className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
             Create account
           </Link>{' '}
           or go back to the{' '}
-          <Link href="/" className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
+          <Link href={withRef('/', ref)} className="font-medium !text-sky-400 underline-offset-4 transition hover:!text-sky-300 hover:underline">
             overview
           </Link>
           .

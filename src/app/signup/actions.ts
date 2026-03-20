@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
 import { signIn } from '@/auth'
-import { verifySignupChallenge } from '@/lib/signup-guard'
 import { createUser, findUserByEmail } from '@/lib/users'
 import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
@@ -38,17 +37,6 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
 
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? 'Could not create account' }
-  }
-
-  const challengeCheck = verifySignupChallenge({
-    token: formData.get('challengeToken')?.toString(),
-    code: formData.get('verificationCode')?.toString(),
-    website: formData.get('website')?.toString(),
-    issuedAt: formData.get('issuedAt')?.toString(),
-  })
-
-  if (!challengeCheck.ok) {
-    return { error: challengeCheck.error }
   }
 
   const existing = await findUserByEmail(parsed.data.email)
