@@ -17,7 +17,7 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://quotefollowup.online'),
   title: 'QuoteFollowUp',
-  description: 'Quote follow-up software for trades and service businesses.',
+  description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
   alternates: {
     canonical: 'https://quotefollowup.online',
   },
@@ -66,7 +66,7 @@ const structuredData = [
     '@type': 'WebSite',
     name: 'QuoteFollowUp',
     url: 'https://quotefollowup.online',
-    description: 'Quote follow-up software for trades and service businesses.',
+    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
   },
   {
     '@context': 'https://schema.org',
@@ -80,7 +80,7 @@ const structuredData = [
       priceCurrency: 'GBP',
     },
     url: 'https://quotefollowup.online',
-    description: 'Quote follow-up software for trades and service businesses.',
+    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
   },
 ]
 
