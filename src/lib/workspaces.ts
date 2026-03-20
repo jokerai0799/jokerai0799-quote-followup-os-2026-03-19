@@ -332,7 +332,7 @@ export async function ensureWorkspaceForUser({
     workspace_id: workspace.id,
     status: 'trialing',
     plan_name: '7-day trial',
-    monthly_price_gbp: 29.99,
+    monthly_price_gbp: 0,
   }, { onConflict: 'workspace_id' })).error
 
   if (subscriptionError) {
