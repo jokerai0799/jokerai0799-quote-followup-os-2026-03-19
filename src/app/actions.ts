@@ -33,7 +33,6 @@ const quoteSchema = z.object({
     const trimmed = (value ?? '').trim()
     return trimmed ? trimmed : null
   }),
-  markDueNow: z.preprocess((value) => value === 'on' || value === 'true', z.boolean()).default(false),
   notes: z.string().optional().transform((value) => (value ?? '').trim()),
   templateKey: templateEnum.default('friendly'),
   followUpOffsets: followUpSchema.default([2, 5, 9]),
@@ -54,20 +53,6 @@ function parseQuote(formData: FormData): QuoteInput {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid quote payload')
   }
 
-  let sentDate = parsed.data.sentDate
-  let status = parsed.data.status
-
-  if (parsed.data.markDueNow && !sentDate) {
-    const firstOffset = Math.max(1, Math.min(...parsed.data.followUpOffsets))
-    const dueBaseDate = new Date()
-    dueBaseDate.setUTCDate(dueBaseDate.getUTCDate() - firstOffset)
-    sentDate = dueBaseDate.toISOString().slice(0, 10)
-
-    if (status === 'draft') {
-      status = 'sent'
-    }
-  }
-
   return {
     clientName: parsed.data.clientName,
     contactName: parsed.data.contactName ?? '',
@@ -75,8 +60,8 @@ function parseQuote(formData: FormData): QuoteInput {
     company: parsed.data.company ?? '',
     title: parsed.data.title,
     value: parsed.data.value,
-    status,
-    sentDate,
+    status: parsed.data.status,
+    sentDate: parsed.data.sentDate,
     notes: parsed.data.notes ?? '',
     templateKey: parsed.data.templateKey,
     followUpOffsets: parsed.data.followUpOffsets,
