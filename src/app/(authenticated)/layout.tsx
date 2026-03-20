@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { BrandLogo } from '@/components/brand-logo'
+import { ChaseNotificationStrip } from '@/components/chase-notification-strip'
 import { Nav } from '@/components/nav'
 import { WorkspaceSwitcher } from '@/components/workspace-switcher'
 import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
@@ -71,22 +72,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
-          {dueCount > 0 ? (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950 shadow-sm">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.45)]" />
-                  <span>
-                    <span className="font-medium">{dueCount} quote{dueCount === 1 ? '' : 's'} due today.</span>{' '}
-                    Head to the chase list to work through what needs attention now.
-                  </span>
-                </div>
-                <Link href="/chase-list" className="inline-flex rounded-xl border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100">
-                  Open chase list
-                </Link>
-              </div>
-            </div>
-          ) : null}
+          <ChaseNotificationStrip chaseCount={dueCount} chaseSignature={chaseSignature} />
 
           {trial.activeTrial ? (
             <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950 shadow-sm">
@@ -94,13 +80,6 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
               {workspace?.role === 'owner'
                 ? `You’ll move to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
                 : 'The workspace owner can upgrade before the trial ends. Your personal workspace billing does not affect access while you are working inside this workspace.'}
-            </div>
-          ) : null}
-
-          {trial.cancelScheduled ? (
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
-              <span className="font-medium">Subscription ends at period end.</span>{' '}
-              Access stays active until {trial.paidThrough ? new Date(trial.paidThrough).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'the current billing period ends'}.
             </div>
           ) : null}
 
