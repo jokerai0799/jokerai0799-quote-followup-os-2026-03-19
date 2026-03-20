@@ -155,7 +155,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     role: membership.role,
     subscriptionStatus: subscription?.status ?? 'demo',
     planName: subscription?.plan_name ?? null,
-    monthlyPriceGbp: subscription?.monthly_price_gbp ?? 0,
+    monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
     createdAt: workspace.created_at,
   }
 }
@@ -330,9 +330,9 @@ export async function ensureWorkspaceForUser({
 
   const subscriptionError = (await supabase.from('subscriptions').upsert({
     workspace_id: workspace.id,
-    status: 'demo',
-    plan_name: 'Demo',
-    monthly_price_gbp: 0,
+    status: 'trialing',
+    plan_name: '7-day trial',
+    monthly_price_gbp: 29.99,
   }, { onConflict: 'workspace_id' })).error
 
   if (subscriptionError) {
@@ -353,7 +353,7 @@ export async function ensureWorkspaceForUser({
     role: 'owner',
     subscriptionStatus: 'trialing',
     planName: '7-day trial',
-    monthlyPriceGbp: 29,
+    monthlyPriceGbp: 29.99,
     createdAt: workspace.created_at,
   } satisfies WorkspaceContext
 }

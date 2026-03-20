@@ -1,7 +1,7 @@
-export const WORKSPACE_MONTHLY_PRICE_GBP = 29
+export const WORKSPACE_MONTHLY_PRICE_GBP = 29.99
 
 export function formatMonthlyPriceGbp(price: number) {
-  return `£${price}/month`
+  return `£${price.toFixed(2)}/month`
 }
 
 export const BILLING_MODEL_COPY = {

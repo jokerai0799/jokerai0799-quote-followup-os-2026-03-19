@@ -39,6 +39,9 @@ create table if not exists public.subscriptions (
   updated_at timestamptz not null default now()
 );
 
+alter table public.subscriptions alter column monthly_price_gbp type numeric(10,2);
+alter table public.subscriptions alter column status set default 'trialing';
+
 create table if not exists public.quotes (
   id uuid primary key default gen_random_uuid(),
   client_name text not null,
