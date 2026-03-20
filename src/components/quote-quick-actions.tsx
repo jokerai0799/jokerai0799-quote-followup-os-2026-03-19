@@ -3,11 +3,13 @@
 import Link from 'next/link'
 import { useTransition } from 'react'
 import { updateQuoteStatusAction } from '@/app/actions'
+import { DeleteQuoteButton } from '@/components/delete-quote-button'
 
-type QuoteStatus = 'draft' | 'sent' | 'follow-up due' | 'replied' | 'won' | 'lost'
+type QuoteStatus = 'draft' | 'sent' | 'due' | 'replied' | 'won' | 'lost'
 
 const statusOptions: Array<{ value: QuoteStatus; label: string }> = [
   { value: 'sent', label: 'Mark sent' },
+  { value: 'due', label: 'Mark due' },
   { value: 'replied', label: 'Mark replied' },
   { value: 'won', label: 'Mark won' },
   { value: 'lost', label: 'Mark lost' },
@@ -75,6 +77,8 @@ export function QuoteQuickActions({
               </button>
             ))
         : null}
+
+      {!compact ? <DeleteQuoteButton quoteId={quoteId} compact /> : null}
     </div>
   )
 }

@@ -211,9 +211,9 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         ) : (
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Team access</p>
-            <h3 className="mt-2 text-xl font-semibold text-slate-950">Add teammate to workspace</h3>
+            <h3 className="mt-2 text-xl font-semibold text-slate-950">Team management</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Only the workspace owner can add or remove teammates.
+              Only the workspace owner can add or remove teammates in this workspace.
             </p>
           </div>
         )}

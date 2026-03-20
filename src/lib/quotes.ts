@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import { supabase } from './supabase'
 import { ensureWorkspaceForUser } from './workspaces'
 
-export const STATUSES = ['draft', 'sent', 'follow-up due', 'replied', 'won', 'lost'] as const
+export const STATUSES = ['draft', 'sent', 'due', 'replied', 'won', 'lost'] as const
 export const TEMPLATE_KEYS = ['friendly', 'nudge', 'checkin'] as const
 
 export type QuoteStatus = (typeof STATUSES)[number]
@@ -179,6 +179,19 @@ export async function setQuoteStatus(id: string, status: QuoteStatus, userId: st
   }
 }
 
+export async function deleteQuote(id: string, userId: string) {
+  const workspaceId = await getWorkspaceIdForUser(userId)
+  const { error } = await supabase
+    .from('quotes')
+    .delete()
+    .eq('id', id)
+    .eq('workspace_id', workspaceId)
+
+  if (error) {
+    throw new Error(`Failed to delete workspace quote: ${error.message}`)
+  }
+}
+
 export function buildFollowUpSchedule(sentDate: string | null, offsets: number[]) {
   if (!sentDate) return []
 
@@ -195,13 +208,24 @@ export function buildFollowUpSchedule(sentDate: string | null, offsets: number[]
 }
 
 export function getNextFollowUpDate(quote: Quote) {
-  if (!quote.sentDate) return null
   const today = new Date().toISOString().slice(0, 10)
+
+  if (quote.status === 'due') {
+    return today
+  }
+
+  if (!quote.sentDate) return null
   const schedule = buildFollowUpSchedule(quote.sentDate, quote.followUpOffsets)
   return schedule.find((item) => item.dueDate >= today)?.dueDate ?? schedule.at(-1)?.dueDate ?? null
 }
 
 export function getChaseState(quote: Quote) {
+  const today = new Date().toISOString().slice(0, 10)
+
+  if (quote.status === 'due') {
+    return { nextDate: today, overdue: false, dueToday: true }
+  }
+
   if (!quote.sentDate || ['draft', 'won', 'lost'].includes(quote.status)) {
     return { nextDate: null, overdue: false, dueToday: false }
   }
@@ -211,7 +235,6 @@ export function getChaseState(quote: Quote) {
     return { nextDate: null, overdue: false, dueToday: false }
   }
 
-  const today = new Date().toISOString().slice(0, 10)
   return {
     nextDate,
     overdue: nextDate < today,

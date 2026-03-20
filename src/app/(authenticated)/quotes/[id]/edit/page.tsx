@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
+import { DeleteQuoteButton } from '@/components/delete-quote-button'
 import { QuoteForm } from '@/components/quote-form'
 import { updateQuote } from '@/app/actions'
 import { requireWorkspaceUsageAccess } from '@/lib/access'
@@ -42,6 +43,17 @@ export default async function EditQuotePage({ params }: PageProps) {
       </div>
 
       <QuoteForm action={updateQuote.bind(null, quote.id)} quote={quote} submitLabel="Save changes" />
+
+      <div className="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-rose-500">Danger zone</p>
+        <h3 className="mt-2 text-xl font-semibold text-slate-950">Delete quote</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          Remove this quote permanently if it was added by mistake or is no longer needed.
+        </p>
+        <div className="mt-5">
+          <DeleteQuoteButton quoteId={quote.id} />
+        </div>
+      </div>
     </section>
   )
 }

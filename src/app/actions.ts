@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { auth, signOut } from '@/auth'
 import { assertWorkspaceWriteAccess } from '@/lib/access'
-import { saveQuote, setQuoteStatus, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
+import { deleteQuote, saveQuote, setQuoteStatus, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
 import { setDefaultWorkspaceForUser } from '@/lib/workspaces'
 
 const statusEnum = z.enum([...STATUSES] as [QuoteStatus, ...QuoteStatus[]])
@@ -115,6 +115,14 @@ export async function updateQuoteStatusAction(id: string, status: QuoteStatus) {
   await setQuoteStatus(id, status, session.user.id)
   revalidateWorkspacePaths()
   revalidatePath(`/quotes/${id}/edit`)
+}
+
+export async function deleteQuoteAction(id: string) {
+  const session = await requireSession()
+  await assertWorkspaceWriteAccess(session.user.id)
+  await deleteQuote(id, session.user.id)
+  revalidateWorkspacePaths()
+  redirect('/quotes')
 }
 
 export async function setActiveWorkspaceAction(formData: FormData) {
