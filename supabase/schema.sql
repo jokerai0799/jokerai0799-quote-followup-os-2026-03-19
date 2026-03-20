@@ -29,7 +29,7 @@ create table if not exists public.workspace_memberships (
 
 create table if not exists public.subscriptions (
   workspace_id uuid primary key references public.workspaces(id) on delete cascade,
-  status text not null default 'demo' check (status in ('demo', 'trialing', 'active', 'past_due', 'canceled')),
+  status text not null default 'trialing' check (status in ('trialing', 'active', 'past_due', 'canceled')),
   plan_name text,
   monthly_price_gbp integer not null default 0,
   provider text,
@@ -41,6 +41,8 @@ create table if not exists public.subscriptions (
 
 alter table public.subscriptions alter column monthly_price_gbp type numeric(10,2);
 alter table public.subscriptions alter column status set default 'trialing';
+alter table public.subscriptions drop constraint if exists subscriptions_status_check;
+alter table public.subscriptions add constraint subscriptions_status_check check (status in ('trialing', 'active', 'past_due', 'canceled'));
 alter table public.subscriptions add column if not exists current_period_end timestamptz;
 alter table public.subscriptions add column if not exists cancel_at_period_end boolean not null default false;
 alter table public.subscriptions add column if not exists canceled_at timestamptz;
@@ -50,8 +52,12 @@ set cancel_at_period_end = false
 where cancel_at_period_end is null;
 
 update public.subscriptions
+set status = 'trialing'
+where status = 'demo';
+
+update public.subscriptions
 set current_period_end = null
-where status in ('demo', 'trialing');
+where status = 'trialing';
 
 update public.subscriptions
 set current_period_end = coalesce(current_period_end, now() + interval '1 month')
@@ -59,7 +65,7 @@ where status in ('active', 'past_due') and current_period_end is null;
 
 update public.subscriptions
 set canceled_at = null
-where status in ('demo', 'trialing', 'active', 'past_due') and cancel_at_period_end = false;
+where status in ('trialing', 'active', 'past_due') and cancel_at_period_end = false;
 
 create table if not exists public.quotes (
   id uuid primary key default gen_random_uuid(),

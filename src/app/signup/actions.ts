@@ -66,7 +66,6 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
     name: parsed.data.name,
     email: parsed.data.email,
     workspaceName: parsed.data.companyName,
-    seedStarter: false,
   })
 
   try {

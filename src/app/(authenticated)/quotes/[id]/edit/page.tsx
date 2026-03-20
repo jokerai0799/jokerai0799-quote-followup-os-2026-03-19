@@ -16,12 +16,13 @@ type PageProps = {
 
 export default async function EditQuotePage({ params }: PageProps) {
   const session = await auth()
-  if (session?.user?.id) {
-    await requireWorkspaceUsageAccess(session.user.id)
+  if (!session?.user?.id) {
+    return null
   }
 
+  await requireWorkspaceUsageAccess(session.user.id)
   const { id } = await params
-  const quote = await getQuote(id, session?.user?.id)
+  const quote = await getQuote(id, session.user.id)
 
   if (!quote) {
     notFound()

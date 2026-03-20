@@ -1,9 +1,6 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { WORKSPACE_MONTHLY_PRICE_GBP } from './billing'
 import { supabase } from './supabase'
-import { STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from './quotes'
 
 type WorkspaceRow = {
   id: string
@@ -38,12 +35,6 @@ type SubscriptionRow = {
   canceled_at: string | null
 }
 
-type SeedQuote = Partial<QuoteInput> & {
-  id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
 export type WorkspaceContext = {
   workspaceId: string
   workspaceName: string
@@ -75,11 +66,6 @@ export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user
 }
 
 let workspaceModelAvailableCache: boolean | null = null
-const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-
-function normalizeId(id?: string) {
-  return id && uuidPattern.test(id) ? id : randomUUID()
-}
 
 function slugify(input: string) {
   return input
@@ -100,16 +86,6 @@ function buildWorkspaceName(name?: string | null, email?: string | null) {
   return 'Owner Workspace'
 }
 
-async function readSeedQuotes() {
-  const seedFile = path.join(process.cwd(), 'data', 'quotes.json')
-  if (!fs.existsSync(seedFile)) {
-    return [] as SeedQuote[]
-  }
-
-  const raw = fs.readFileSync(seedFile, 'utf8')
-  return JSON.parse(raw) as SeedQuote[]
-}
-
 export async function isWorkspaceModelAvailable() {
   if (workspaceModelAvailableCache !== null) {
     return workspaceModelAvailableCache
@@ -125,17 +101,28 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     return null
   }
 
-  const { data: membership, error: membershipError } = await supabase
-    .from('workspace_memberships')
-    .select('workspace_id, user_id, role, created_at')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: true })
-    .limit(1)
-    .maybeSingle<MembershipRow>()
+  const [{ data: userRow, error: userError }, { data: memberships, error: membershipError }] = await Promise.all([
+    supabase.from('users').select('default_workspace_id').eq('id', userId).maybeSingle<{ default_workspace_id?: string | null }>(),
+    supabase
+      .from('workspace_memberships')
+      .select('workspace_id, user_id, role, created_at')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: true })
+      .returns<MembershipRow[]>(),
+  ])
+
+  if (userError) {
+    throw new Error(`Failed to fetch user workspace state: ${userError.message}`)
+  }
 
   if (membershipError) {
-    throw new Error(`Failed to fetch workspace membership: ${membershipError.message}`)
+    throw new Error(`Failed to fetch workspace memberships: ${membershipError.message}`)
   }
+
+  const membershipList = memberships ?? []
+  const membership = userRow?.default_workspace_id
+    ? membershipList.find((entry) => entry.workspace_id === userRow.default_workspace_id) ?? membershipList[0]
+    : membershipList[0]
 
   if (!membership) {
     return null
@@ -160,7 +147,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     slug: workspace.slug,
     isTemplate: workspace.is_template,
     role: membership.role,
-    subscriptionStatus: subscription?.status ?? 'demo',
+    subscriptionStatus: subscription?.status ?? 'trialing',
     planName: subscription?.plan_name ?? null,
     monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
     currentPeriodEnd: subscription?.current_period_end ?? null,
@@ -211,59 +198,6 @@ export async function getWorkspaceMembers(workspaceId: string): Promise<Workspac
   })
 }
 
-export async function seedStarterQuotesForWorkspace(workspaceId: string) {
-  const { count, error: countError } = await supabase
-    .from('quotes')
-    .select('*', { count: 'exact', head: true })
-    .eq('workspace_id', workspaceId)
-
-  if (countError) {
-    throw new Error(`Failed to inspect workspace quotes: ${countError.message}`)
-  }
-
-  if ((count ?? 0) > 0) {
-    return
-  }
-
-  const records = await readSeedQuotes()
-  if (!records.length) {
-    return
-  }
-
-  const now = new Date().toISOString()
-  const payload = records.map((record) => {
-    const status = STATUSES.includes((record.status ?? 'draft') as QuoteStatus)
-      ? ((record.status ?? 'draft') as QuoteStatus)
-      : 'draft'
-    const templateKey = TEMPLATE_KEYS.includes((record.templateKey ?? 'friendly') as TemplateKey)
-      ? ((record.templateKey ?? 'friendly') as TemplateKey)
-      : 'friendly'
-
-    return {
-      id: normalizeId(record.id),
-      workspace_id: workspaceId,
-      client_name: record.clientName ?? 'Unknown client',
-      contact_name: record.contactName ?? null,
-      email: record.email ?? null,
-      company: record.company ?? null,
-      title: record.title ?? 'Untitled quote',
-      value: Number(record.value) || 0,
-      status,
-      sent_date: record.sentDate || null,
-      notes: record.notes ?? null,
-      template_key: templateKey,
-      follow_up_offsets: record.followUpOffsets ?? [2, 5, 9],
-      created_at: record.createdAt ?? now,
-      updated_at: record.updatedAt ?? now,
-    }
-  })
-
-  const { error } = await supabase.from('quotes').insert(payload)
-  if (error) {
-    throw new Error(`Failed to seed starter workspace quotes: ${error.message}`)
-  }
-}
-
 export async function renameWorkspace(workspaceId: string, name: string) {
   const trimmed = name.trim()
   const { error } = await supabase.from('workspaces').update({ name: trimmed }).eq('id', workspaceId)
@@ -303,6 +237,15 @@ export async function addWorkspaceMember(workspaceId: string, userId: string, ro
   if (error) {
     throw new Error(`Failed to add workspace member: ${error.message}`)
   }
+
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ default_workspace_id: workspaceId })
+    .eq('id', userId)
+
+  if (updateError) {
+    throw new Error(`Failed to set teammate default workspace: ${updateError.message}`)
+  }
 }
 
 export async function removeWorkspaceMember(workspaceId: string, userId: string) {
@@ -315,6 +258,30 @@ export async function removeWorkspaceMember(workspaceId: string, userId: string)
   if (error) {
     throw new Error(`Failed to remove workspace member: ${error.message}`)
   }
+
+  const [{ data: userRow, error: userError }, { data: ownedWorkspace, error: ownedWorkspaceError }] = await Promise.all([
+    supabase.from('users').select('default_workspace_id').eq('id', userId).maybeSingle<{ default_workspace_id?: string | null }>(),
+    supabase.from('workspaces').select('id').eq('owner_user_id', userId).order('created_at', { ascending: true }).limit(1).maybeSingle<{ id: string }>(),
+  ])
+
+  if (userError) {
+    throw new Error(`Failed to inspect removed teammate workspace state: ${userError.message}`)
+  }
+
+  if (ownedWorkspaceError) {
+    throw new Error(`Failed to inspect removed teammate owned workspace: ${ownedWorkspaceError.message}`)
+  }
+
+  if (userRow?.default_workspace_id === workspaceId) {
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ default_workspace_id: ownedWorkspace?.id ?? null })
+      .eq('id', userId)
+
+    if (updateError) {
+      throw new Error(`Failed to reset removed teammate default workspace: ${updateError.message}`)
+    }
+  }
 }
 
 export async function ensureWorkspaceForUser({
@@ -322,19 +289,14 @@ export async function ensureWorkspaceForUser({
   name,
   email,
   workspaceName,
-  seedStarter = false,
 }: {
   userId: string
   name?: string | null
   email?: string | null
   workspaceName?: string
-  seedStarter?: boolean
 }) {
   const existing = await getWorkspaceContextForUser(userId)
   if (existing) {
-    if (seedStarter) {
-      await seedStarterQuotesForWorkspace(existing.workspaceId)
-    }
     return existing
   }
 
@@ -387,10 +349,6 @@ export async function ensureWorkspaceForUser({
   }
 
   await supabase.from('users').update({ default_workspace_id: workspace.id }).eq('id', userId)
-
-  if (seedStarter) {
-    await seedStarterQuotesForWorkspace(workspace.id)
-  }
 
   return {
     workspaceId: workspace.id,

@@ -2,6 +2,8 @@
 
 QuoteFollowUp is a lightweight Next.js app for trades and service businesses that lose revenue when sent quotes go cold.
 
+Live site: <https://quotefollowup.online>
+
 This build focuses on one job: **track quotes, surface who needs chasing today, and keep follow-ups consistent** — with hosted Supabase persistence and the start of a multi-workspace SaaS model.
 
 ## Core features
@@ -9,7 +11,7 @@ This build focuses on one job: **track quotes, surface who needs chasing today, 
 - public marketing homepage + login/signup flow
 - per-user workspace provisioning on signup
 - protected dashboard, quote list, chase list, playbook, and settings pages
-- starter workspace seeded from demo data so users can see what the product could look like
+- clean private workspace created for each new signup
 - quote inbox / pipeline table
 - add and edit quote records
 - statuses: `draft`, `sent`, `follow-up due`, `replied`, `won`, `lost`
@@ -35,7 +37,7 @@ cp .env.example .env   # set AUTH_SECRET + Supabase credentials + workspace boot
 npm install
 npm run db:migrate     # prints the Supabase SQL schema path
 # run supabase/schema.sql once in the Supabase SQL editor
-npm run db:seed        # seeds the bootstrap user and starter workspace
+npm run db:seed        # seeds a bootstrap user and ensures a clean private workspace
 npm run dev
 ```
 
@@ -44,15 +46,16 @@ Then open <http://localhost:3000> and sign in using the credentials you set in `
 ## Database + migrations
 
 - `npm run db:migrate` points you at `supabase/schema.sql`, which should be run in the Supabase SQL editor.
-- `npm run db:seed` ensures a workspace user exists and provisions starter workspace data.
+- `npm run db:seed` ensures a workspace user exists and provisions a clean private workspace.
 - Runtime data lives in Supabase.
-- The app includes a backward-safe fallback for the older flat quote model, but the intended direction is workspace isolation.
+- Quote access is now workspace-scoped only; the legacy flat quote fallback has been removed.
 
 ## Current product shape
 
-- today, new signups can be provisioned with their own starter workspace
+- today, new signups are provisioned into their own clean private workspace
+- owners can add and remove teammates from that workspace
 - the schema now has room for workspace membership and subscription state
-- billing is **not** wired yet, so `subscription.status='demo'` is currently a scaffold for the later paid-workspace flow
+- one workspace subscription is intended to cover the owner and invited teammates
 
 ## Notes
 
@@ -62,8 +65,8 @@ Then open <http://localhost:3000> and sign in using the credentials you set in `
 
 ## Next sensible steps
 
-1. wire billing so demo workspaces can convert into paid workspaces
-2. add invite teammates + per-user roles
+1. wire real Stripe billing and customer portal flows
+2. add workspace switching for users who belong to more than one workspace
 3. add timeline/event log per quote
 4. add email send + send history
 5. add analytics by source, service type, and win rate

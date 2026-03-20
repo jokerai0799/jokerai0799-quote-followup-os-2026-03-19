@@ -19,7 +19,7 @@ export function getTrialState({
   const now = new Date()
   const msLeft = endsAt.getTime() - now.getTime()
   const daysLeft = Math.max(0, Math.ceil(msLeft / 86400000))
-  const isTrialLike = status === 'trialing' || status === 'demo'
+  const isTrialLike = status === 'trialing'
   const trialExpired = isTrialLike && msLeft <= 0
   const activeTrial = isTrialLike && msLeft > 0
 

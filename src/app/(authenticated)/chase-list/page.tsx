@@ -10,12 +10,13 @@ type PageProps = {
 
 export default async function ChaseListPage({ searchParams }: PageProps) {
   const session = await auth()
-  if (session?.user?.id) {
-    await requireWorkspaceUsageAccess(session.user.id)
+  if (!session?.user?.id) {
+    return null
   }
 
+  await requireWorkspaceUsageAccess(session.user.id)
   const { filter } = await searchParams
-  const quotes = await getQuotes(session?.user?.id)
+  const quotes = await getQuotes(session.user.id)
   const fullChaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
   const overdueQuotes = fullChaseList.filter((quote) => getChaseState(quote).overdue)
   const dueTodayQuotes = fullChaseList.filter((quote) => getChaseState(quote).dueToday)
