@@ -264,6 +264,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
           </div>
         </div>
       </section>
+
     </main>
   )
 }

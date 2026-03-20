@@ -15,8 +15,30 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://quotefollowup.online'),
   title: 'QuoteFollowUp',
   description: 'Quote follow-up software for trades and service businesses.',
+  openGraph: {
+    title: 'QuoteFollowUp',
+    description: 'Quote follow-up software for trades and service businesses.',
+    url: 'https://quotefollowup.online',
+    siteName: 'QuoteFollowUp',
+    type: 'website',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'QuoteFollowUp — quote follow-up software for trades and service businesses',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'QuoteFollowUp',
+    description: 'Quote follow-up software for trades and service businesses.',
+    images: ['/opengraph-image'],
+  },
   icons: {
     icon: [
       { url: '/brand/favicon.svg', type: 'image/svg+xml' },
@@ -30,7 +52,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${instrumentSerif.variable} ${dmMono.variable} h-full antialiased`}>
-      <body className="min-h-full bg-slate-100 text-slate-950">{children}</body>
+      <body className="min-h-full bg-slate-100 text-slate-950">
+        <div className="min-h-full flex flex-col">
+          <div className="flex-1">{children}</div>
+          <footer className="border-t border-slate-200 bg-slate-50">
+            <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+              <p>QuoteFollowUp</p>
+              <p>
+                Support:{' '}
+                <a href="mailto:quotefollowup@outlook.com" className="font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline">
+                  quotefollowup@outlook.com
+                </a>
+              </p>
+            </div>
+          </footer>
+        </div>
+      </body>
     </html>
   )
 }
