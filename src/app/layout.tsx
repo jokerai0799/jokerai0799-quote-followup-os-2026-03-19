@@ -17,6 +17,14 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: 'QuoteFollowUp',
   description: 'Quote follow-up software for trades and service businesses.',
+  icons: {
+    icon: [
+      { url: '/brand/favicon.svg', type: 'image/svg+xml' },
+      { url: '/brand/favicon-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: ['/brand/favicon-32.png'],
+  },
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
