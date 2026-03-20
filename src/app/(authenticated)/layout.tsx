@@ -5,7 +5,7 @@ import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { BrandLogo } from '@/components/brand-logo'
 import { Nav } from '@/components/nav'
-import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
@@ -72,12 +72,23 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 : 'The workspace owner will be able to upgrade before the trial ends.'}
             </div>
           ) : null}
+
           {trial.expired ? (
             <div className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950 shadow-sm">
-              <span className="font-medium">{workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember}</span>{' '}
-              Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <span className="font-medium">{workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember}</span>{' '}
+                  Current launch price: {formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} per workspace.
+                </div>
+                {workspace?.role === 'owner' ? (
+                  <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" target="_blank" rel="noreferrer">
+                    {BILLING_MODEL_COPY.cta}
+                  </Link>
+                ) : null}
+              </div>
             </div>
           ) : null}
+
           {children}
         </div>
       </div>

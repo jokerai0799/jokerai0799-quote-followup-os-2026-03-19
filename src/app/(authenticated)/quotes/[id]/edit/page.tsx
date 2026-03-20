@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
 import { QuoteForm } from '@/components/quote-form'
 import { updateQuote } from '@/app/actions'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { getQuote } from '@/lib/quotes'
 
 export const metadata = {
@@ -15,6 +16,10 @@ type PageProps = {
 
 export default async function EditQuotePage({ params }: PageProps) {
   const session = await auth()
+  if (session?.user?.id) {
+    await requireWorkspaceUsageAccess(session.user.id)
+  }
+
   const { id } = await params
   const quote = await getQuote(id, session?.user?.id)
 

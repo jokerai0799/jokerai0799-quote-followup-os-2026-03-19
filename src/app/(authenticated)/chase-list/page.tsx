@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { ChaseList } from '@/components/ui'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { getChaseState, getDailyChaseList, getQuotes } from '@/lib/quotes'
 
 type PageProps = {
@@ -9,14 +10,17 @@ type PageProps = {
 
 export default async function ChaseListPage({ searchParams }: PageProps) {
   const session = await auth()
+  if (session?.user?.id) {
+    await requireWorkspaceUsageAccess(session.user.id)
+  }
+
   const { filter } = await searchParams
   const quotes = await getQuotes(session?.user?.id)
   const fullChaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
   const overdueQuotes = fullChaseList.filter((quote) => getChaseState(quote).overdue)
   const dueTodayQuotes = fullChaseList.filter((quote) => getChaseState(quote).dueToday)
 
-  const chaseList =
-    filter === 'overdue' ? overdueQuotes : filter === 'today' ? dueTodayQuotes : fullChaseList
+  const chaseList = filter === 'overdue' ? overdueQuotes : filter === 'today' ? dueTodayQuotes : fullChaseList
 
   const filters = [
     { key: 'all', label: 'All needing attention', count: fullChaseList.length, href: '/chase-list' },

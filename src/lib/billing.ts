@@ -1,4 +1,5 @@
 export const WORKSPACE_MONTHLY_PRICE_GBP = 29.99
+export const STRIPE_CHECKOUT_URL = 'https://buy.stripe.com/5kQdRb8cu2vb22X4vb8Ra01'
 
 export function formatMonthlyPriceGbp(price: number) {
   return `£${price.toFixed(2)}/month`
@@ -11,4 +12,5 @@ export const BILLING_MODEL_COPY = {
   teammate: 'If someone signs up only to join another workspace, they should not be forced to pay.',
   expiredOwner: 'Your trial has ended — upgrade to keep using this workspace.',
   expiredMember: 'This workspace trial has ended. Ask the workspace owner to upgrade to continue.',
+  cta: 'Start subscription',
 }

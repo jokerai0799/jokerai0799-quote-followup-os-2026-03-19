@@ -1,3 +1,5 @@
+import { auth } from '@/auth'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { messageTemplates } from '@/lib/quotes'
 
 const steps = [
@@ -19,7 +21,12 @@ const steps = [
   },
 ]
 
-export default function PlaybookPage() {
+export default async function PlaybookPage() {
+  const session = await auth()
+  if (session?.user?.id) {
+    await requireWorkspaceUsageAccess(session.user.id)
+  }
+
   return (
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">

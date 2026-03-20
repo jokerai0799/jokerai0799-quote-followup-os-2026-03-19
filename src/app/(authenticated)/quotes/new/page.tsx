@@ -1,12 +1,19 @@
 import Link from 'next/link'
-import { QuoteForm } from '@/components/quote-form'
+import { auth } from '@/auth'
 import { createQuote } from '@/app/actions'
+import { QuoteForm } from '@/components/quote-form'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 
 export const metadata = {
   title: 'New quote | QuoteFollowUp',
 }
 
-export default function NewQuotePage() {
+export default async function NewQuotePage() {
+  const session = await auth()
+  if (session?.user?.id) {
+    await requireWorkspaceUsageAccess(session.user.id)
+  }
+
   return (
     <section className="space-y-6">
       <div className="flex flex-col gap-4 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">

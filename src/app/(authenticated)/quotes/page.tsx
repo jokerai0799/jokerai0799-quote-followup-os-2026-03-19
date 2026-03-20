@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { QuoteTable } from '@/components/ui'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { getChaseState, getMetrics, getQuotes } from '@/lib/quotes'
 
 type PageProps = {
@@ -67,6 +68,9 @@ function getViewCopy(status?: string, view?: string) {
 
 export default async function QuotesPage({ searchParams }: PageProps) {
   const session = await auth()
+  if (session?.user?.id) {
+    await requireWorkspaceUsageAccess(session.user.id)
+  }
   const { status, view } = await searchParams
   const quotes = await getQuotes(session?.user?.id)
   const filteredQuotes = filterQuotes(quotes, status, view)

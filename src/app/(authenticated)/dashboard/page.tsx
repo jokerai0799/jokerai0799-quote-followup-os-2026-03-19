@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { ChaseList, QuoteTable } from '@/components/ui'
+import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
 import { formatCurrency, getDailyChaseList, getMetrics, getQuotes, getStatusBreakdown } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'

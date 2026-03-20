@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { auth } from '@/auth'
+import { assertWorkspaceWriteAccess } from '@/lib/access'
 import { findUserByEmail, updateUserName } from '@/lib/users'
 import { addWorkspaceMember, getWorkspaceContextForUser, getWorkspaceMembers, renameWorkspace } from '@/lib/workspaces'
 
@@ -34,10 +35,9 @@ async function requireUserId() {
 
 export async function updateProfileAction(formData: FormData) {
   const userId = await requireUserId()
-  const parsed = profileSchema.safeParse({
-    name: formData.get('name'),
-  })
+  await assertWorkspaceWriteAccess(userId)
 
+  const parsed = profileSchema.safeParse({ name: formData.get('name') })
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid profile payload')
   }
@@ -49,10 +49,9 @@ export async function updateProfileAction(formData: FormData) {
 
 export async function updateWorkspaceAction(formData: FormData) {
   const userId = await requireUserId()
-  const parsed = workspaceSchema.safeParse({
-    workspaceName: formData.get('workspaceName'),
-  })
+  await assertWorkspaceWriteAccess(userId)
 
+  const parsed = workspaceSchema.safeParse({ workspaceName: formData.get('workspaceName') })
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid workspace payload')
   }
@@ -69,6 +68,8 @@ export async function updateWorkspaceAction(formData: FormData) {
 
 export async function addTeammateAction(_prevState: AddTeammateState, formData: FormData): Promise<AddTeammateState> {
   const userId = await requireUserId()
+  await assertWorkspaceWriteAccess(userId)
+
   const parsed = teammateSchema.safeParse({
     email: formData.get('email'),
     role: formData.get('role'),

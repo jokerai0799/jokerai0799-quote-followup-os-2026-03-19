@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { auth, signOut } from '@/auth'
+import { assertWorkspaceWriteAccess } from '@/lib/access'
 import { saveQuote, setQuoteStatus, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
 
 const statusEnum = z.enum([...STATUSES] as [QuoteStatus, ...QuoteStatus[]])
@@ -21,33 +22,17 @@ const followUpSchema = z.preprocess((value) => {
 
 const quoteSchema = z.object({
   clientName: z.string().trim().min(1, 'Client name is required'),
-  contactName: z
-    .string()
-    .optional()
-    .transform((value) => (value ?? '').trim()),
-  email: z
-    .string()
-    .optional()
-    .transform((value) => (value ?? '').trim())
-    .refine((value) => !value || emailRegex.test(value), 'Email must be valid'),
-  company: z
-    .string()
-    .optional()
-    .transform((value) => (value ?? '').trim()),
+  contactName: z.string().optional().transform((value) => (value ?? '').trim()),
+  email: z.string().optional().transform((value) => (value ?? '').trim()).refine((value) => !value || emailRegex.test(value), 'Email must be valid'),
+  company: z.string().optional().transform((value) => (value ?? '').trim()),
   title: z.string().trim().min(1, 'Quote title is required'),
   value: z.coerce.number().nonnegative({ message: 'Value must be zero or greater' }),
   status: statusEnum.default('draft'),
-  sentDate: z
-    .string()
-    .optional()
-    .transform((value) => {
-      const trimmed = (value ?? '').trim()
-      return trimmed ? trimmed : null
-    }),
-  notes: z
-    .string()
-    .optional()
-    .transform((value) => (value ?? '').trim()),
+  sentDate: z.string().optional().transform((value) => {
+    const trimmed = (value ?? '').trim()
+    return trimmed ? trimmed : null
+  }),
+  notes: z.string().optional().transform((value) => (value ?? '').trim()),
   templateKey: templateEnum.default('friendly'),
   followUpOffsets: followUpSchema.default([2, 5, 9]),
 })
@@ -80,10 +65,12 @@ function revalidateWorkspacePaths() {
   revalidatePath('/dashboard')
   revalidatePath('/quotes')
   revalidatePath('/chase-list')
+  revalidatePath('/settings')
 }
 
 export async function createQuote(formData: FormData) {
   const session = await requireSession()
+  await assertWorkspaceWriteAccess(session.user.id)
   const payload = parseQuote(formData)
   await saveQuote(payload, undefined, session.user.id)
   revalidateWorkspacePaths()
@@ -92,6 +79,7 @@ export async function createQuote(formData: FormData) {
 
 export async function updateQuote(id: string, formData: FormData) {
   const session = await requireSession()
+  await assertWorkspaceWriteAccess(session.user.id)
   const payload = parseQuote(formData)
   await saveQuote(payload, id, session.user.id)
   revalidateWorkspacePaths()
@@ -101,6 +89,7 @@ export async function updateQuote(id: string, formData: FormData) {
 
 export async function updateQuoteStatusAction(id: string, status: QuoteStatus) {
   const session = await requireSession()
+  await assertWorkspaceWriteAccess(session.user.id)
   await setQuoteStatus(id, status, session.user.id)
   revalidateWorkspacePaths()
   revalidatePath(`/quotes/${id}/edit`)

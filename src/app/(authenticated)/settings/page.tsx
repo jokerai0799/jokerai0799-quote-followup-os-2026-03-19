@@ -1,7 +1,8 @@
+import Link from 'next/link'
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
 import { updateProfileAction, updateWorkspaceAction } from './actions'
-import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
@@ -110,6 +111,13 @@ export default async function SettingsPage() {
               : trial.activeTrial
                 ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in your 7-day workspace trial.`
                 : 'This workspace is on an active paid plan.'}
+            {trial.expired ? (
+              <div className="mt-4">
+                <Link href={STRIPE_CHECKOUT_URL} className="inline-flex rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" target="_blank" rel="noreferrer">
+                  {BILLING_MODEL_COPY.cta}
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
 
