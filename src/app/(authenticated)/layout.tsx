@@ -47,11 +47,6 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 xl:flex-nowrap xl:justify-end">
-              <div className="hidden items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-medium text-emerald-100 lg:inline-flex">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(74,222,128,0.8)]" />
-                {dueCount} due today
-              </div>
-
               <WorkspaceSwitcher workspaces={workspaceOptions} activeWorkspaceId={workspace?.workspaceId} user={user ? { id: user.id, name: user.name, email: user.email } : null} />
 
               <Link
@@ -76,6 +71,23 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="space-y-6">
+          {dueCount > 0 ? (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-950 shadow-sm">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.45)]" />
+                  <span>
+                    <span className="font-medium">{dueCount} quote{dueCount === 1 ? '' : 's'} due today.</span>{' '}
+                    Head to the chase list to work through what needs attention now.
+                  </span>
+                </div>
+                <Link href="/chase-list" className="inline-flex rounded-xl border border-emerald-300 bg-white px-4 py-2 text-sm font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100">
+                  Open chase list
+                </Link>
+              </div>
+            </div>
+          ) : null}
+
           {trial.activeTrial ? (
             <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950 shadow-sm">
               <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.</span>{' '}
