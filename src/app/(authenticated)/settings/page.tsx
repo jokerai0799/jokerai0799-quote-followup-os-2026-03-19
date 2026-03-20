@@ -1,15 +1,14 @@
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
 import { RemoveMemberButton } from './remove-member-button'
-import { cancelSubscriptionAction, startSubscriptionCheckoutAction, updateProfileAction, updateWorkspaceAction } from './actions'
+import { cancelSubscriptionAction, startSubscriptionCheckoutAction, updateWorkspaceAction } from './actions'
 import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
-import { findUserById } from '@/lib/users'
 import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
 
 type PageProps = {
-  searchParams: Promise<{ billing?: string }>
+  searchParams: Promise<{ billing?: string; saved?: string }>
 }
 
 export default async function SettingsPage({ searchParams }: PageProps) {
@@ -18,9 +17,8 @@ export default async function SettingsPage({ searchParams }: PageProps) {
     return null
   }
 
-  const { billing } = await searchParams
-  const [user, workspace, quotes] = await Promise.all([
-    findUserById(session.user.id),
+  const { billing, saved } = await searchParams
+  const [workspace, quotes] = await Promise.all([
     ensureWorkspaceForUser({ userId: session.user.id }),
     getQuotes(session.user.id),
   ])
@@ -41,6 +39,9 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   const paidThroughLabel = trial.paidThrough
     ? new Date(trial.paidThrough).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
     : null
+  const savedMessage = saved === 'workspace'
+    ? 'Workspace name updated.'
+    : null
 
   return (
     <section className="space-y-6">
@@ -50,6 +51,11 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
           Update your workspace details, manage team access, and review how billing applies to the workspace you are currently in.
         </p>
+        {savedMessage ? (
+          <div className="mt-4 inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700">
+            {savedMessage}
+          </div>
+        ) : null}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -61,7 +67,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Monthly plan</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-          <p className="mt-2 text-sm text-slate-500">Recommended launch price per workspace</p>
+          <p className="mt-2 text-sm text-slate-500">One active subscription covers this workspace</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Quotes tracked</p>
@@ -143,7 +149,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         ) : (
           <>
             {isOwner ? (
-              <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
                 <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
@@ -152,11 +158,11 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                   <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
                 </label>
                 <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-                  Save workspace
+                  Save
                 </button>
               </form>
             ) : (
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
                 <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">Only the workspace owner can rename this workspace.</p>
@@ -165,23 +171,6 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 </div>
               </div>
             )}
-
-            <form action={updateProfileAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Account</p>
-              <h3 className="mt-2 text-xl font-semibold text-slate-950">Profile</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">Keep the account details clean for this workspace owner.</p>
-              <label className="mt-5 block text-sm font-medium text-slate-700">
-                Name
-                <input name="name" defaultValue={user?.name ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
-              </label>
-              <label className="mt-4 block text-sm font-medium text-slate-700">
-                Email
-                <input value={user?.email ?? ''} className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-500 outline-none" disabled readOnly />
-              </label>
-              <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
-                Save profile
-              </button>
-            </form>
           </>
         )}
       </div>
