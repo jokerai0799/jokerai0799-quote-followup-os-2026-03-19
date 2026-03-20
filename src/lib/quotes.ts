@@ -321,8 +321,17 @@ export function getDailyChaseList(quotes: Quote[]) {
     .sort((a, b) => (a.chase.nextDate ?? '').localeCompare(b.chase.nextDate ?? ''))
 }
 
+export function getMessageTitle(title: string) {
+  const cleaned = title
+    .replace(/\s+(quote|estimate|proposal)$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return cleaned || title.trim()
+}
+
 export function renderTemplate(quote: Quote) {
   return messageTemplates[quote.templateKey]
     .replaceAll('{{contactName}}', quote.contactName || quote.clientName)
-    .replaceAll('{{title}}', quote.title)
+    .replaceAll('{{title}}', getMessageTitle(quote.title))
 }

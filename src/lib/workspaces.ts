@@ -50,18 +50,15 @@ export type WorkspaceContext = {
 }
 
 export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user?: { name?: string | null; email?: string | null } | null) {
+  const fallbackName = user?.name?.trim() ? `${user.name.trim()} Workspace` : user?.email?.trim() ? `${user.email.split('@')[0]} Workspace` : 'Your Workspace'
+
   if (!workspace) {
-    return user?.name?.trim() ? `${user.name.trim()} Workspace` : 'Your Workspace'
+    return fallbackName
   }
 
-  if (workspace.isTemplate || workspace.workspaceName === 'Demo Workspace') {
-    if (user?.name?.trim()) {
-      return `${user.name.trim()} Workspace`
-    }
-    if (user?.email?.trim()) {
-      return `${user.email.split('@')[0]} Workspace`
-    }
-    return 'Your Workspace'
+  const looksLikeLegacyDefault = workspace.isTemplate || /^(demo|jokerai?|your|new) workspace$/i.test(workspace.workspaceName)
+  if (looksLikeLegacyDefault) {
+    return fallbackName
   }
 
   return workspace.workspaceName
@@ -83,13 +80,14 @@ function slugify(input: string) {
 }
 
 function buildWorkspaceName(name?: string | null, email?: string | null) {
-  if (name?.trim()) {
-    return `${name.trim()} Workspace`
+  const trimmedName = name?.trim()
+  if (trimmedName && !/^jokerai?$/i.test(trimmedName)) {
+    return `${trimmedName} Workspace`
   }
   if (email?.trim()) {
     return `${email.split('@')[0]} Workspace`
   }
-  return 'New Workspace'
+  return 'Owner Workspace'
 }
 
 async function readSeedQuotes() {
@@ -257,6 +255,16 @@ export async function renameWorkspace(workspaceId: string, name: string) {
 
   if (error) {
     throw new Error(`Failed to rename workspace: ${error.message}`)
+  }
+}
+
+export async function addWorkspaceMember(workspaceId: string, userId: string, role: 'admin' | 'member') {
+  const { error } = await supabase
+    .from('workspace_memberships')
+    .insert({ workspace_id: workspaceId, user_id: userId, role })
+
+  if (error) {
+    throw new Error(`Failed to add workspace member: ${error.message}`)
   }
 }
 

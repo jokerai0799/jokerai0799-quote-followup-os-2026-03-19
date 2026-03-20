@@ -24,9 +24,9 @@ export default function PlaybookPage() {
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Playbook</p>
-        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Default follow-up operating system</h2>
+        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Default follow-up approach</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Use this as the default motion for small service businesses: send quickly, follow up predictably, and push toward a clear yes / no / later outcome.
+          Use this as a simple follow-up rhythm for small service businesses: send clearly, follow up consistently, and work toward a clear yes, no, or later.
         </p>
       </div>
 

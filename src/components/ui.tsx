@@ -59,8 +59,8 @@ export function QuoteTable({ quotes }: { quotes: Quote[] }) {
                   {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
                   {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
                 </td>
-                <td className="px-4 py-4 text-right">
-                  <div className="flex flex-col items-end gap-2">
+                <td className="w-[220px] px-4 py-4 text-right">
+                  <div className="flex flex-col items-end gap-1.5">
                     <Link className="font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
                       Edit
                     </Link>

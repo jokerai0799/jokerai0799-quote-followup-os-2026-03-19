@@ -1,4 +1,5 @@
 import { auth } from '@/auth'
+import { AddTeammateForm } from './add-teammate-form'
 import { updateProfileAction, updateWorkspaceAction } from './actions'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'
@@ -42,9 +43,9 @@ export default async function SettingsPage() {
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Settings</p>
-        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace settings</h2>
+        <h2 className="mt-2 text-3xl font-semibold text-slate-950">Workspace and account</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Manage the name people see, confirm account details, and keep a clear view of where the product should grow next.
+          Update your workspace details, manage team access, and review what should be built next.
         </p>
       </div>
 
@@ -118,26 +119,31 @@ export default async function SettingsPage() {
         </form>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
-          <h3 className="mt-2 text-2xl font-semibold text-slate-950">Workspace people</h3>
-          <div className="mt-5 space-y-3">
-            {members.map((member) => (
-              <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <div>
-                  <p className="font-medium text-slate-950">{member.name}</p>
-                  <p className="text-sm text-slate-500">{member.email}</p>
+      <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="space-y-4">
+          <AddTeammateForm />
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Team</p>
+            <h3 className="mt-2 text-2xl font-semibold text-slate-950">People in this workspace</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">This is everyone who currently has access to this workspace.</p>
+            <div className="mt-5 space-y-3">
+              {members.map((member) => (
+                <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div>
+                    <p className="font-medium text-slate-950">{member.name}</p>
+                    <p className="text-sm text-slate-500">{member.email}</p>
+                  </div>
+                  <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
                 </div>
-                <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Product direction</p>
-          <h3 className="mt-2 text-2xl font-semibold text-slate-950">What makes sense next</h3>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Planned features</p>
+          <h3 className="mt-2 text-2xl font-semibold text-slate-950">What we should build next</h3>
           <div className="mt-5 space-y-4">
             {recommendations.map((item) => (
               <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">

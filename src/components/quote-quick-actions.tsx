@@ -33,12 +33,16 @@ export function QuoteQuickActions({
     ? `mailto:${encodeURIComponent(quoteEmail)}?subject=${encodeURIComponent(`Following up on ${quoteTitle}`)}&body=${encodeURIComponent(message)}`
     : null
 
+  const baseButtonClass = compact
+    ? 'rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition'
+    : 'rounded-lg border px-3 py-2 text-xs font-medium transition'
+
   return (
-    <div className={compact ? 'flex flex-wrap justify-end gap-2' : 'flex flex-wrap gap-2'}>
+    <div className={compact ? 'flex max-w-[210px] flex-wrap justify-end gap-1.5' : 'flex flex-wrap gap-2'}>
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(message)}
-        className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950"
+        className={`${baseButtonClass} border-slate-300 text-slate-700 hover:border-slate-950 hover:text-slate-950`}
       >
         Copy message
       </button>
@@ -46,28 +50,31 @@ export function QuoteQuickActions({
       {mailtoHref ? (
         <Link
           href={mailtoHref}
-          className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-xs font-medium text-sky-700 transition hover:border-sky-400 hover:bg-sky-100 hover:text-sky-800"
+          className={`${baseButtonClass} border-sky-300 bg-sky-50 text-sky-700 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-800`}
         >
           Email client
         </Link>
       ) : null}
 
-      {statusOptions
-        .filter((option) => option.value !== status)
-        .slice(0, compact ? 2 : statusOptions.length)
-        .map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            disabled={pending}
-            onClick={() => startTransition(async () => {
-              await updateQuoteStatusAction(quoteId, option.value)
-            })}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {option.label}
-          </button>
-        ))}
+      {!compact
+        ? statusOptions
+            .filter((option) => option.value !== status)
+            .map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                disabled={pending}
+                onClick={() =>
+                  startTransition(async () => {
+                    await updateQuoteStatusAction(quoteId, option.value)
+                  })
+                }
+                className={`${baseButtonClass} border-slate-300 text-slate-700 hover:border-slate-950 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60`}
+              >
+                {option.label}
+              </button>
+            ))
+        : null}
     </div>
   )
 }
