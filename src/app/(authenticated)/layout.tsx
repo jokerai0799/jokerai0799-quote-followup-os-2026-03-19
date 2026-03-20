@@ -5,11 +5,12 @@ import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { BrandLogo } from '@/components/brand-logo'
 import { Nav } from '@/components/nav'
+import { WorkspaceSwitcher } from '@/components/workspace-switcher'
 import { BILLING_MODEL_COPY, STRIPE_CHECKOUT_URL, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
-import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
+import { ensureWorkspaceForUser, listWorkspaceContextsForUser } from '@/lib/workspaces'
 
 export default async function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -21,7 +22,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const workspace = user
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email })
     : null
-  const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
+  const workspaceOptions = user ? await listWorkspaceContextsForUser(user.id) : []
   const trial = getTrialState({
     createdAt: workspace?.createdAt,
     subscriptionStatus: workspace?.subscriptionStatus,
@@ -51,12 +52,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 {dueCount} due today
               </div>
 
-              <Link
-                href="/settings"
-                className="hidden max-w-[180px] items-center rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-white/90 transition hover:border-white/20 hover:bg-white/10 hover:text-white lg:inline-flex"
-              >
-                <span className="truncate">{displayWorkspaceName}</span>
-              </Link>
+              <WorkspaceSwitcher workspaces={workspaceOptions} activeWorkspaceId={workspace?.workspaceId} user={user ? { id: user.id, name: user.name, email: user.email } : null} />
 
               <Link
                 href="/quotes/new"

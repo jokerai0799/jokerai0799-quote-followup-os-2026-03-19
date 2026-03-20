@@ -1,0 +1,93 @@
+import { setActiveWorkspaceAction } from '@/app/actions'
+import { getWorkspaceDisplayName, type WorkspaceContext } from '@/lib/workspaces'
+
+type WorkspaceSwitcherProps = {
+  workspaces: WorkspaceContext[]
+  activeWorkspaceId?: string | null
+  user?: { id: string; name?: string | null; email?: string | null } | null
+}
+
+function getWorkspaceMetaLabel(workspace: WorkspaceContext, userId?: string | null) {
+  if (workspace.ownerUserId && userId && workspace.ownerUserId === userId) {
+    return 'Personal'
+  }
+
+  if (workspace.role === 'owner') {
+    return 'Owner'
+  }
+
+  if (workspace.role === 'admin') {
+    return 'Admin'
+  }
+
+  return 'Member'
+}
+
+export function WorkspaceSwitcher({ workspaces, activeWorkspaceId, user }: WorkspaceSwitcherProps) {
+  if (!workspaces.length) {
+    return null
+  }
+
+  const activeWorkspace = workspaces.find((workspace) => workspace.workspaceId === activeWorkspaceId) ?? workspaces[0]
+  const activeLabel = getWorkspaceDisplayName(activeWorkspace, user)
+
+  if (workspaces.length === 1) {
+    return (
+      <LinkLikeBadge label={activeLabel} meta={getWorkspaceMetaLabel(activeWorkspace, user?.id ?? null)} />
+    )
+  }
+
+  return (
+    <details className="relative">
+      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-white/90 transition hover:border-white/20 hover:bg-white/10 hover:text-white">
+        <span className="max-w-[180px] truncate">{activeLabel}</span>
+        <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-white/70">
+          {getWorkspaceMetaLabel(activeWorkspace, user?.id ?? null)}
+        </span>
+        <span className="text-xs text-white/60">▾</span>
+      </summary>
+
+      <div className="absolute right-0 z-20 mt-2 w-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_18px_50px_rgba(15,23,42,0.22)]">
+        <div className="px-2 py-2">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspaces</p>
+          <p className="mt-1 text-xs text-slate-500">Switch between your personal workspace and any team workspaces you belong to.</p>
+        </div>
+        <div className="space-y-1">
+          {workspaces.map((workspace) => {
+            const isActive = workspace.workspaceId === activeWorkspace.workspaceId
+            return (
+              <form key={workspace.workspaceId} action={setActiveWorkspaceAction}>
+                <input type="hidden" name="workspaceId" value={workspace.workspaceId} />
+                <button
+                  type="submit"
+                  className={isActive
+                    ? 'flex w-full items-center justify-between rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left'
+                    : 'flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition hover:bg-slate-50'}
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-medium text-slate-950">{getWorkspaceDisplayName(workspace, user)}</span>
+                    <span className="mt-0.5 block text-xs text-slate-500">{getWorkspaceMetaLabel(workspace, user?.id ?? null)}</span>
+                  </span>
+                  {isActive ? (
+                    <span className="rounded-full border border-sky-200 bg-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-sky-700">
+                      Active
+                    </span>
+                  ) : null}
+                </button>
+              </form>
+            )
+          })}
+        </div>
+      </div>
+    </details>
+  )
+}
+
+function LinkLikeBadge({ label, meta }: { label: string; meta: string }) {
+  return (
+    <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-white/90 lg:inline-flex">
+      <span className="max-w-[180px] truncate">{label}</span>
+      <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-white/70">{meta}</span>
+    </div>
+  )
+}

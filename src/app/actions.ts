@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { auth, signOut } from '@/auth'
 import { assertWorkspaceWriteAccess } from '@/lib/access'
 import { saveQuote, setQuoteStatus, STATUSES, TEMPLATE_KEYS, type QuoteInput, type QuoteStatus, type TemplateKey } from '@/lib/quotes'
+import { setDefaultWorkspaceForUser } from '@/lib/workspaces'
 
 const statusEnum = z.enum([...STATUSES] as [QuoteStatus, ...QuoteStatus[]])
 const templateEnum = z.enum([...TEMPLATE_KEYS] as [TemplateKey, ...TemplateKey[]])
@@ -114,6 +115,19 @@ export async function updateQuoteStatusAction(id: string, status: QuoteStatus) {
   await setQuoteStatus(id, status, session.user.id)
   revalidateWorkspacePaths()
   revalidatePath(`/quotes/${id}/edit`)
+}
+
+export async function setActiveWorkspaceAction(formData: FormData) {
+  const session = await requireSession()
+  const workspaceId = String(formData.get('workspaceId') ?? '').trim()
+
+  if (!workspaceId) {
+    throw new Error('Workspace not found')
+  }
+
+  await setDefaultWorkspaceForUser(session.user.id, workspaceId)
+  revalidateWorkspacePaths()
+  redirect('/dashboard')
 }
 
 export async function signOutAction() {

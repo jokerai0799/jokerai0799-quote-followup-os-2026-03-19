@@ -7,6 +7,7 @@ type WorkspaceRow = {
   name: string
   slug: string
   is_template: boolean
+  owner_user_id?: string | null
   created_at: string
 }
 
@@ -40,6 +41,7 @@ export type WorkspaceContext = {
   workspaceName: string
   slug: string
   isTemplate: boolean
+  ownerUserId?: string | null
   role: string
   subscriptionStatus: string
   planName: string | null
@@ -129,7 +131,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
   }
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
-    supabase.from('workspaces').select('id, name, slug, is_template, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
+    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
     supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
@@ -146,6 +148,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     workspaceName: workspace.name,
     slug: workspace.slug,
     isTemplate: workspace.is_template,
+    ownerUserId: workspace.owner_user_id ?? null,
     role: membership.role,
     subscriptionStatus: subscription?.status ?? 'trialing',
     planName: subscription?.plan_name ?? null,
@@ -155,6 +158,67 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     canceledAt: subscription?.canceled_at ?? null,
     createdAt: workspace.created_at,
   }
+}
+
+export async function listWorkspaceContextsForUser(userId: string): Promise<WorkspaceContext[]> {
+  if (!(await isWorkspaceModelAvailable())) {
+    return []
+  }
+
+  const { data: memberships, error: membershipError } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id, user_id, role, created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true })
+    .returns<MembershipRow[]>()
+
+  if (membershipError) {
+    throw new Error(`Failed to fetch workspace memberships: ${membershipError.message}`)
+  }
+
+  const membershipList = memberships ?? []
+  if (!membershipList.length) {
+    return []
+  }
+
+  const workspaceIds = membershipList.map((entry) => entry.workspace_id)
+  const [{ data: workspaces, error: workspaceError }, { data: subscriptions, error: subscriptionError }] = await Promise.all([
+    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
+    supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, current_period_end, cancel_at_period_end, canceled_at').in('workspace_id', workspaceIds).returns<SubscriptionRow[]>(),
+  ])
+
+  if (workspaceError) {
+    throw new Error(`Failed to fetch workspaces: ${workspaceError.message}`)
+  }
+
+  if (subscriptionError) {
+    throw new Error(`Failed to fetch subscriptions: ${subscriptionError.message}`)
+  }
+
+  const workspaceMap = new Map((workspaces ?? []).map((workspace) => [workspace.id, workspace]))
+  const subscriptionMap = new Map((subscriptions ?? []).map((subscription) => [subscription.workspace_id, subscription]))
+
+  return membershipList.flatMap((membership) => {
+    const workspace = workspaceMap.get(membership.workspace_id)
+    if (!workspace) return []
+    const subscription = subscriptionMap.get(membership.workspace_id)
+
+    return [{
+      workspaceId: workspace.id,
+      workspaceName: workspace.name,
+      slug: workspace.slug,
+      isTemplate: workspace.is_template,
+      ownerUserId: workspace.owner_user_id ?? null,
+      role: membership.role,
+      subscriptionStatus: subscription?.status ?? 'trialing',
+      planName: subscription?.plan_name ?? null,
+      monthlyPriceGbp: subscription?.monthly_price_gbp ?? 29.99,
+      currentPeriodEnd: subscription?.current_period_end ?? null,
+      cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
+      canceledAt: subscription?.canceled_at ?? null,
+      createdAt: workspace.created_at,
+    }]
+  })
 }
 
 export async function getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMember[]> {
@@ -238,13 +302,25 @@ export async function addWorkspaceMember(workspaceId: string, userId: string, ro
     throw new Error(`Failed to add workspace member: ${error.message}`)
   }
 
-  const { error: updateError } = await supabase
+  const { data: userRow, error: userError } = await supabase
     .from('users')
-    .update({ default_workspace_id: workspaceId })
+    .select('default_workspace_id')
     .eq('id', userId)
+    .maybeSingle<{ default_workspace_id?: string | null }>()
 
-  if (updateError) {
-    throw new Error(`Failed to set teammate default workspace: ${updateError.message}`)
+  if (userError) {
+    throw new Error(`Failed to inspect teammate default workspace: ${userError.message}`)
+  }
+
+  if (!userRow?.default_workspace_id) {
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ default_workspace_id: workspaceId })
+      .eq('id', userId)
+
+    if (updateError) {
+      throw new Error(`Failed to set teammate default workspace: ${updateError.message}`)
+    }
   }
 }
 
@@ -281,6 +357,32 @@ export async function removeWorkspaceMember(workspaceId: string, userId: string)
     if (updateError) {
       throw new Error(`Failed to reset removed teammate default workspace: ${updateError.message}`)
     }
+  }
+}
+
+export async function setDefaultWorkspaceForUser(userId: string, workspaceId: string) {
+  const { data: membership, error: membershipError } = await supabase
+    .from('workspace_memberships')
+    .select('workspace_id')
+    .eq('user_id', userId)
+    .eq('workspace_id', workspaceId)
+    .maybeSingle<{ workspace_id: string }>()
+
+  if (membershipError) {
+    throw new Error(`Failed to verify workspace membership: ${membershipError.message}`)
+  }
+
+  if (!membership) {
+    throw new Error('Workspace access not found')
+  }
+
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ default_workspace_id: workspaceId })
+    .eq('id', userId)
+
+  if (updateError) {
+    throw new Error(`Failed to update active workspace: ${updateError.message}`)
   }
 }
 
@@ -355,6 +457,7 @@ export async function ensureWorkspaceForUser({
     workspaceName: workspace.name,
     slug: workspace.slug,
     isTemplate: workspace.is_template,
+    ownerUserId: userId,
     role: 'owner',
     subscriptionStatus: 'trialing',
     planName: '7-day trial',
