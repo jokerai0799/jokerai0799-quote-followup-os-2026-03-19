@@ -26,10 +26,10 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/opengraph-image',
-        width: 1200,
-        height: 630,
-        alt: 'QuoteFollowUp — quote follow-up software for trades and service businesses',
+        url: '/og-homepage.jpg',
+        width: 1280,
+        height: 719,
+        alt: 'QuoteFollowUp homepage preview',
       },
     ],
   },
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'QuoteFollowUp',
     description: 'Quote follow-up software for trades and service businesses.',
-    images: ['/opengraph-image'],
+    images: ['/og-homepage.jpg'],
   },
   icons: {
     icon: [
