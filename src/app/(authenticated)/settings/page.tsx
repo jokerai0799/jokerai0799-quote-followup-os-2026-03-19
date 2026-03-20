@@ -101,13 +101,13 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                 <div>
                   <p className="font-medium text-slate-950">Ready to activate this workspace?</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Start the subscription flow now and keep this workspace active for you and your team.
+                    Start the subscription now and activate paid access for this workspace immediately.
                   </p>
                 </div>
                 <form action={startSubscriptionCheckoutAction}>
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center rounded-xl border border-sky-500 bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
+                    className="inline-flex items-center justify-center rounded-xl border border-emerald-600 bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-emerald-500 hover:bg-emerald-500"
                   >
                     Subscribe now
                   </button>

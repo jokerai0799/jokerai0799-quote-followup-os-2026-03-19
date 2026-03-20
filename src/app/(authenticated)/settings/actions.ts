@@ -164,7 +164,6 @@ export async function startSubscriptionCheckoutAction() {
         workspaceId: workspace.workspaceId,
         ownerUserId: userId,
       },
-      trial_period_days: 7,
     },
     metadata: {
       workspaceId: workspace.workspaceId,

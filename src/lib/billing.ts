@@ -7,7 +7,7 @@ export function formatMonthlyPriceGbp(price: number) {
 export const BILLING_MODEL_COPY = {
   title: 'Workspace billing',
   summary: 'One subscription covers the active workspace and everyone who works inside it.',
-  signup: 'Signing up is free. Your personal workspace starts with a 7-day trial before payment is needed.',
+  signup: 'You can subscribe when you are ready. If you click Subscribe now, billing starts immediately for this workspace.',
   teammate: 'Invited teammates can switch into this workspace and use it under this workspace subscription. They do not need their own separate paid plan to work here.',
   expiredOwner: 'Your trial has ended — upgrade to keep using this workspace.',
   expiredMember: 'This workspace trial has ended. Ask the workspace owner to upgrade to continue.',
