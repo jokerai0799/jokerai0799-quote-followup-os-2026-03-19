@@ -52,10 +52,49 @@ export const metadata: Metadata = {
   },
 }
 
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'QuoteFollowUp',
+    url: 'https://quotefollowup.online',
+    email: 'quotefollowup@outlook.com',
+    logo: 'https://quotefollowup.online/brand/favicon-32.png',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'QuoteFollowUp',
+    url: 'https://quotefollowup.online',
+    description: 'Quote follow-up software for trades and service businesses.',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'QuoteFollowUp',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '29.99',
+      priceCurrency: 'GBP',
+    },
+    url: 'https://quotefollowup.online',
+    description: 'Quote follow-up software for trades and service businesses.',
+  },
+]
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${instrumentSerif.variable} ${dmMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-slate-100 text-slate-950">
+        {structuredData.map((entry, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(entry) }}
+          />
+        ))}
         <div className="min-h-full flex flex-col">
           <div className="flex-1">{children}</div>
           <footer className="border-t border-slate-200 bg-slate-50">
