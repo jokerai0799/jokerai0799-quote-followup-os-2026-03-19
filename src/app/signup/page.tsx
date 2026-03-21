@@ -27,13 +27,12 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
           <div className="flex justify-center">
             <BrandLogo compact />
           </div>
-          <div className="space-y-2">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-400">QuoteFollowUp</p>
-            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Create your workspace account</h1>
+          <div className="space-y-3">
+            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Create your account</h1>
             <p className="text-sm text-slate-400">
-              Start with quote follow-up software built for trades and service businesses that need cleaner follow-up and more booked work.
+              Set up your workspace and start tracking quotes, follow-ups, and booked work in one place.
             </p>
-            <p className="text-xs text-sky-300/90">Start with a 7-day workspace trial, then upgrade only if you want to keep using your own workspace.</p>
+            <p className="text-xs text-sky-300/90">Start with a 7-day trial, then upgrade only if you want to keep using it.</p>
           </div>
         </div>
 
