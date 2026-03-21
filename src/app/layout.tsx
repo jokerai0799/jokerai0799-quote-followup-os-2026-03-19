@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { DM_Mono, Instrument_Serif } from 'next/font/google'
+import { seoPageLinks } from '@/lib/seo-pages'
 import './globals.css'
 
 const instrumentSerif = Instrument_Serif({
@@ -116,14 +118,29 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="min-h-full flex flex-col">
           <div className="flex-1">{children}</div>
           <footer className="border-t border-slate-200 bg-slate-50">
-            <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-              <p>QuoteFollowUp</p>
-              <p>
-                Support:{' '}
-                <a href="mailto:quotefollowup@outlook.com" className="font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline">
-                  quotefollowup@outlook.com
-                </a>
-              </p>
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="space-y-1 text-sm text-slate-500">
+                  <p>QuoteFollowUp</p>
+                  <p>
+                    Support:{' '}
+                    <a href="mailto:quotefollowup@outlook.com" className="font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline">
+                      quotefollowup@outlook.com
+                    </a>
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Related pages</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600">
+                    {seoPageLinks.map((page) => (
+                      <Link key={page.href} href={page.href} className="underline-offset-4 transition hover:text-slate-950 hover:underline">
+                        {page.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </footer>
         </div>

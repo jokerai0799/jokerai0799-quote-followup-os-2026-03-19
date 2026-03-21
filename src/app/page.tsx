@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
-import { seoPageLinks } from '@/lib/seo-pages'
 
 export const metadata: Metadata = {
   title: 'Quote Follow-Up Software for Trades & Service Businesses',
@@ -311,23 +310,6 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Explore more</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">More ways to land on QuoteFollowUp from Google.</h2>
-            <p className="mt-4 text-base leading-7 text-slate-600">These pages cover closely related search intents while still leading people into the same core product and signup flow.</p>
-          </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {seoPageLinks.map((page) => (
-              <Link key={page.href} href={page.href} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-sm font-medium text-slate-800 shadow-sm transition hover:border-sky-300 hover:text-slate-950">
-                {page.label}
-              </Link>
-            ))}
           </div>
         </div>
       </section>
