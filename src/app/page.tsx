@@ -109,8 +109,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
 
         <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">QuoteFollowUp</p>
-            <h1 className="mt-4 font-serif text-5xl italic tracking-tight text-slate-50 sm:text-6xl">
+            <h1 className="font-serif text-5xl italic tracking-tight text-slate-50 sm:text-6xl">
               Quote follow-up software for trades and service businesses
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
