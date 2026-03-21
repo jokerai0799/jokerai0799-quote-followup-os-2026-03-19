@@ -16,14 +16,19 @@ const dmMono = DM_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://quotefollowup.online'),
-  title: 'QuoteFollowUp',
+  title: {
+    default: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
+    template: '%s | QuoteFollowUp',
+  },
   description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
+  applicationName: 'QuoteFollowUp',
+  category: 'business software',
   alternates: {
     canonical: 'https://quotefollowup.online',
   },
   openGraph: {
-    title: 'QuoteFollowUp',
-    description: 'Quote follow-up software for trades and service businesses.',
+    title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
+    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
     url: 'https://quotefollowup.online',
     siteName: 'QuoteFollowUp',
     type: 'website',
@@ -38,8 +43,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'QuoteFollowUp',
-    description: 'Quote follow-up software for trades and service businesses.',
+    title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
+    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
     images: ['/og-homepage.jpg'],
   },
   icons: {
@@ -74,12 +79,23 @@ const structuredData = [
     '@type': 'SoftwareApplication',
     name: 'QuoteFollowUp',
     applicationCategory: 'BusinessApplication',
+    applicationSubCategory: 'Quote management and follow-up software',
     operatingSystem: 'Web',
     offers: {
       '@type': 'Offer',
       price: '29.99',
       priceCurrency: 'GBP',
     },
+    audience: {
+      '@type': 'BusinessAudience',
+      audienceType: 'Trades and service businesses',
+    },
+    featureList: [
+      'Track quotes in one place',
+      'See follow-ups due today',
+      'Manage quote status and pipeline',
+      'Keep a repeatable follow-up process for small service teams',
+    ],
     url: 'https://quotefollowup.online',
     description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
   },

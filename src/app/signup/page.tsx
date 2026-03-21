@@ -5,7 +5,11 @@ import { BrandLogo } from '@/components/brand-logo'
 import { SignupForm } from './signup-form'
 
 export const metadata = {
-  title: 'Sign up | QuoteFollowUp',
+  title: 'Sign up',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {

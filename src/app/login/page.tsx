@@ -5,7 +5,11 @@ import { BrandLogo } from '@/components/brand-logo'
 import { LoginForm } from './login-form'
 
 export const metadata = {
-  title: 'Log in | QuoteFollowUp',
+  title: 'Log in',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 function withRef(path: string, ref?: string) {

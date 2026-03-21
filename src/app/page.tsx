@@ -1,6 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
+
+export const metadata: Metadata = {
+  title: 'Quote Follow-Up Software for Trades & Service Businesses',
+  description:
+    'Track quotes, see who needs chasing today, and win more work with quote follow-up software built for trades and service businesses.',
+}
 
 const features = [
   {
@@ -29,6 +36,32 @@ const demoRows = [
   ['Walker Homes', 'Kitchen repaint and touch-ups', '£1,450', 'Won', '—'],
 ]
 
+const useCases = [
+  'Plumbing quote follow-up',
+  'Electrical estimate tracking',
+  'Cleaning quote management',
+  'Property maintenance follow-up',
+  'Small team service-business pipeline visibility',
+]
+
+const faqs = [
+  {
+    question: 'Who is QuoteFollowUp for?',
+    answer:
+      'QuoteFollowUp is for trades and service businesses that send quotes or estimates regularly and need a simple way to track what was sent, what is due for follow-up, and which jobs have been won or lost.',
+  },
+  {
+    question: 'Is this a full CRM?',
+    answer:
+      'No. It is intentionally focused on quote tracking, quote management, and follow-up workflow so small service teams can stay consistent without paying for a bloated CRM.',
+  },
+  {
+    question: 'What problem does it solve?',
+    answer:
+      'It helps stop sent quotes from going cold by giving you one place to track each estimate, see who needs chasing today, and keep a repeatable follow-up process.',
+  },
+]
+
 function withRef(path: string, ref?: string) {
   if (!ref) return path
   const separator = path.includes('?') ? '&' : '?'
@@ -39,8 +72,22 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
   const session = await auth()
   const { ref } = await searchParams
 
+  const faqStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 text-slate-950">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }} />
       <section className="bg-[#0D1520] text-white">
         <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <BrandLogo />
@@ -241,6 +288,45 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               </div>
             </div>
           </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-50">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+          <div>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Who it fits</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Built for quote-heavy trades and service businesses.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              If your team sends estimates every week and too many go quiet after the first send, QuoteFollowUp gives you a lightweight quote management system focused on follow-through rather than a full CRM rollout.
+            </p>
+          </div>
+          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-950">Common use cases</h3>
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+              {useCases.map((item) => (
+                <li key={item} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">FAQ</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Straight answers before you sign up.</h2>
+          </div>
+          <div className="mt-8 grid gap-4">
+            {faqs.map((item) => (
+              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+                <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{item.answer}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
