@@ -1,24 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Background -->
-  <rect width="32" height="32" rx="7" fill="#1A2B42"/>
-
-  <!-- Document body -->
-  <rect x="5" y="4" width="14" height="18" rx="2.2" fill="#243958"/>
-  <rect x="5" y="4" width="14" height="18" rx="2.2" stroke="#2E4E74" stroke-width="1"/>
-
-  <!-- Folded corner -->
-  <polygon points="15,4 19,8 15,8" fill="#111E2E"/>
-  <polyline points="15,4 15,8 19,8" stroke="#2E4E74" stroke-width="1" stroke-linejoin="round"/>
-
-  <!-- Line items -->
-  <rect x="7.5" y="11" width="5" height="1.6" rx="0.8" fill="#3B82F6" opacity="0.95"/>
-  <rect x="7.5" y="14" width="8" height="1.6" rx="0.8" fill="#5A7A9A" opacity="0.6"/>
-  <rect x="7.5" y="17" width="6" height="1.6" rx="0.8" fill="#5A7A9A" opacity="0.4"/>
-
-  <!-- Arrow -->
-  <line x1="20" y1="17" x2="27.5" y2="17" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round"/>
-  <polyline points="24,13.5 28,17 24,20.5" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <!-- Pulse dot -->
-  <circle cx="28" cy="17" r="1.5" fill="#60A5FA"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Dark background rounded square -->
+  <rect width="32" height="32" rx="6" fill="#1a2e4a"/>
+  
+  <!-- Quote document shape -->
+  <rect x="7" y="5" width="14" height="18" rx="2" fill="#2d6bcf"/>
+  
+  <!-- Document lines -->
+  <rect x="9.5" y="9" width="9" height="1.5" rx="0.75" fill="white" opacity="0.9"/>
+  <rect x="9.5" y="12" width="9" height="1.5" rx="0.75" fill="white" opacity="0.9"/>
+  <rect x="9.5" y="15" width="6" height="1.5" rx="0.75" fill="white" opacity="0.9"/>
+  
+  <!-- Follow-up arrow -->
+  <circle cx="22" cy="22" r="7" fill="#f59e0b"/>
+  <path d="M19 22 L23 22 M21.5 19.5 L24 22 L21.5 24.5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>
