@@ -65,7 +65,7 @@ const structuredData = [
     name: 'QuoteFollowUp',
     url: 'https://quotefollowup.online',
     email: 'quotefollowup@outlook.com',
-    logo: 'https://quotefollowup.online/favicon-512.png',
+    logo: 'https://quotefollowup.online/google-search-logo.png',
   },
   {
     '@context': 'https://schema.org',
@@ -78,6 +78,7 @@ const structuredData = [
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: 'QuoteFollowUp',
+    image: 'https://quotefollowup.online/google-search-logo.png',
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Quote management and follow-up software',
     operatingSystem: 'Web',
