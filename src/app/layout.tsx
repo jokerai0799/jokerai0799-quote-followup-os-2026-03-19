@@ -50,10 +50,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico', type: 'image/x-icon' },
-      { url: '/brand/favicon.svg', type: 'image/svg+xml' },
-      { url: '/brand/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-512.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: '/brand/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     shortcut: ['/favicon.ico'],
   },
 }
@@ -65,7 +64,7 @@ const structuredData = [
     name: 'QuoteFollowUp',
     url: 'https://quotefollowup.online',
     email: 'quotefollowup@outlook.com',
-    logo: 'https://quotefollowup.online/brand/favicon-32.png',
+    logo: 'https://quotefollowup.online/favicon-512.png',
   },
   {
     '@context': 'https://schema.org',
