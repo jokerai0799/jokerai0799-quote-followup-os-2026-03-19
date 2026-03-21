@@ -77,10 +77,24 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
           {trial.activeTrial ? (
             <div className="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-950 shadow-sm">
-              <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.</span>{' '}
-              {workspace?.role === 'owner'
-                ? `Upgrade to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
-                : 'The workspace owner can upgrade before the trial ends. Your personal workspace billing does not affect access while you are working inside this workspace.'}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.</span>{' '}
+                  {workspace?.role === 'owner'
+                    ? `Upgrade to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
+                    : 'The workspace owner can upgrade before the trial ends. Your personal workspace billing does not affect access while you are working inside this workspace.'}
+                </div>
+                {workspace?.role === 'owner' ? (
+                  <form action={startSubscriptionCheckoutAction}>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center justify-center rounded-xl border border-emerald-600 bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-emerald-500 hover:bg-emerald-500"
+                    >
+                      Subscribe now
+                    </button>
+                  </form>
+                ) : null}
+              </div>
             </div>
           ) : null}
 
