@@ -42,7 +42,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-center xl:gap-8">
-              <BrandLogo href="/dashboard" showTagline={false} />
+              <BrandLogo href="/" showTagline={false} />
               <div className="min-w-0">
                 <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
               </div>
