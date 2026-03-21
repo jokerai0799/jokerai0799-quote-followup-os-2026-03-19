@@ -41,19 +41,19 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       <header className="border-b border-slate-800 bg-[#162033] text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)]">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex min-w-0 flex-col gap-4 xl:flex-row xl:items-center xl:gap-8">
+            <div className="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-center xl:gap-8">
               <BrandLogo href="/" showTagline={false} />
               <div className="min-w-0">
                 <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 xl:flex-nowrap xl:justify-end">
+            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center xl:flex-nowrap xl:justify-end">
               <WorkspaceSwitcher workspaces={workspaceOptions} activeWorkspaceId={workspace?.workspaceId} user={user ? { id: user.id, name: user.name, email: user.email } : null} />
 
               <Link
                 href="/quotes/new"
-                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
+                className="inline-flex w-full items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500 sm:w-auto"
               >
                 New quote
               </Link>
@@ -61,7 +61,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white"
+                  className="inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white sm:w-auto"
                 >
                   Sign out
                 </button>

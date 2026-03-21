@@ -40,7 +40,7 @@ export function QuoteQuickActions({
     : 'rounded-lg border px-3 py-2 text-xs font-medium transition'
 
   return (
-    <div className={compact ? 'flex max-w-[210px] flex-wrap justify-end gap-1.5' : 'flex flex-wrap gap-2'}>
+    <div className={compact ? 'flex w-full flex-wrap gap-1.5 md:max-w-[210px] md:justify-end' : 'flex flex-wrap gap-2'}>
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(message)}

@@ -27,59 +27,111 @@ export function MetricCard({ label, value, subtext }: { label: string; value: st
 
 export function QuoteTable({ quotes }: { quotes: Quote[] }) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm">
-      <table className="min-w-full divide-y divide-zinc-200 text-sm">
-        <thead className="bg-zinc-50 text-left text-zinc-500">
-          <tr>
-            <th className="px-4 py-3 font-medium">Client</th>
-            <th className="px-4 py-3 font-medium">Quote</th>
-            <th className="px-4 py-3 font-medium">Value</th>
-            <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium">Next follow-up</th>
-            <th className="px-4 py-3 font-medium"></th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-zinc-100">
-          {quotes.map((quote) => {
-            const chase = getChaseState(quote)
-            return (
-              <tr key={quote.id} className="align-top">
-                <td className="px-4 py-4">
-                  <p className="font-medium text-zinc-900">{quote.clientName}</p>
-                  <p className="text-zinc-500">{quote.contactName || quote.email || 'No contact yet'}</p>
-                </td>
-                <td className="px-4 py-4">
+    <>
+      <div className="grid gap-4 md:hidden">
+        {quotes.map((quote) => {
+          const chase = getChaseState(quote)
+          return (
+            <article key={quote.id} className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold text-zinc-950">{quote.clientName}</p>
+                  <p className="mt-1 text-sm text-zinc-500">{quote.contactName || quote.email || 'No contact yet'}</p>
+                </div>
+                <StatusBadge status={quote.status} />
+              </div>
+
+              <div className="mt-4 space-y-3 text-sm">
+                <div>
                   <p className="font-medium text-zinc-900">{quote.title}</p>
                   <p className="text-zinc-500">Sent {formatDate(quote.sentDate)}</p>
-                </td>
-                <td className="px-4 py-4 font-medium text-zinc-900">{formatCurrency(quote.value)}</td>
-                <td className="px-4 py-4"><StatusBadge status={quote.status} /></td>
-                <td className="px-4 py-4 text-zinc-600">
-                  {chase.nextDate ? formatDate(chase.nextDate) : '—'}
-                  {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
-                  {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
-                </td>
-                <td className="w-[220px] px-4 py-4 text-right">
-                  <div className="flex flex-col items-end gap-1.5">
-                    <Link className="font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
-                      Edit
-                    </Link>
-                    <QuoteQuickActions
-                      quoteId={quote.id}
-                      quoteTitle={quote.title}
-                      quoteEmail={quote.email}
-                      status={quote.status}
-                      message={renderTemplate(quote)}
-                      compact
-                    />
+                </div>
+                <div className="grid grid-cols-2 gap-3 rounded-2xl bg-zinc-50 p-3">
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-zinc-500">Value</p>
+                    <p className="mt-1 font-medium text-zinc-900">{formatCurrency(quote.value)}</p>
                   </div>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-zinc-500">Next follow-up</p>
+                    <p className="mt-1 font-medium text-zinc-900">{chase.nextDate ? formatDate(chase.nextDate) : '—'}</p>
+                    {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
+                    {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3 border-t border-zinc-100 pt-4">
+                <Link className="inline-flex font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
+                  Edit quote
+                </Link>
+                <QuoteQuickActions
+                  quoteId={quote.id}
+                  quoteTitle={quote.title}
+                  quoteEmail={quote.email}
+                  status={quote.status}
+                  message={renderTemplate(quote)}
+                  compact
+                />
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm md:block">
+        <table className="min-w-full divide-y divide-zinc-200 text-sm">
+          <thead className="bg-zinc-50 text-left text-zinc-500">
+            <tr>
+              <th className="px-4 py-3 font-medium">Client</th>
+              <th className="px-4 py-3 font-medium">Quote</th>
+              <th className="px-4 py-3 font-medium">Value</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="px-4 py-3 font-medium">Next follow-up</th>
+              <th className="px-4 py-3 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-100">
+            {quotes.map((quote) => {
+              const chase = getChaseState(quote)
+              return (
+                <tr key={quote.id} className="align-top">
+                  <td className="px-4 py-4">
+                    <p className="font-medium text-zinc-900">{quote.clientName}</p>
+                    <p className="text-zinc-500">{quote.contactName || quote.email || 'No contact yet'}</p>
+                  </td>
+                  <td className="px-4 py-4">
+                    <p className="font-medium text-zinc-900">{quote.title}</p>
+                    <p className="text-zinc-500">Sent {formatDate(quote.sentDate)}</p>
+                  </td>
+                  <td className="px-4 py-4 font-medium text-zinc-900">{formatCurrency(quote.value)}</td>
+                  <td className="px-4 py-4"><StatusBadge status={quote.status} /></td>
+                  <td className="px-4 py-4 text-zinc-600">
+                    {chase.nextDate ? formatDate(chase.nextDate) : '—'}
+                    {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
+                    {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
+                  </td>
+                  <td className="w-[220px] px-4 py-4 text-right">
+                    <div className="flex flex-col items-end gap-1.5">
+                      <Link className="font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
+                        Edit
+                      </Link>
+                      <QuoteQuickActions
+                        quoteId={quote.id}
+                        quoteTitle={quote.title}
+                        quoteEmail={quote.email}
+                        status={quote.status}
+                        message={renderTemplate(quote)}
+                        compact
+                      />
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
 

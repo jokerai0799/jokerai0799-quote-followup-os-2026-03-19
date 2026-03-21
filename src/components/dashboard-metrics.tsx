@@ -19,7 +19,7 @@ export function DashboardMetrics({ totalQuotes, valueAtRisk, wonRevenue, overdue
   ]
 
   return (
-    <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
       {cards.map((card) => (
         <Link
           key={card.label}
