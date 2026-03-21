@@ -33,7 +33,7 @@ export default async function PlaybookPage() {
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Playbook</p>
         <h2 className="mt-2 text-3xl font-semibold text-slate-950">Default follow-up approach</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-          Use this as a simple follow-up rhythm for small service businesses: send clearly, follow up consistently, and work toward a clear yes, no, or later.
+          A simple follow-up rhythm for small service businesses, built to keep quotes moving toward a clear yes, no, or later.
         </p>
       </div>
 

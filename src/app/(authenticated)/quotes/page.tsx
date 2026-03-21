@@ -97,9 +97,9 @@ export default async function QuotesPage({ searchParams }: PageProps) {
           </div>
           <Link
             href="/quotes/new"
-            className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold !text-white text-white leading-none shadow-[0_8px_20px_rgba(14,165,233,0.22)] transition hover:border-sky-400 hover:bg-sky-500 hover:!text-white"
+            className="inline-flex items-center justify-center rounded-xl border border-sky-500 bg-sky-600 px-3.5 py-2 text-sm font-semibold !text-white text-white leading-none shadow-[0_6px_16px_rgba(14,165,233,0.18)] transition hover:border-sky-400 hover:bg-sky-500 hover:!text-white"
           >
-            Add quote
+            New quote
           </Link>
         </div>
       </div>
