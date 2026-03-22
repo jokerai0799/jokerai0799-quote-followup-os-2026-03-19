@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 
-export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || 'price_1TCt9sRuuPfhc5ohti3XqS9f'
+export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || 'price_1TDrIFRuuPfhc5ohdhIgETXp'
 
 export function getStripeClient() {
   const secretKey = process.env.STRIPE_SECRET_KEY
