@@ -95,12 +95,6 @@ export default async function QuotesPage({ searchParams }: PageProps) {
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Tracked</p>
             <p className="mt-1 text-xl font-semibold text-slate-950">{filteredQuotes.length}</p>
           </div>
-          <Link
-            href="/quotes/new"
-            className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
-          >
-            New quote
-          </Link>
         </div>
       </div>
       <QuoteTable quotes={filteredQuotes} />
