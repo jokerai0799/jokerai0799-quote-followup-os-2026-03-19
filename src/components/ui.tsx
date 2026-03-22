@@ -143,8 +143,8 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
         const chase = getChaseState(quote)
         return (
           <div key={quote.id} className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-zinc-950">{quote.clientName}</h3>
                   <StatusBadge status={quote.status} />
@@ -152,10 +152,13 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
                 <p className="mt-1 text-sm text-zinc-600">{quote.title}</p>
                 <p className="mt-3 text-sm text-zinc-500">Next chase: {chase.nextDate ? formatDate(chase.nextDate) : '—'}</p>
               </div>
-              <div className="md:max-w-md">
-                <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Suggested message</p>
-                <p className="mt-2 rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-700">{renderTemplate(quote)}</p>
-              </div>
+              <Link href={`/quotes/${quote.id}/edit`} className="shrink-0 text-sm font-medium text-zinc-700 underline-offset-4 transition hover:text-zinc-950 hover:underline">
+                Edit
+              </Link>
+            </div>
+            <div className="mt-4 md:max-w-md">
+              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Suggested message</p>
+              <p className="mt-2 rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-700">{renderTemplate(quote)}</p>
             </div>
             <div className="mt-4 border-t border-zinc-100 pt-4">
               <QuoteQuickActions
