@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { WORKSPACE_CURRENCIES, type WorkspaceCurrency } from '@/lib/currency'
 import { sendSignupVerificationEmail } from '@/lib/email'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { buildPendingVerificationPasswordHash, createUser, findUserByEmail, isUserEmailVerified } from '@/lib/users'
 import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
@@ -30,6 +31,17 @@ export type SignupState = {
 }
 
 export async function signupAction(_prevState: SignupState, formData: FormData): Promise<SignupState> {
+  const rawEmail = String(formData.get('email') ?? '').trim().toLowerCase()
+  const rateLimit = checkRateLimit({
+    key: `signup:${rawEmail || 'unknown'}`,
+    limit: 4,
+    windowMs: 10 * 60 * 1000,
+  })
+
+  if (!rateLimit.ok) {
+    return { error: 'Too many signup attempts. Please wait a few minutes and try again.' }
+  }
+
   const parsed = signupSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),

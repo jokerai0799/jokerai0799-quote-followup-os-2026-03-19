@@ -138,6 +138,52 @@ create trigger trg_quotes_updated_at
 before update on public.quotes
 for each row execute function public.set_updated_at();
 
+alter table public.users enable row level security;
+alter table public.workspaces enable row level security;
+alter table public.workspace_memberships enable row level security;
+alter table public.subscriptions enable row level security;
+alter table public.quotes enable row level security;
+
+drop policy if exists "service_role_full_access_users" on public.users;
+create policy "service_role_full_access_users"
+on public.users
+for all
+to service_role
+using (true)
+with check (true);
+
+drop policy if exists "service_role_full_access_workspaces" on public.workspaces;
+create policy "service_role_full_access_workspaces"
+on public.workspaces
+for all
+to service_role
+using (true)
+with check (true);
+
+drop policy if exists "service_role_full_access_workspace_memberships" on public.workspace_memberships;
+create policy "service_role_full_access_workspace_memberships"
+on public.workspace_memberships
+for all
+to service_role
+using (true)
+with check (true);
+
+drop policy if exists "service_role_full_access_subscriptions" on public.subscriptions;
+create policy "service_role_full_access_subscriptions"
+on public.subscriptions
+for all
+to service_role
+using (true)
+with check (true);
+
+drop policy if exists "service_role_full_access_quotes" on public.quotes;
+create policy "service_role_full_access_quotes"
+on public.quotes
+for all
+to service_role
+using (true)
+with check (true);
+
 -- No demo workspace bootstrap here.
 -- Production workspaces are provisioned per user by application logic,
 -- so new accounts always start with a clean private workspace.

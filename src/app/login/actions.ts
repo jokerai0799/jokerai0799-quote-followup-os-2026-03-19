@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
 import { signIn } from '@/auth'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { findUserByEmail, getComparablePasswordHash, isUserEmailVerified } from '@/lib/users'
 
 const loginSchema = z.object({
@@ -16,6 +17,17 @@ export type LoginState = {
 }
 
 export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
+  const rawEmail = String(formData.get('email') ?? '').trim().toLowerCase()
+  const rateLimit = checkRateLimit({
+    key: `login:${rawEmail || 'unknown'}`,
+    limit: 8,
+    windowMs: 10 * 60 * 1000,
+  })
+
+  if (!rateLimit.ok) {
+    return { error: 'Too many login attempts. Please wait a few minutes and try again.' }
+  }
+
   const parsed = loginSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
