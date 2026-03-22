@@ -167,6 +167,7 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
                 quoteEmail={quote.email}
                 status={quote.status}
                 message={renderTemplate(quote)}
+                dense
               />
             </div>
           </div>

@@ -22,6 +22,7 @@ export function QuoteQuickActions({
   status,
   message,
   compact = false,
+  dense = false,
 }: {
   quoteId: string
   quoteTitle: string
@@ -29,6 +30,7 @@ export function QuoteQuickActions({
   status: QuoteStatus
   message: string
   compact?: boolean
+  dense?: boolean
 }) {
   const [pending, startTransition] = useTransition()
   const mailtoHref = quoteEmail
@@ -37,10 +39,12 @@ export function QuoteQuickActions({
 
   const baseButtonClass = compact
     ? 'rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition'
-    : 'rounded-lg border px-3 py-2 text-xs font-medium transition'
+    : dense
+      ? 'rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition'
+      : 'rounded-lg border px-3 py-2 text-xs font-medium transition'
 
   return (
-    <div className={compact ? 'flex w-full flex-wrap gap-1.5 md:max-w-[210px] md:justify-end' : 'flex flex-wrap gap-2'}>
+    <div className={compact ? 'flex w-full flex-wrap gap-1.5 md:max-w-[210px] md:justify-end' : dense ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
       {mailtoHref ? (
         <Link
           href={mailtoHref}
@@ -70,7 +74,7 @@ export function QuoteQuickActions({
             ))
         : null}
 
-      {!compact ? <DeleteQuoteButton quoteId={quoteId} compact /> : null}
+      {!compact ? <DeleteQuoteButton quoteId={quoteId} compact={dense} /> : null}
     </div>
   )
 }
