@@ -1,11 +1,11 @@
 'use server'
 
 import bcrypt from 'bcryptjs'
-import { AuthError } from 'next-auth'
+import { redirect } from 'next/navigation'
 import { z } from 'zod'
-import { signIn } from '@/auth'
 import { WORKSPACE_CURRENCIES, type WorkspaceCurrency } from '@/lib/currency'
-import { createUser, findUserByEmail } from '@/lib/users'
+import { sendSignupVerificationEmail } from '@/lib/email'
+import { buildPendingVerificationPasswordHash, createUser, findUserByEmail, isUserEmailVerified } from '@/lib/users'
 import { ensureWorkspaceForUser } from '@/lib/workspaces'
 
 const currencyEnum = z.enum([...WORKSPACE_CURRENCIES] as [WorkspaceCurrency, ...WorkspaceCurrency[]])
@@ -45,37 +45,32 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
   }
 
   const existing = await findUserByEmail(parsed.data.email)
-  if (existing) {
+  if (existing && isUserEmailVerified(existing)) {
     return { error: 'An account with this email already exists' }
   }
 
-  const passwordHash = await bcrypt.hash(parsed.data.password, 12)
-  const user = await createUser({
-    email: parsed.data.email,
-    name: parsed.data.name,
-    passwordHash,
-  })
-
-  await ensureWorkspaceForUser({
-    userId: user.id,
-    name: parsed.data.name,
-    email: parsed.data.email,
-    workspaceName: parsed.data.companyName,
-    referralCode: parsed.data.referralCode || null,
-    currencyCode: parsed.data.currencyCode,
-  })
-
-  try {
-    await signIn('credentials', {
+  if (!existing) {
+    const passwordHash = await bcrypt.hash(parsed.data.password, 12)
+    const user = await createUser({
       email: parsed.data.email,
-      password: parsed.data.password,
-      redirectTo: '/dashboard',
+      name: parsed.data.name,
+      passwordHash: buildPendingVerificationPasswordHash(passwordHash),
     })
-    return {}
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: 'Account created, but auto sign-in failed. Please log in.' }
-    }
-    throw error
+
+    await ensureWorkspaceForUser({
+      userId: user.id,
+      name: parsed.data.name,
+      email: parsed.data.email,
+      workspaceName: parsed.data.companyName,
+      referralCode: parsed.data.referralCode || null,
+      currencyCode: parsed.data.currencyCode,
+    })
   }
+
+  await sendSignupVerificationEmail({
+    email: parsed.data.email,
+    name: parsed.data.name,
+  })
+
+  redirect(`/signup/check-email?email=${encodeURIComponent(parsed.data.email)}`)
 }

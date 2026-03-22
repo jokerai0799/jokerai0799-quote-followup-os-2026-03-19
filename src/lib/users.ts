@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import { supabase } from './supabase'
 
+const PENDING_VERIFICATION_PREFIX = 'pending:'
+
 export type UserRecord = {
   id: string
   email: string
@@ -31,6 +33,20 @@ function mapRow(row: UserRow): UserRecord {
     updatedAt: row.updated_at,
     defaultWorkspaceId: row.default_workspace_id ?? null,
   }
+}
+
+export function buildPendingVerificationPasswordHash(passwordHash: string) {
+  return `${PENDING_VERIFICATION_PREFIX}${passwordHash}`
+}
+
+export function isUserEmailVerified(user: Pick<UserRecord, 'passwordHash'>) {
+  return !user.passwordHash.startsWith(PENDING_VERIFICATION_PREFIX)
+}
+
+export function getComparablePasswordHash(user: Pick<UserRecord, 'passwordHash'>) {
+  return user.passwordHash.startsWith(PENDING_VERIFICATION_PREFIX)
+    ? user.passwordHash.slice(PENDING_VERIFICATION_PREFIX.length)
+    : user.passwordHash
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | null> {
@@ -136,6 +152,31 @@ export async function upsertUserByEmail({
 
   if (error) {
     throw new Error(`Failed to upsert user: ${error.message}`)
+  }
+
+  return mapRow(data)
+}
+
+export async function markUserEmailVerified(id: string) {
+  const user = await findUserById(id)
+  if (!user) {
+    throw new Error('User not found')
+  }
+
+  if (isUserEmailVerified(user)) {
+    return user
+  }
+
+  const nextPasswordHash = getComparablePasswordHash(user)
+  const { data, error } = await supabase
+    .from('users')
+    .update({ password_hash: nextPasswordHash, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select('id, email, name, password_hash, created_at, updated_at, default_workspace_id')
+    .single<UserRow>()
+
+  if (error) {
+    throw new Error(`Failed to verify user email: ${error.message}`)
   }
 
   return mapRow(data)

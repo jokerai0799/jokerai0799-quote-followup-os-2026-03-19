@@ -5,11 +5,23 @@ import { loginAction, type LoginState } from './actions'
 
 const initialState: LoginState = {}
 
-export function LoginForm() {
+type Notice = {
+  tone: 'success' | 'warning'
+  message: string
+}
+
+export function LoginForm({ notice }: { notice?: Notice | null }) {
   const [state, formAction] = useFormState(loginAction, initialState)
 
   return (
     <form action={formAction} className="space-y-5">
+      {notice ? (
+        <div className={notice.tone === 'success'
+          ? 'rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900'
+          : 'rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900'}>
+          {notice.message}
+        </div>
+      ) : null}
       <div>
         <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="email">
           Email
