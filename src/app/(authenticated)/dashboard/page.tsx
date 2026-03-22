@@ -35,9 +35,6 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const currentQuotePage = Math.min(getDashboardQuotesPage(quotesPage), totalQuotePages)
   const quoteStart = (currentQuotePage - 1) * DASHBOARD_QUOTES_PER_PAGE
   const paginatedQuotes = quotes.slice(quoteStart, quoteStart + DASHBOARD_QUOTES_PER_PAGE)
-  const quoteRangeStart = quotes.length ? quoteStart + 1 : 0
-  const quoteRangeEnd = Math.min(quoteStart + DASHBOARD_QUOTES_PER_PAGE, quotes.length)
-
   return (
     <>
       <section className="rounded-[2rem] border border-slate-800 bg-[#0F172A] px-6 py-8 text-white shadow-xl sm:px-8">
@@ -167,21 +164,37 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
           {quotes.length > DASHBOARD_QUOTES_PER_PAGE ? (
             <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-900">Page {currentQuotePage} of {totalQuotePages}</p>
-                <p className="text-sm text-slate-500">
-                  Showing <span className="font-medium text-slate-900">{quoteRangeStart}-{quoteRangeEnd}</span> of <span className="font-medium text-slate-900">{quotes.length}</span> quotes.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-900">Page {currentQuotePage} of {totalQuotePages}</p>
+              <div className="flex flex-wrap items-center gap-2">
                 {currentQuotePage > 1 ? (
                   <Link href={currentQuotePage - 1 === 1 ? '/dashboard' : `/dashboard?quotesPage=${currentQuotePage - 1}`} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
-                    Previous page
+                    Previous
                   </Link>
                 ) : null}
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {Array.from({ length: totalQuotePages }, (_, index) => {
+                    const page = index + 1
+                    const href = page === 1 ? '/dashboard' : `/dashboard?quotesPage=${page}`
+                    const isActive = page === currentQuotePage
+
+                    return (
+                      <Link
+                        key={page}
+                        href={href}
+                        className={isActive
+                          ? 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-slate-950 px-3 text-sm font-medium text-white'
+                          : 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950'}
+                      >
+                        {page}
+                      </Link>
+                    )
+                  })}
+                </div>
+
                 {currentQuotePage < totalQuotePages ? (
-                  <Link href={`/dashboard?quotesPage=${currentQuotePage + 1}`} className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 !text-white">
-                    Next page
+                  <Link href={`/dashboard?quotesPage=${currentQuotePage + 1}`} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
+                    Next
                   </Link>
                 ) : null}
               </div>
