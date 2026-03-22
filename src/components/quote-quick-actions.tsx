@@ -41,14 +41,6 @@ export function QuoteQuickActions({
 
   return (
     <div className={compact ? 'flex w-full flex-wrap gap-1.5 md:max-w-[210px] md:justify-end' : 'flex flex-wrap gap-2'}>
-      <button
-        type="button"
-        onClick={() => navigator.clipboard.writeText(message)}
-        className={`${baseButtonClass} border-slate-300 text-slate-700 hover:border-slate-950 hover:text-slate-950`}
-      >
-        Copy message
-      </button>
-
       {mailtoHref ? (
         <Link
           href={mailtoHref}
