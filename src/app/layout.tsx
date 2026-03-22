@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Analytics } from '@vercel/analytics/next'
 import { DM_Mono, Instrument_Serif } from 'next/font/google'
 import { seoPageLinks } from '@/lib/seo-pages'
 import './globals.css'
@@ -144,6 +145,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </div>
           </footer>
         </div>
+        <Analytics />
       </body>
     </html>
   )
