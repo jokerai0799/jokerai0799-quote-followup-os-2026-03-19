@@ -155,6 +155,20 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
         </div>
       </section>
 
+      <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
+            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace looks like before you create yours.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
+            </p>
+          </div>
+
+          <MarketingDemo />
+        </div>
+      </section>
+
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What we offer</p>
@@ -171,20 +185,6 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               <p className="mt-3 text-sm leading-6 text-slate-600">{feature.body}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace can look like before you create yours.</h2>
-            <p className="mt-4 text-base leading-7 text-slate-600">
-              Explore the product layout, see how quote statuses stand out, and get a clear feel for how the workspace is designed to work day to day.
-            </p>
-          </div>
-
-          <MarketingDemo />
         </div>
       </section>
 
