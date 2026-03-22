@@ -26,7 +26,7 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: P
           <BrandLogo compact />
         </div>
         <div className="space-y-3">
-          <h1 className="font-serif text-4xl italic tracking-tight text-slate-50">Check your email</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-slate-50">Check your email</h1>
           <p className="text-sm leading-6 text-slate-300">
             We sent a verification link{email ? ` to ${email}` : ''}. Open it to activate your account, then log in.
           </p>
