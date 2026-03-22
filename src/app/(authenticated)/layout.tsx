@@ -12,7 +12,7 @@ import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp 
 import { getDailyChaseList, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { findUserById } from '@/lib/users'
-import { ensureWorkspaceForUser, listWorkspaceContextsForUser } from '@/lib/workspaces'
+import { getWorkspaceContextForUser, listWorkspaceContextsForUser } from '@/lib/workspaces'
 
 export default async function AuthenticatedLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -21,9 +21,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   }
 
   const user = await findUserById(session.user.id)
-  const workspace = user
-    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email })
-    : null
+  const workspace = await getWorkspaceContextForUser(session.user.id)
   const workspaceOptions = user ? await listWorkspaceContextsForUser(user.id) : []
   const trial = getTrialState({
     createdAt: workspace?.createdAt,

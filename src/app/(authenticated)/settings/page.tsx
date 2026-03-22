@@ -6,7 +6,7 @@ import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp 
 import { WORKSPACE_CURRENCY_OPTIONS } from '@/lib/currency'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
-import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
+import { getWorkspaceContextForUser, getWorkspaceMembers } from '@/lib/workspaces'
 
 type PageProps = {
   searchParams: Promise<{ billing?: string; saved?: string }>
@@ -20,7 +20,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
 
   const { billing, saved } = await searchParams
   const [workspace, quotes] = await Promise.all([
-    ensureWorkspaceForUser({ userId: session.user.id }),
+    getWorkspaceContextForUser(session.user.id),
     getQuotes(session.user.id),
   ])
 

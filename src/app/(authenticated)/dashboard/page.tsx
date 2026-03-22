@@ -5,7 +5,7 @@ import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { DashboardMetrics } from '@/components/dashboard-metrics'
 import { formatCurrency, getDailyChaseList, getMetrics, getQuotes, getStatusBreakdown } from '@/lib/quotes'
 import { findUserById } from '@/lib/users'
-import { ensureWorkspaceForUser, getWorkspaceDisplayName } from '@/lib/workspaces'
+import { getWorkspaceDisplayName } from '@/lib/workspaces'
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -15,9 +15,7 @@ export default async function DashboardPage() {
 
   const access = await requireWorkspaceUsageAccess(session.user.id)
   const user = await findUserById(session.user.id)
-  const workspace = user
-    ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email })
-    : access.workspace
+  const workspace = access.workspace
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)
   const metrics = getMetrics(quotes)
