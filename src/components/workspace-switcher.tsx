@@ -1,4 +1,5 @@
 import { setActiveWorkspaceAction } from '@/app/actions'
+import { WorkspaceSwitcherSubmit } from '@/components/workspace-switcher-submit'
 import { getWorkspaceDisplayName, type WorkspaceContext } from '@/lib/workspaces'
 
 type WorkspaceSwitcherProps = {
@@ -58,22 +59,11 @@ export function WorkspaceSwitcher({ workspaces, activeWorkspaceId, user }: Works
             return (
               <form key={workspace.workspaceId} action={setActiveWorkspaceAction}>
                 <input type="hidden" name="workspaceId" value={workspace.workspaceId} />
-                <button
-                  type="submit"
-                  className={isActive
-                    ? 'flex w-full items-center justify-between rounded-xl border border-sky-200 bg-sky-50 px-3 py-2.5 text-left'
-                    : 'flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left transition hover:bg-slate-50'}
-                >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-medium text-slate-950">{getWorkspaceDisplayName(workspace, user)}</span>
-                    <span className="mt-0.5 block text-xs text-slate-500">{getWorkspaceMetaLabel(workspace, user?.id ?? null)}</span>
-                  </span>
-                  {isActive ? (
-                    <span className="rounded-full border border-sky-200 bg-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.18em] text-sky-700">
-                      Active
-                    </span>
-                  ) : null}
-                </button>
+                <WorkspaceSwitcherSubmit
+                  label={getWorkspaceDisplayName(workspace, user)}
+                  meta={getWorkspaceMetaLabel(workspace, user?.id ?? null)}
+                  active={isActive}
+                />
               </form>
             )
           })}
