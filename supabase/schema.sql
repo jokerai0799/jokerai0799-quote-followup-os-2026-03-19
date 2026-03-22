@@ -45,6 +45,8 @@ alter table public.subscriptions alter column monthly_price_gbp type numeric(10,
 alter table public.subscriptions alter column status set default 'trialing';
 alter table public.subscriptions drop constraint if exists subscriptions_status_check;
 alter table public.subscriptions add constraint subscriptions_status_check check (status in ('trialing', 'active', 'past_due', 'canceled'));
+alter table public.workspaces drop constraint if exists workspaces_currency_code_check;
+alter table public.workspaces add constraint workspaces_currency_code_check check (currency_code in ('GBP', 'USD', 'EUR', 'AUD', 'CAD'));
 alter table public.subscriptions add column if not exists current_period_end timestamptz;
 alter table public.subscriptions add column if not exists cancel_at_period_end boolean not null default false;
 alter table public.subscriptions add column if not exists canceled_at timestamptz;
@@ -89,6 +91,7 @@ create table if not exists public.quotes (
 alter table public.users add column if not exists default_workspace_id uuid references public.workspaces(id) on delete set null;
 alter table public.workspaces add column if not exists referral_code text;
 alter table public.workspaces add column if not exists referred_at timestamptz;
+alter table public.workspaces add column if not exists currency_code text not null default 'GBP';
 alter table public.quotes add column if not exists workspace_id uuid references public.workspaces(id) on delete cascade;
 alter table public.quotes drop constraint if exists quotes_status_check;
 alter table public.quotes add constraint quotes_status_check check (status in ('draft', 'sent', 'due', 'replied', 'won', 'lost'));

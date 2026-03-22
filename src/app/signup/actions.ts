@@ -4,14 +4,18 @@ import bcrypt from 'bcryptjs'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
 import { signIn } from '@/auth'
+import { WORKSPACE_CURRENCIES, type WorkspaceCurrency } from '@/lib/currency'
 import { createUser, findUserByEmail } from '@/lib/users'
 import { ensureWorkspaceForUser } from '@/lib/workspaces'
+
+const currencyEnum = z.enum([...WORKSPACE_CURRENCIES] as [WorkspaceCurrency, ...WorkspaceCurrency[]])
 
 const signupSchema = z
   .object({
     name: z.string().trim().min(2, 'Enter your name'),
     email: z.string().trim().email('Enter a valid email'),
     companyName: z.string().trim().min(2, 'Enter your company name'),
+    currencyCode: currencyEnum.default('GBP'),
     password: z.string().min(8, 'Use at least 8 characters'),
     confirmPassword: z.string().min(8, 'Confirm your password'),
     referralCode: z.string().trim().max(64).optional().transform((value) => value?.trim() || ''),
@@ -30,6 +34,7 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
     name: formData.get('name'),
     email: formData.get('email'),
     companyName: formData.get('companyName'),
+    currencyCode: formData.get('currencyCode'),
     password: formData.get('password'),
     confirmPassword: formData.get('confirmPassword'),
     referralCode: formData.get('referralCode'),
@@ -57,6 +62,7 @@ export async function signupAction(_prevState: SignupState, formData: FormData):
     email: parsed.data.email,
     workspaceName: parsed.data.companyName,
     referralCode: parsed.data.referralCode || null,
+    currencyCode: parsed.data.currencyCode,
   })
 
   try {

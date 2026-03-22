@@ -1,15 +1,17 @@
+import { type WorkspaceCurrency } from '@/lib/currency'
 import { STATUSES, TEMPLATE_KEYS, type Quote } from '@/lib/quotes'
 
 type QuoteFormProps = {
   action: (formData: FormData) => void | Promise<void>
   quote?: Quote
   submitLabel: string
+  currencyCode?: WorkspaceCurrency
 }
 
 const fieldClass =
   'mt-2 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-0 transition focus:border-zinc-400'
 
-export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
+export function QuoteForm({ action, quote, submitLabel, currencyCode = 'GBP' }: QuoteFormProps) {
   return (
     <form action={action} className="grid gap-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
       <div className="grid gap-4 md:grid-cols-2">
@@ -34,7 +36,7 @@ export function QuoteForm({ action, quote, submitLabel }: QuoteFormProps) {
           <input className={fieldClass} name="title" defaultValue={quote?.title} required />
         </label>
         <label className="block text-sm font-medium text-zinc-700">
-          Value (GBP)
+          Value ({currencyCode})
           <input className={fieldClass} name="value" type="number" min="0" step="0.01" inputMode="decimal" defaultValue={quote?.value} required />
         </label>
         <label className="block text-sm font-medium text-zinc-700">

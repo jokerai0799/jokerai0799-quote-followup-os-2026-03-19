@@ -21,7 +21,7 @@ export default async function EditQuotePage({ params }: PageProps) {
     return null
   }
 
-  await requireWorkspaceUsageAccess(session.user.id)
+  const access = await requireWorkspaceUsageAccess(session.user.id)
   const { id } = await params
   const quote = await getQuote(id, session.user.id)
 
@@ -42,7 +42,7 @@ export default async function EditQuotePage({ params }: PageProps) {
         </Link>
       </div>
 
-      <QuoteForm action={updateQuote.bind(null, quote.id)} quote={quote} submitLabel="Save changes" />
+      <QuoteForm action={updateQuote.bind(null, quote.id)} quote={quote} submitLabel="Save changes" currencyCode={access.workspace?.currencyCode ?? 'GBP'} />
 
       <div className="rounded-3xl border border-rose-200 bg-white p-6 shadow-sm">
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-rose-500">Danger zone</p>

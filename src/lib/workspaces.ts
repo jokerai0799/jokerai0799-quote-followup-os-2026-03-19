@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { WORKSPACE_MONTHLY_PRICE_GBP } from './billing'
+import { normalizeWorkspaceCurrency, type WorkspaceCurrency } from './currency'
 import { supabase } from './supabase'
 
 type WorkspaceRow = {
@@ -10,6 +11,7 @@ type WorkspaceRow = {
   owner_user_id?: string | null
   referral_code?: string | null
   referred_at?: string | null
+  currency_code?: string | null
   created_at: string
 }
 
@@ -49,6 +51,7 @@ export type WorkspaceContext = {
   ownerUserId?: string | null
   referralCode?: string | null
   referredAt?: string | null
+  currencyCode: WorkspaceCurrency
   role: string
   subscriptionStatus: string
   planName: string | null
@@ -78,6 +81,7 @@ export function getWorkspaceDisplayName(workspace: WorkspaceContext | null, user
 }
 
 let workspaceModelAvailableCache: boolean | null = null
+let workspaceCurrencyColumnAvailableCache: boolean | null = null
 
 function slugify(input: string) {
   return input
@@ -108,10 +112,22 @@ export async function isWorkspaceModelAvailable() {
   return workspaceModelAvailableCache
 }
 
+async function isWorkspaceCurrencyColumnAvailable() {
+  if (workspaceCurrencyColumnAvailableCache !== null) {
+    return workspaceCurrencyColumnAvailableCache
+  }
+
+  const { error } = await supabase.from('workspaces').select('currency_code').limit(1)
+  workspaceCurrencyColumnAvailableCache = !error
+  return workspaceCurrencyColumnAvailableCache
+}
+
 export async function getWorkspaceContextForUser(userId: string): Promise<WorkspaceContext | null> {
   if (!(await isWorkspaceModelAvailable())) {
     return null
   }
+
+  const currencyColumnAvailable = await isWorkspaceCurrencyColumnAvailable()
 
   const [{ data: userRow, error: userError }, { data: memberships, error: membershipError }] = await Promise.all([
     supabase.from('users').select('default_workspace_id').eq('id', userId).maybeSingle<{ default_workspace_id?: string | null }>(),
@@ -141,7 +157,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
   }
 
   const [{ data: workspace, error: workspaceError }, { data: subscription, error: subscriptionError }] = await Promise.all([
-    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
+    supabase.from('workspaces').select(currencyColumnAvailable ? '*' : 'id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').eq('id', membership.workspace_id).single<WorkspaceRow>(),
     supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, provider, provider_customer_id, provider_subscription_id, current_period_end, cancel_at_period_end, canceled_at').eq('workspace_id', membership.workspace_id).maybeSingle<SubscriptionRow>(),
   ])
 
@@ -161,6 +177,7 @@ export async function getWorkspaceContextForUser(userId: string): Promise<Worksp
     ownerUserId: workspace.owner_user_id ?? null,
     referralCode: workspace.referral_code ?? null,
     referredAt: workspace.referred_at ?? null,
+    currencyCode: normalizeWorkspaceCurrency(workspace.currency_code),
     role: membership.role,
     subscriptionStatus: subscription?.status ?? 'trialing',
     planName: subscription?.plan_name ?? null,
@@ -180,6 +197,8 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
     return []
   }
 
+  const currencyColumnAvailable = await isWorkspaceCurrencyColumnAvailable()
+
   const { data: memberships, error: membershipError } = await supabase
     .from('workspace_memberships')
     .select('workspace_id, user_id, role, created_at')
@@ -198,7 +217,7 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
 
   const workspaceIds = membershipList.map((entry) => entry.workspace_id)
   const [{ data: workspaces, error: workspaceError }, { data: subscriptions, error: subscriptionError }] = await Promise.all([
-    supabase.from('workspaces').select('id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
+    supabase.from('workspaces').select(currencyColumnAvailable ? '*' : 'id, name, slug, is_template, owner_user_id, referral_code, referred_at, created_at').in('id', workspaceIds).returns<WorkspaceRow[]>(),
     supabase.from('subscriptions').select('workspace_id, status, plan_name, monthly_price_gbp, provider, provider_customer_id, provider_subscription_id, current_period_end, cancel_at_period_end, canceled_at').in('workspace_id', workspaceIds).returns<SubscriptionRow[]>(),
   ])
 
@@ -226,6 +245,7 @@ export async function listWorkspaceContextsForUser(userId: string): Promise<Work
       ownerUserId: workspace.owner_user_id ?? null,
       referralCode: workspace.referral_code ?? null,
       referredAt: workspace.referred_at ?? null,
+      currencyCode: normalizeWorkspaceCurrency(workspace.currency_code),
       role: membership.role,
       subscriptionStatus: subscription?.status ?? 'trialing',
       planName: subscription?.plan_name ?? null,
@@ -320,12 +340,24 @@ export async function getWorkspaceMembers(workspaceId: string): Promise<Workspac
   })
 }
 
-export async function renameWorkspace(workspaceId: string, name: string) {
+export async function updateWorkspaceDetails(workspaceId: string, {
+  name,
+  currencyCode,
+}: {
+  name: string
+  currencyCode?: WorkspaceCurrency
+}) {
   const trimmed = name.trim()
-  const { error } = await supabase.from('workspaces').update({ name: trimmed }).eq('id', workspaceId)
+  const payload: Record<string, string> = { name: trimmed }
+
+  if (currencyCode && await isWorkspaceCurrencyColumnAvailable()) {
+    payload.currency_code = currencyCode
+  }
+
+  const { error } = await supabase.from('workspaces').update(payload).eq('id', workspaceId)
 
   if (error) {
-    throw new Error(`Failed to rename workspace: ${error.message}`)
+    throw new Error(`Failed to update workspace: ${error.message}`)
   }
 }
 
@@ -474,12 +506,14 @@ export async function ensureWorkspaceForUser({
   email,
   workspaceName,
   referralCode,
+  currencyCode,
 }: {
   userId: string
   name?: string | null
   email?: string | null
   workspaceName?: string
   referralCode?: string | null
+  currencyCode?: WorkspaceCurrency
 }) {
   const existing = await getWorkspaceContextForUser(userId)
   if (existing) {
@@ -493,21 +527,28 @@ export async function ensureWorkspaceForUser({
   const finalWorkspaceName = workspaceName?.trim() || buildWorkspaceName(name, email)
   const slugBase = slugify(finalWorkspaceName)
   const slug = `${slugBase}-${randomUUID().slice(0, 8)}`
+  const normalizedCurrencyCode = normalizeWorkspaceCurrency(currencyCode)
 
   const normalizedReferralCode = referralCode?.trim() ? referralCode.trim() : null
+  const currencyColumnAvailable = await isWorkspaceCurrencyColumnAvailable()
+  const workspacePayload: Record<string, unknown> = {
+    id: randomUUID(),
+    name: finalWorkspaceName,
+    slug,
+    is_template: false,
+    owner_user_id: userId,
+    referral_code: normalizedReferralCode,
+    referred_at: normalizedReferralCode ? new Date().toISOString() : null,
+  }
+
+  if (currencyColumnAvailable) {
+    workspacePayload.currency_code = normalizedCurrencyCode
+  }
 
   const { data: workspace, error: workspaceError } = await supabase
     .from('workspaces')
-    .insert({
-      id: randomUUID(),
-      name: finalWorkspaceName,
-      slug,
-      is_template: false,
-      owner_user_id: userId,
-      referral_code: normalizedReferralCode,
-      referred_at: normalizedReferralCode ? new Date().toISOString() : null,
-    })
-    .select('id, name, slug, is_template, created_at')
+    .insert(workspacePayload)
+    .select(currencyColumnAvailable ? '*' : 'id, name, slug, is_template, created_at')
     .single<WorkspaceRow>()
 
   if (workspaceError) {
@@ -551,6 +592,7 @@ export async function ensureWorkspaceForUser({
     ownerUserId: userId,
     referralCode: normalizedReferralCode,
     referredAt: normalizedReferralCode ? new Date().toISOString() : null,
+    currencyCode: normalizedCurrencyCode,
     role: 'owner',
     subscriptionStatus: 'trialing',
     planName: '7-day trial',

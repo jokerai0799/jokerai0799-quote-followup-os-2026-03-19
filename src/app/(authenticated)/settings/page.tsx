@@ -3,6 +3,7 @@ import { AddTeammateForm } from './add-teammate-form'
 import { RemoveMemberButton } from './remove-member-button'
 import { cancelSubscriptionAction, startSubscriptionCheckoutAction, updateWorkspaceAction } from './actions'
 import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { WORKSPACE_CURRENCY_OPTIONS } from '@/lib/currency'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
 import { ensureWorkspaceForUser, getWorkspaceMembers } from '@/lib/workspaces'
@@ -58,7 +59,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Plan</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{trial.canceled ? 'Canceled' : trial.cancelScheduled ? 'Cancels at period end' : trial.expired ? 'Trial ended' : trial.activeTrial ? 'Trial mode' : workspace?.planName ?? 'Active plan'}</p>
@@ -67,7 +68,12 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Monthly plan</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-          <p className="mt-2 text-sm text-slate-500">One active subscription covers this workspace</p>
+          <p className="mt-2 text-sm text-slate-500">Billed in GBP through Stripe</p>
+        </div>
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace currency</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.currencyCode ?? 'GBP'}</p>
+          <p className="mt-2 text-sm text-slate-500">Used for quote values and dashboard totals</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Quotes tracked</p>
@@ -151,12 +157,24 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             {isOwner ? (
               <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
-                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product for this workspace.</p>
-                <label className="mt-5 block text-sm font-medium text-slate-700">
-                  Name
-                  <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
-                </label>
+                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace details</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product and choose the currency used for quotes in this workspace.</p>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Name
+                    <input name="workspaceName" defaultValue={workspace?.workspaceName ?? ''} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500" required />
+                  </label>
+                  <label className="block text-sm font-medium text-slate-700">
+                    Workspace currency
+                    <select name="currencyCode" defaultValue={workspace?.currencyCode ?? 'GBP'} className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-950 outline-none transition focus:border-sky-500">
+                      {WORKSPACE_CURRENCY_OPTIONS.map((currency) => (
+                        <option key={currency.value} value={currency.value}>
+                          {currency.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
                 <button className="mt-5 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800" type="submit">
                   Save
                 </button>
@@ -164,10 +182,15 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             ) : (
               <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
-                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace name</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Only the workspace owner can rename this workspace.</p>
-                <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
-                  {workspace?.workspaceName ?? 'Workspace'}
+                <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace details</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Only the workspace owner can change the workspace name or currency.</p>
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                    {workspace?.workspaceName ?? 'Workspace'}
+                  </div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-600">
+                    {workspace?.currencyCode ?? 'GBP'}
+                  </div>
                 </div>
               </div>
             )}

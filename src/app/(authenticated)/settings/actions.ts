@@ -6,12 +6,16 @@ import { z } from 'zod'
 import { auth } from '@/auth'
 import { assertWorkspaceWriteAccess } from '@/lib/access'
 import { WORKSPACE_MONTHLY_PRICE_GBP } from '@/lib/billing'
+import { WORKSPACE_CURRENCIES, type WorkspaceCurrency } from '@/lib/currency'
 import { getStripeClient, STRIPE_PRICE_ID, toWorkspaceSubscriptionStatus } from '@/lib/stripe'
 import { findUserByEmail, findUserById } from '@/lib/users'
-import { addWorkspaceMember, cancelWorkspaceSubscription, getWorkspaceContextForUser, getWorkspaceMembers, removeWorkspaceMember, renameWorkspace, syncWorkspaceSubscription } from '@/lib/workspaces'
+import { addWorkspaceMember, cancelWorkspaceSubscription, getWorkspaceContextForUser, getWorkspaceMembers, removeWorkspaceMember, syncWorkspaceSubscription, updateWorkspaceDetails } from '@/lib/workspaces'
+
+const currencyEnum = z.enum([...WORKSPACE_CURRENCIES] as [WorkspaceCurrency, ...WorkspaceCurrency[]])
 
 const workspaceSchema = z.object({
   workspaceName: z.string().trim().min(2, 'Enter a workspace name'),
+  currencyCode: currencyEnum.default('GBP'),
 })
 
 const teammateSchema = z.object({
@@ -52,13 +56,19 @@ export async function updateWorkspaceAction(formData: FormData) {
   const userId = await requireUserId()
   await assertWorkspaceWriteAccess(userId)
 
-  const parsed = workspaceSchema.safeParse({ workspaceName: formData.get('workspaceName') })
+  const parsed = workspaceSchema.safeParse({
+    workspaceName: formData.get('workspaceName'),
+    currencyCode: formData.get('currencyCode'),
+  })
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message ?? 'Invalid workspace payload')
   }
 
   const workspace = await requireOwnerWorkspace(userId)
-  await renameWorkspace(workspace.workspaceId, parsed.data.workspaceName)
+  await updateWorkspaceDetails(workspace.workspaceId, {
+    name: parsed.data.workspaceName,
+    currencyCode: parsed.data.currencyCode,
+  })
   revalidatePath('/settings')
   revalidatePath('/dashboard')
   redirect('/settings?saved=workspace')

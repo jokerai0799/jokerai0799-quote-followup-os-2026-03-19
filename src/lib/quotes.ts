@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { formatWorkspaceCurrency, type WorkspaceCurrency } from './currency'
 import { supabase } from './supabase'
 import { ensureWorkspaceForUser } from './workspaces'
 
@@ -242,12 +243,8 @@ export function getChaseState(quote: Quote) {
   }
 }
 
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat('en-GB', {
-    style: 'currency',
-    currency: 'GBP',
-    maximumFractionDigits: 0,
-  }).format(value)
+export function formatCurrency(value: number, currency: WorkspaceCurrency = 'GBP') {
+  return formatWorkspaceCurrency(value, currency, { maximumFractionDigits: 0 })
 }
 
 export function formatDate(date: string | null | undefined) {

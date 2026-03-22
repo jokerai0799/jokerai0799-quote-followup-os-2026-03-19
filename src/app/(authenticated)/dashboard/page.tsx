@@ -13,10 +13,11 @@ export default async function DashboardPage() {
     return null
   }
 
+  const access = await requireWorkspaceUsageAccess(session.user.id)
   const user = await findUserById(session.user.id)
   const workspace = user
     ? await ensureWorkspaceForUser({ userId: user.id, name: user.name, email: user.email })
-    : null
+    : access.workspace
   const displayWorkspaceName = getWorkspaceDisplayName(workspace, user)
   const quotes = await getQuotes(session.user.id)
   const metrics = getMetrics(quotes)
@@ -52,7 +53,7 @@ export default async function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Link href="/quotes?view=open" className="rounded-2xl border border-slate-600/90 bg-slate-900/55 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:border-slate-500 hover:bg-slate-900/65">
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Open pipeline</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.valueAtRisk)}</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.valueAtRisk, workspace?.currencyCode ?? 'GBP')}</p>
               <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-400">
                 <span>Value still live in this workspace.</span>
                 <span className="text-xs font-medium text-slate-300">View</span>
@@ -100,7 +101,7 @@ export default async function DashboardPage() {
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Overview</p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-950">Performance snapshot</h2>
         </div>
-        <DashboardMetrics {...metrics} />
+        <DashboardMetrics {...metrics} currencyCode={workspace?.currencyCode ?? 'GBP'} />
       </section>
 
       <section className="space-y-4">
@@ -148,7 +149,7 @@ export default async function DashboardPage() {
               View all quotes
             </Link>
           </div>
-          <QuoteTable quotes={quotes} />
+          <QuoteTable quotes={quotes} currencyCode={workspace?.currencyCode ?? 'GBP'} />
         </div>
 
         <aside className="space-y-4">
@@ -166,7 +167,7 @@ export default async function DashboardPage() {
               {statusBreakdown.map((item) => (
                 <Link key={item.status} href={`/quotes?status=${encodeURIComponent(item.status)}`} className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 px-3 py-2.5 text-sm transition hover:border-slate-300 hover:bg-slate-50">
                   <span className="text-slate-600">{item.status}</span>
-                  <span className="font-medium text-slate-950">{item.count} · {formatCurrency(item.value)}</span>
+                  <span className="font-medium text-slate-950">{item.count} · {formatCurrency(item.value, workspace?.currencyCode ?? 'GBP')}</span>
                 </Link>
               ))}
             </div>

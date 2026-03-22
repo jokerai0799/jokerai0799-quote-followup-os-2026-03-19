@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { type WorkspaceCurrency } from '@/lib/currency'
 import { QuoteQuickActions } from '@/components/quote-quick-actions'
 import { formatCurrency, formatDate, getChaseState, renderTemplate, type Quote, type QuoteStatus } from '@/lib/quotes'
 
@@ -25,7 +26,7 @@ export function MetricCard({ label, value, subtext }: { label: string; value: st
   )
 }
 
-export function QuoteTable({ quotes }: { quotes: Quote[] }) {
+export function QuoteTable({ quotes, currencyCode = 'GBP' }: { quotes: Quote[]; currencyCode?: WorkspaceCurrency }) {
   return (
     <>
       <div className="grid gap-4 md:hidden">
@@ -49,7 +50,7 @@ export function QuoteTable({ quotes }: { quotes: Quote[] }) {
                 <div className="grid grid-cols-2 gap-3 rounded-2xl bg-zinc-50 p-3">
                   <div>
                     <p className="text-xs uppercase tracking-wide text-zinc-500">Value</p>
-                    <p className="mt-1 font-medium text-zinc-900">{formatCurrency(quote.value)}</p>
+                    <p className="mt-1 font-medium text-zinc-900">{formatCurrency(quote.value, currencyCode)}</p>
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wide text-zinc-500">Next follow-up</p>
@@ -103,7 +104,7 @@ export function QuoteTable({ quotes }: { quotes: Quote[] }) {
                     <p className="font-medium text-zinc-900">{quote.title}</p>
                     <p className="text-zinc-500">Sent {formatDate(quote.sentDate)}</p>
                   </td>
-                  <td className="px-4 py-4 font-medium text-zinc-900">{formatCurrency(quote.value)}</td>
+                  <td className="px-4 py-4 font-medium text-zinc-900">{formatCurrency(quote.value, currencyCode)}</td>
                   <td className="px-4 py-4"><StatusBadge status={quote.status} /></td>
                   <td className="px-4 py-4 text-zinc-600">
                     {chase.nextDate ? formatDate(chase.nextDate) : '—'}

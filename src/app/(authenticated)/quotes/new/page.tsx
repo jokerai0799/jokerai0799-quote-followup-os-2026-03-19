@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { createQuote } from '@/app/actions'
 import { QuoteForm } from '@/components/quote-form'
+import { type WorkspaceCurrency } from '@/lib/currency'
 import { requireWorkspaceUsageAccess } from '@/lib/access'
 
 export const metadata = {
@@ -10,8 +11,11 @@ export const metadata = {
 
 export default async function NewQuotePage() {
   const session = await auth()
+  let currencyCode: WorkspaceCurrency = 'GBP'
+
   if (session?.user?.id) {
-    await requireWorkspaceUsageAccess(session.user.id)
+    const access = await requireWorkspaceUsageAccess(session.user.id)
+    currencyCode = access.workspace?.currencyCode ?? 'GBP'
   }
 
   return (
@@ -27,7 +31,7 @@ export default async function NewQuotePage() {
         </Link>
       </div>
 
-      <QuoteForm action={createQuote} submitLabel="Save quote" />
+      <QuoteForm action={createQuote} submitLabel="Save quote" currencyCode={currencyCode} />
     </section>
   )
 }

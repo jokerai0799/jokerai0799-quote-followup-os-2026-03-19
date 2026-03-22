@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useFormState, useFormStatus } from 'react-dom'
+import { WORKSPACE_CURRENCY_OPTIONS } from '@/lib/currency'
 import { signupAction, type SignupState } from './actions'
 
 const initialState: SignupState = {}
@@ -33,6 +34,19 @@ export function SignupForm({ referralCode = '' }: { referralCode?: string }) {
           Email
         </label>
         <input id="email" name="email" type="email" required className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500" />
+      </div>
+
+      <div>
+        <label className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400" htmlFor="currencyCode">
+          Workspace currency
+        </label>
+        <select id="currencyCode" name="currencyCode" defaultValue="GBP" className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-sky-500">
+          {WORKSPACE_CURRENCY_OPTIONS.map((currency) => (
+            <option key={currency.value} value={currency.value}>
+              {currency.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

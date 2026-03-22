@@ -72,7 +72,7 @@ export default async function QuotesPage({ searchParams }: PageProps) {
     return null
   }
 
-  await requireWorkspaceUsageAccess(session.user.id)
+  const access = await requireWorkspaceUsageAccess(session.user.id)
   const { status, view } = await searchParams
   const quotes = await getQuotes(session.user.id)
   const filteredQuotes = filterQuotes(quotes, status, view)
@@ -97,7 +97,7 @@ export default async function QuotesPage({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
-      <QuoteTable quotes={filteredQuotes} />
+      <QuoteTable quotes={filteredQuotes} currencyCode={access.workspace?.currencyCode ?? 'GBP'} />
     </section>
   )
 }
