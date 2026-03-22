@@ -4,8 +4,10 @@ import { QuoteTable } from '@/components/ui'
 import { requireWorkspaceUsageAccess } from '@/lib/access'
 import { getChaseState, getQuotes } from '@/lib/quotes'
 
+const QUOTES_PAGE_SIZE = 24
+
 type PageProps = {
-  searchParams: Promise<{ status?: string; view?: string }>
+  searchParams: Promise<{ status?: string; view?: string; page?: string }>
 }
 
 function filterQuotes(quotes: Awaited<ReturnType<typeof getQuotes>>, status?: string, view?: string) {
@@ -66,6 +68,20 @@ function getViewCopy(status?: string, view?: string) {
   }
 }
 
+function getPageNumber(page?: string) {
+  const parsed = Number.parseInt(page ?? '1', 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1
+}
+
+function buildQuotesHref(page: number, status?: string, view?: string) {
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (view) params.set('view', view)
+  if (page > 1) params.set('page', String(page))
+  const query = params.toString()
+  return query ? `/quotes?${query}` : '/quotes'
+}
+
 export default async function QuotesPage({ searchParams }: PageProps) {
   const session = await auth()
   if (!session?.user?.id) {
@@ -73,10 +89,15 @@ export default async function QuotesPage({ searchParams }: PageProps) {
   }
 
   const access = await requireWorkspaceUsageAccess(session.user.id)
-  const { status, view } = await searchParams
+  const { status, view, page } = await searchParams
   const quotes = await getQuotes(session.user.id)
   const filteredQuotes = filterQuotes(quotes, status, view)
   const copy = getViewCopy(status, view)
+
+  const totalPages = Math.max(1, Math.ceil(filteredQuotes.length / QUOTES_PAGE_SIZE))
+  const currentPage = Math.min(getPageNumber(page), totalPages)
+  const pageStart = (currentPage - 1) * QUOTES_PAGE_SIZE
+  const paginatedQuotes = filteredQuotes.slice(pageStart, pageStart + QUOTES_PAGE_SIZE)
 
   return (
     <section className="space-y-5">
@@ -96,7 +117,45 @@ export default async function QuotesPage({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
-      <QuoteTable quotes={filteredQuotes} currencyCode={access.workspace?.currencyCode ?? 'GBP'} />
+
+      <QuoteTable quotes={paginatedQuotes} currencyCode={access.workspace?.currencyCode ?? 'GBP'} />
+
+      {filteredQuotes.length > QUOTES_PAGE_SIZE ? (
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm font-medium text-slate-900">Page {currentPage} of {totalPages}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            {currentPage > 1 ? (
+              <Link href={buildQuotesHref(currentPage - 1, status, view)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
+                Previous
+              </Link>
+            ) : null}
+
+            <div className="flex flex-wrap items-center gap-2">
+              {Array.from({ length: totalPages }, (_, index) => {
+                const pageNumber = index + 1
+                const isActive = pageNumber === currentPage
+                return (
+                  <Link
+                    key={pageNumber}
+                    href={buildQuotesHref(pageNumber, status, view)}
+                    className={isActive
+                      ? 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-950 bg-slate-100 px-3 text-sm font-semibold text-slate-950'
+                      : 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950'}
+                  >
+                    {pageNumber}
+                  </Link>
+                )
+              })}
+            </div>
+
+            {currentPage < totalPages ? (
+              <Link href={buildQuotesHref(currentPage + 1, status, view)} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
+                Next
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </section>
   )
 }

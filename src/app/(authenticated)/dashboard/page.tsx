@@ -183,7 +183,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                         key={page}
                         href={href}
                         className={isActive
-                          ? 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-slate-950 px-3 text-sm font-medium text-white'
+                          ? 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-950 bg-slate-100 px-3 text-sm font-semibold text-slate-950'
                           : 'inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-300 px-3 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950'}
                       >
                         {page}
