@@ -32,7 +32,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
             <p className="text-sm text-slate-400">
               Set up your workspace and start tracking quotes, follow-ups, and booked work in one place.
             </p>
-            <p className="text-xs text-sky-300/90">Start with a 7-day trial, then upgrade only if you want to keep using it.</p>
+            <p className="text-xs text-sky-300/90">Start with a 7-day trial, then upgrade to keep your workspace active.</p>
           </div>
         </div>
 
