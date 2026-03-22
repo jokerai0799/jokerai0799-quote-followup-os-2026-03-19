@@ -7,7 +7,14 @@ import { formatCurrency, getDailyChaseList, getMetrics, getQuotes, getStatusBrea
 import { findUserById } from '@/lib/users'
 import { getWorkspaceDisplayName } from '@/lib/workspaces'
 
-export default async function DashboardPage() {
+const DASHBOARD_QUOTES_PER_PAGE = 12
+
+function getDashboardQuotesPage(page?: string) {
+  const parsed = Number.parseInt(page ?? '1', 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 1
+}
+
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ quotesPage?: string }> }) {
   const session = await auth()
   if (!session?.user) {
     return null
@@ -22,6 +29,14 @@ export default async function DashboardPage() {
   const chaseList = getDailyChaseList(quotes).map(({ quote }) => quote)
   const statusBreakdown = getStatusBreakdown(quotes)
   const isEmptyWorkspace = quotes.length === 0
+
+  const { quotesPage } = await searchParams
+  const totalQuotePages = Math.max(1, Math.ceil(quotes.length / DASHBOARD_QUOTES_PER_PAGE))
+  const currentQuotePage = Math.min(getDashboardQuotesPage(quotesPage), totalQuotePages)
+  const quoteStart = (currentQuotePage - 1) * DASHBOARD_QUOTES_PER_PAGE
+  const paginatedQuotes = quotes.slice(quoteStart, quoteStart + DASHBOARD_QUOTES_PER_PAGE)
+  const quoteRangeStart = quotes.length ? quoteStart + 1 : 0
+  const quoteRangeEnd = Math.min(quoteStart + DASHBOARD_QUOTES_PER_PAGE, quotes.length)
 
   return (
     <>
@@ -147,7 +162,28 @@ export default async function DashboardPage() {
               View all quotes
             </Link>
           </div>
-          <QuoteTable quotes={quotes} currencyCode={workspace?.currencyCode ?? 'GBP'} />
+
+          <QuoteTable quotes={paginatedQuotes} currencyCode={workspace?.currencyCode ?? 'GBP'} />
+
+          {quotes.length > DASHBOARD_QUOTES_PER_PAGE ? (
+            <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-slate-500">
+                Showing <span className="font-medium text-slate-900">{quoteRangeStart}-{quoteRangeEnd}</span> of <span className="font-medium text-slate-900">{quotes.length}</span> quotes.
+              </p>
+              <div className="flex items-center gap-2">
+                {currentQuotePage > 1 ? (
+                  <Link href={currentQuotePage - 1 === 1 ? '/dashboard' : `/dashboard?quotesPage=${currentQuotePage - 1}`} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
+                    Previous page
+                  </Link>
+                ) : null}
+                {currentQuotePage < totalQuotePages ? (
+                  <Link href={`/dashboard?quotesPage=${currentQuotePage + 1}`} className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 !text-white">
+                    Next page
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <aside className="space-y-4">
