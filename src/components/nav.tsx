@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 
 const items = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -13,32 +13,50 @@ const items = [
 ]
 
 const STORAGE_KEY = 'qfu:chase-list:last-seen-signature'
+const STORAGE_EVENT = 'qfu:chase-list:last-seen-signature:changed'
+
+function readLastSeenSignature() {
+  if (typeof window === 'undefined') return null
+
+  try {
+    return window.localStorage.getItem(STORAGE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function subscribe(callback: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
+  const handleChange = () => callback()
+  window.addEventListener('storage', handleChange)
+  window.addEventListener(STORAGE_EVENT, handleChange)
+
+  return () => {
+    window.removeEventListener('storage', handleChange)
+    window.removeEventListener(STORAGE_EVENT, handleChange)
+  }
+}
 
 export function Nav({ chaseCount = 0, chaseSignature = 'empty' }: { chaseCount?: number; chaseSignature?: string }) {
   const pathname = usePathname()
-  const [lastSeenSignature, setLastSeenSignature] = useState<string | null>(null)
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY)
-      setLastSeenSignature(saved)
-    } catch {
-      setLastSeenSignature(null)
-    }
-  }, [])
+  const lastSeenSignature = useSyncExternalStore(subscribe, readLastSeenSignature, () => null)
 
   useEffect(() => {
     if (pathname !== '/chase-list') return
 
     try {
       window.localStorage.setItem(STORAGE_KEY, chaseSignature)
-      setLastSeenSignature(chaseSignature)
+      window.dispatchEvent(new Event(STORAGE_EVENT))
     } catch {
-      setLastSeenSignature(chaseSignature)
+      // Ignore localStorage failures and fall back to current-path behavior.
     }
   }, [pathname, chaseSignature])
 
-  const showChaseAttention = chaseCount > 0 && pathname !== '/chase-list' && lastSeenSignature !== chaseSignature
+  const effectiveLastSeenSignature = pathname === '/chase-list' ? chaseSignature : lastSeenSignature
+  const showChaseAttention = chaseCount > 0 && pathname !== '/chase-list' && effectiveLastSeenSignature !== chaseSignature
 
   return (
     <div className="overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { formatWorkspaceCurrency, type WorkspaceCurrency } from '@/lib/currency'
 
 type DemoRow = {
@@ -32,29 +32,29 @@ function detectDemoCurrency(): WorkspaceCurrency {
   return 'GBP'
 }
 
+function subscribeToLocaleChanges(callback: () => void) {
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
+  window.addEventListener('languagechange', callback)
+  return () => window.removeEventListener('languagechange', callback)
+}
+
+function getClientCurrencySnapshot() {
+  const detected = detectDemoCurrency()
+  return DEMO_CURRENCIES.includes(detected) ? detected : 'GBP'
+}
+
 function formatDemoCurrency(value: number, currency: WorkspaceCurrency) {
   return formatWorkspaceCurrency(value, currency, { maximumFractionDigits: 0 })
 }
 
 export function MarketingDemo() {
-  const [currencyCode, setCurrencyCode] = useState<WorkspaceCurrency>('GBP')
+  const currencyCode = useSyncExternalStore<WorkspaceCurrency>(subscribeToLocaleChanges, getClientCurrencySnapshot, () => 'GBP')
 
-  useEffect(() => {
-    const detected = detectDemoCurrency()
-    if (DEMO_CURRENCIES.includes(detected)) {
-      setCurrencyCode(detected)
-    }
-  }, [])
-
-  const openPipeline = useMemo(
-    () => demoRows.filter((row) => row.status !== 'Won').reduce((sum, row) => sum + row.value, 0),
-    [],
-  )
-
-  const wonRevenue = useMemo(
-    () => demoRows.filter((row) => row.status === 'Won').reduce((sum, row) => sum + row.value, 0),
-    [],
-  )
+  const openPipeline = demoRows.filter((row) => row.status !== 'Won').reduce((sum, row) => sum + row.value, 0)
+  const wonRevenue = demoRows.filter((row) => row.status === 'Won').reduce((sum, row) => sum + row.value, 0)
 
   return (
     <div className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_80px_rgba(15,23,42,0.08)]">

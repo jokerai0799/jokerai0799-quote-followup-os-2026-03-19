@@ -1,5 +1,6 @@
 'use server'
 
+import Stripe from 'stripe'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
@@ -50,6 +51,12 @@ async function requireUserId() {
     throw new Error('Unauthorized')
   }
   return session.user.id
+}
+
+function getSubscriptionCurrentPeriodEnd(subscription: Stripe.Subscription) {
+  const subscriptionWithPeriod = subscription as Stripe.Subscription & { current_period_end?: number | null }
+  const raw = subscriptionWithPeriod.current_period_end ?? null
+  return raw ? new Date(raw * 1000).toISOString() : null
 }
 
 export async function updateWorkspaceAction(formData: FormData) {
@@ -199,7 +206,7 @@ export async function cancelSubscriptionAction() {
     provider: 'stripe',
     providerCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id ?? null,
     providerSubscriptionId: subscription.id,
-    currentPeriodEnd: (subscription as any).current_period_end ? new Date((subscription as any).current_period_end * 1000).toISOString() : workspace.currentPeriodEnd,
+    currentPeriodEnd: getSubscriptionCurrentPeriodEnd(subscription) ?? workspace.currentPeriodEnd,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
     canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
   })

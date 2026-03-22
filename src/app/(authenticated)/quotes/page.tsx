@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { QuoteTable } from '@/components/ui'
 import { requireWorkspaceUsageAccess } from '@/lib/access'
-import { getChaseState, getMetrics, getQuotes } from '@/lib/quotes'
+import { getChaseState, getQuotes } from '@/lib/quotes'
 
 type PageProps = {
   searchParams: Promise<{ status?: string; view?: string }>
@@ -76,7 +76,6 @@ export default async function QuotesPage({ searchParams }: PageProps) {
   const { status, view } = await searchParams
   const quotes = await getQuotes(session.user.id)
   const filteredQuotes = filterQuotes(quotes, status, view)
-  const metrics = getMetrics(quotes)
   const copy = getViewCopy(status, view)
 
   return (
