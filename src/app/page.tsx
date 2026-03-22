@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
+import { MarketingDemo } from '@/components/marketing-demo'
 
 export const metadata: Metadata = {
   title: 'Quote Follow-Up Software for Trades & Service Businesses',
@@ -28,12 +29,6 @@ const workflow = [
   'Track sent quotes and their next follow-up date',
   'See overdue and due-today quotes instantly',
   'Keep your pipeline moving without guesswork',
-]
-
-const demoRows = [
-  ['Jones Property Lets', 'Boiler replacement quote', '£2,400', 'Sent', '20 Mar'],
-  ['Reed Electrical', 'Consumer unit upgrade', '£980', 'Follow-up due', 'Today'],
-  ['Walker Homes', 'Kitchen repaint and touch-ups', '£1,450', 'Won', '—'],
 ]
 
 const useCases = [
@@ -189,105 +184,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
             </p>
           </div>
 
-          <div className="mt-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_20px_80px_rgba(15,23,42,0.08)]">
-            <div className="border-b border-sky-100 bg-gradient-to-r from-sky-600 via-blue-500 to-cyan-400 px-6 py-5 text-white sm:px-8">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-100/90">Demo workspace</p>
-                  <h3 className="mt-2 text-2xl font-semibold tracking-tight">How the product looks in use</h3>
-                </div>
-                <p className="max-w-xl text-sm text-sky-50/90">
-                  A clean quote pipeline, readable status colours, and a chase list that is easy to scan at a glance.
-                </p>
-              </div>
-            </div>
-
-            <div className="p-6 sm:p-8">
-            <div className="grid gap-4 lg:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Open pipeline</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">£3,380</p>
-                <p className="mt-2 text-sm text-slate-500">Quotes still in play</p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Due today</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">2</p>
-                <p className="mt-2 text-sm text-slate-500">Quotes needing action now</p>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Won revenue</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">£1,450</p>
-                <p className="mt-2 text-sm text-slate-500">Closed business so far</p>
-              </div>
-            </div>
-
-            <div className="mt-8 grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
-              <div className="space-y-4">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Pipeline</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-slate-950">Sample quote table</h3>
-                </div>
-                <div className="overflow-x-auto rounded-3xl border border-slate-200 bg-white shadow-sm">
-                  <table className="min-w-full divide-y divide-slate-200 text-sm">
-                    <thead className="bg-slate-50 text-left text-slate-500">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">Client</th>
-                        <th className="px-4 py-3 font-medium">Quote</th>
-                        <th className="px-4 py-3 font-medium">Value</th>
-                        <th className="px-4 py-3 font-medium">Status</th>
-                        <th className="px-4 py-3 font-medium">Next follow-up</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {demoRows.map(([client, title, value, status, next]) => (
-                        <tr key={client}>
-                          <td className="px-4 py-4 font-medium text-slate-950">{client}</td>
-                          <td className="px-4 py-4 text-slate-700">{title}</td>
-                          <td className="px-4 py-4 font-medium text-slate-900">{value}</td>
-                          <td className="px-4 py-4">
-                            <span
-                              className={
-                                status === 'Sent'
-                                  ? 'inline-flex rounded-full bg-blue-100 px-2.5 py-1 text-xs font-medium text-blue-700'
-                                  : status === 'Follow-up due'
-                                    ? 'inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-800'
-                                    : 'inline-flex rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-700'
-                              }
-                            >
-                              {status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-4 text-slate-700">{next}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Today’s chase list</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-slate-950">Clean and easy to scan</h3>
-                </div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="font-medium text-slate-950">Reed Electrical</p>
-                  <p className="mt-1 text-sm text-slate-500">Consumer unit upgrade · £980</p>
-                  <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                    Due today — send a quick nudge to keep the job moving.
-                  </p>
-                </div>
-                <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                  <p className="font-medium text-slate-950">Jones Property Lets</p>
-                  <p className="mt-1 text-sm text-slate-500">Boiler replacement quote · £2,400</p>
-                  <p className="mt-4 rounded-2xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                    Follow-up due tomorrow — check they received the quote and answer any questions.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
+          <MarketingDemo />
         </div>
       </section>
 
