@@ -167,9 +167,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
           {quotes.length > DASHBOARD_QUOTES_PER_PAGE ? (
             <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-slate-500">
-                Showing <span className="font-medium text-slate-900">{quoteRangeStart}-{quoteRangeEnd}</span> of <span className="font-medium text-slate-900">{quotes.length}</span> quotes.
-              </p>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-slate-900">Page {currentQuotePage} of {totalQuotePages}</p>
+                <p className="text-sm text-slate-500">
+                  Showing <span className="font-medium text-slate-900">{quoteRangeStart}-{quoteRangeEnd}</span> of <span className="font-medium text-slate-900">{quotes.length}</span> quotes.
+                </p>
+              </div>
               <div className="flex items-center gap-2">
                 {currentQuotePage > 1 ? (
                   <Link href={currentQuotePage - 1 === 1 ? '/dashboard' : `/dashboard?quotesPage=${currentQuotePage - 1}`} className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-950 hover:text-slate-950">
