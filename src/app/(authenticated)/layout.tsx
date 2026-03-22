@@ -81,7 +81,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
                 <div>
                   <span className="font-medium">{trial.daysLeft} day{trial.daysLeft === 1 ? '' : 's'} left in this workspace trial.</span>{' '}
                   {workspace?.role === 'owner'
-                    ? `Upgrade to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial.`
+                    ? `Upgrade to ${formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)} to keep using this workspace after the trial. Stripe billing is currently in GBP.`
                     : 'The workspace owner can upgrade before the trial ends. Your personal workspace billing does not affect access while you are working inside this workspace.'}
                 </div>
                 {workspace?.role === 'owner' ? (

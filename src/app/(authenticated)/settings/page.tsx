@@ -66,14 +66,14 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           <p className="mt-2 text-sm text-slate-500">{trial.canceled ? 'Subscription has ended for this workspace' : trial.cancelScheduled ? (paidThroughLabel ? `Access remains active until ${paidThroughLabel}` : 'Access remains active until the current billing period ends') : trial.expired ? 'Upgrade needed to keep using this workspace' : trial.activeTrial ? '7-day trial in progress' : 'Active billing'}</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Monthly plan</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Stripe billing</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-          <p className="mt-2 text-sm text-slate-500">Billed in GBP through Stripe</p>
+          <p className="mt-2 text-sm text-slate-500">Subscription billing is currently charged in GBP through Stripe.</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace currency</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace quote currency</p>
           <p className="mt-2 text-xl font-semibold text-slate-950">{workspace?.currencyCode ?? 'GBP'}</p>
-          <p className="mt-2 text-sm text-slate-500">Used for quote values and dashboard totals</p>
+          <p className="mt-2 text-sm text-slate-500">Used for quote values, dashboard totals, and quote forms across this workspace.</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Quotes tracked</p>
@@ -96,7 +96,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Launch price</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-              <p className="mt-2 text-sm text-slate-600">One paid workspace covers the owner and any invited teammates working inside this workspace.</p>
+              <p className="mt-2 text-sm text-slate-600">Charged in GBP through Stripe. This is separate from the workspace quote currency below.</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Signup</p>
@@ -158,7 +158,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
               <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
                 <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace details</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product and choose the currency used for quotes in this workspace.</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product and choose the currency used for quotes in this workspace. Subscription billing stays in GBP for now.</p>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
                   <label className="block text-sm font-medium text-slate-700">
                     Name

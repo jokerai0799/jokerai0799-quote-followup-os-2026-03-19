@@ -71,6 +71,9 @@ export async function updateWorkspaceAction(formData: FormData) {
   })
   revalidatePath('/settings')
   revalidatePath('/dashboard')
+  revalidatePath('/quotes')
+  revalidatePath('/quotes/new')
+  revalidatePath('/chase-list')
   redirect('/settings?saved=workspace')
 }
 
