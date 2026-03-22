@@ -1,8 +1,9 @@
 import { auth } from '@/auth'
 import { AddTeammateForm } from './add-teammate-form'
+import { LocalizedBillingPrice } from './localized-billing-price'
 import { RemoveMemberButton } from './remove-member-button'
 import { cancelSubscriptionAction, startSubscriptionCheckoutAction, updateWorkspaceAction } from './actions'
-import { BILLING_MODEL_COPY, WORKSPACE_MONTHLY_PRICE_GBP, formatMonthlyPriceGbp } from '@/lib/billing'
+import { BILLING_MODEL_COPY } from '@/lib/billing'
 import { WORKSPACE_CURRENCY_OPTIONS } from '@/lib/currency'
 import { getDailyChaseList, getMetrics, getQuotes } from '@/lib/quotes'
 import { getTrialState } from '@/lib/trial'
@@ -67,8 +68,8 @@ export default async function SettingsPage({ searchParams }: PageProps) {
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Stripe billing</p>
-          <p className="mt-2 text-xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-          <p className="mt-2 text-sm text-slate-500">Subscription billing is currently charged in GBP through Stripe.</p>
+          <p className="mt-2 text-xl font-semibold text-slate-950"><LocalizedBillingPrice /></p>
+          <p className="mt-2 text-sm text-slate-500">Checkout and billing are managed securely by Stripe.</p>
         </div>
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace quote currency</p>
@@ -95,8 +96,8 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Launch price</p>
-              <p className="mt-2 text-2xl font-semibold text-slate-950">{formatMonthlyPriceGbp(WORKSPACE_MONTHLY_PRICE_GBP)}</p>
-              <p className="mt-2 text-sm text-slate-600">Charged in GBP through Stripe. This is separate from the workspace quote currency below.</p>
+              <p className="mt-2 text-2xl font-semibold text-slate-950"><LocalizedBillingPrice /></p>
+              <p className="mt-2 text-sm text-slate-600">Checkout and billing are managed securely by Stripe. This is separate from the workspace quote currency below.</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Signup</p>
@@ -158,7 +159,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
               <form action={updateWorkspaceAction} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-2">
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Workspace</p>
                 <h3 className="mt-2 text-xl font-semibold text-slate-950">Workspace details</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product and choose the currency used for quotes in this workspace. Subscription billing stays in GBP for now.</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">Change the name shown across the product and choose the currency used for quotes in this workspace. Subscription billing is handled separately through Stripe.</p>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
                   <label className="block text-sm font-medium text-slate-700">
                     Name
