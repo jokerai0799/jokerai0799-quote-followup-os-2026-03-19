@@ -1,5 +1,5 @@
 import { type WorkspaceCurrency } from '@/lib/currency'
-import { STATUSES, TEMPLATE_KEYS, type Quote } from '@/lib/quotes'
+import { STATUSES, type Quote } from '@/lib/quotes'
 
 type QuoteFormProps = {
   action: (formData: FormData) => void | Promise<void>
@@ -14,6 +14,8 @@ const fieldClass =
 export function QuoteForm({ action, quote, submitLabel, currencyCode = 'GBP' }: QuoteFormProps) {
   return (
     <form action={action} className="grid gap-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <input type="hidden" name="templateKey" value={quote?.templateKey ?? 'friendly'} />
+
       <div className="grid gap-4 md:grid-cols-2">
         <label className="block text-sm font-medium text-zinc-700">
           Client name
@@ -62,22 +64,6 @@ export function QuoteForm({ action, quote, submitLabel, currencyCode = 'GBP' }: 
               defaultValue={quote?.followUpOffsets?.join(', ') ?? '2, 5, 9'}
               placeholder="2, 5, 9"
             />
-          </label>
-        </div>
-        <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 md:col-span-2">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500">Follow-up preference</p>
-          <p className="mt-2 text-sm text-zinc-600">
-            This only sets the default tone for suggested chase messages later. Saving this quote does not send anything.
-          </p>
-          <label className="mt-4 block text-sm font-medium text-zinc-700">
-            Default follow-up style
-            <select className={fieldClass} name="templateKey" defaultValue={quote?.templateKey ?? 'friendly'}>
-              {TEMPLATE_KEYS.map((template) => (
-                <option key={template} value={template}>
-                  {template}
-                </option>
-              ))}
-            </select>
           </label>
         </div>
         <label className="block text-sm font-medium text-zinc-700 md:col-span-2">
