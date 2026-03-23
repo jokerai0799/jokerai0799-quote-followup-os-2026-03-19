@@ -97,7 +97,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Launch price</p>
               <p className="mt-2 text-2xl font-semibold text-slate-950"><LocalizedBillingPrice /></p>
-              <p className="mt-2 text-sm text-slate-600">Checkout and billing are managed securely by Stripe. This is separate from the workspace quote currency below.</p>
+              <p className="mt-2 text-sm text-slate-600">Checkout and billing are managed securely by Stripe.</p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Signup</p>
