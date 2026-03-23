@@ -29,6 +29,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://quotefollowup.online',
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
     description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
