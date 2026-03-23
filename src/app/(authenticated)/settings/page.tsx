@@ -139,7 +139,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
                   : trial.expired
                     ? (workspace?.role === 'owner' ? BILLING_MODEL_COPY.expiredOwner : BILLING_MODEL_COPY.expiredMember)
                     : trial.activeTrial
-                      ? `${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'} left in this workspace trial. Upgrade to continue after the trial.`
+                      ? `Trial ends in ${trial.daysLeft} day${trial.daysLeft === 1 ? '' : 's'}. Upgrade to keep your workspace running.`
                       : 'This workspace is on an active paid plan.'}
             </div>
           </div>
