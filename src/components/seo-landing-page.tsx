@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
+import { MarketingDemo } from '@/components/marketing-demo'
+import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 type RelatedPage = {
   href: string
@@ -18,6 +20,7 @@ type SeoLandingPageProps = {
   faqs: { question: string; answer: string }[]
   relatedPages: RelatedPage[]
   searchParams: Promise<{ ref?: string }>
+  pagePath: string
 }
 
 function withRef(path: string, ref?: string) {
@@ -26,8 +29,9 @@ function withRef(path: string, ref?: string) {
   return `${path}${separator}ref=${encodeURIComponent(ref)}`
 }
 
-export async function SeoLandingPage({ eyebrow, title, intro, description, benefits, fitTitle, fitBody, faqs, relatedPages, searchParams }: SeoLandingPageProps) {
+export async function SeoLandingPage({ eyebrow, title, intro, description, benefits, fitTitle, fitBody, faqs, relatedPages, searchParams, pagePath }: SeoLandingPageProps) {
   const [session, { ref }] = await Promise.all([auth(), searchParams])
+  const pageUrl = `${SITE_URL}${pagePath}`
 
   const faqStructuredData = {
     '@context': 'https://schema.org',
@@ -42,9 +46,51 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
     })),
   }
 
+  const softwareStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: SITE_NAME,
+    applicationCategory: 'BusinessApplication',
+    applicationSubCategory: eyebrow,
+    operatingSystem: 'Web',
+    url: pageUrl,
+    description,
+    audience: {
+      '@type': 'BusinessAudience',
+      audienceType: 'Trades and service businesses',
+    },
+    featureList: benefits,
+    offers: {
+      '@type': 'Offer',
+      price: '29.99',
+      priceCurrency: 'GBP',
+    },
+  }
+
+  const breadcrumbStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: SITE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: eyebrow,
+        item: pageUrl,
+      },
+    ],
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareStructuredData) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }} />
 
       <section className="bg-[#0D1520] text-white">
         <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
@@ -60,7 +106,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
               href={session?.user ? '/dashboard' : withRef('/signup', ref)}
               className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
             >
-              {session?.user ? 'Open workspace' : 'Create workspace'}
+              {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>
         </header>
@@ -76,15 +122,19 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
                 href={session?.user ? '/dashboard' : withRef('/signup', ref)}
                 className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
               >
-                {session?.user ? 'Open workspace' : 'Create workspace'}
+                {session?.user ? 'Open workspace' : 'Start 7-day trial'}
               </Link>
               <Link
-                href="/"
+                href="#demo"
                 className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                View homepage
+                View demo
               </Link>
             </div>
+
+            <p className="mt-4 text-sm text-slate-400">
+              Start with a 7-day trial, see how the workflow fits your team, and keep your quotes moving.
+            </p>
           </div>
         </div>
       </section>
@@ -107,6 +157,35 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
+            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what QuoteFollowUp looks like before you start your trial.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              The demo keeps the same dynamic currency behaviour as the homepage, so visitors get a clearer feel for the product straight away.
+            </p>
+          </div>
+
+          <MarketingDemo />
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href={session?.user ? '/dashboard' : withRef('/signup', ref)}
+              className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white"
+            >
+              {session?.user ? 'Open workspace' : 'Start 7-day trial'}
+            </Link>
+            <Link
+              href={session?.user ? '/dashboard' : withRef('/login', ref)}
+              className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950"
+            >
+              {session?.user ? 'Open workspace' : 'Log in'}
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -147,15 +226,15 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">See how QuoteFollowUp fits your workflow.</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">You can create your own workspace and start tracking quotes without changing the core way your team already follows up.</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Start the 7-day trial when you’re ready.</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">You can view the demo first, then create your own workspace to track real quotes, contacts, and follow-ups.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
-              Back to homepage
+            <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
+              View demo
             </Link>
             <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
-              {session?.user ? 'Open workspace' : 'Create workspace'}
+              {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>
         </div>

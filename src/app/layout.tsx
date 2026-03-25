@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { DM_Mono, Instrument_Serif } from 'next/font/google'
 import { seoPageLinks } from '@/lib/seo-pages'
+import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site'
 import './globals.css'
 
 const instrumentSerif = Instrument_Serif({
@@ -19,30 +20,38 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://quotefollowup.online'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
     template: '%s | QuoteFollowUp',
   },
-  description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
-  applicationName: 'QuoteFollowUp',
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
   category: 'business software',
+  manifest: '/manifest.webmanifest',
   alternates: {
-    canonical: 'https://quotefollowup.online',
+    canonical: SITE_URL,
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
   },
   openGraph: {
     title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
-    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
-    url: 'https://quotefollowup.online',
-    siteName: 'QuoteFollowUp',
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: 'website',
     images: [
       {
-        url: '/og-homepage.jpg',
+        url: DEFAULT_OG_IMAGE,
         width: 1280,
         height: 551,
         alt: 'QuoteFollowUp homepage preview',
@@ -52,8 +61,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
-    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
-    images: ['/og-homepage.jpg'],
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
   },
   icons: {
     icon: [
@@ -70,23 +79,23 @@ const structuredData = [
   {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'QuoteFollowUp',
-    url: 'https://quotefollowup.online',
+    name: SITE_NAME,
+    url: SITE_URL,
     email: 'quotefollowup@outlook.com',
-    logo: 'https://quotefollowup.online/google-search-logo.png',
+    logo: `${SITE_URL}/google-search-logo.png`,
   },
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'QuoteFollowUp',
-    url: 'https://quotefollowup.online',
-    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: DEFAULT_DESCRIPTION,
   },
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'QuoteFollowUp',
-    image: 'https://quotefollowup.online/google-search-logo.png',
+    name: SITE_NAME,
+    image: `${SITE_URL}/google-search-logo.png`,
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Quote management and follow-up software',
     operatingSystem: 'Web',
@@ -105,8 +114,8 @@ const structuredData = [
       'Manage quote status and pipeline',
       'Keep a repeatable follow-up process for small service teams',
     ],
-    url: 'https://quotefollowup.online',
-    description: 'Track quotes, follow up on time, and win more work with simple quote follow-up software for trades and service businesses.',
+    url: SITE_URL,
+    description: DEFAULT_DESCRIPTION,
   },
 ]
 

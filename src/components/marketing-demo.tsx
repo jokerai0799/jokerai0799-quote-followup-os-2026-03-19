@@ -14,7 +14,7 @@ type DemoRow = {
 const demoRows: DemoRow[] = [
   { client: 'Jones Property Lets', title: 'Boiler replacement quote', value: 2400, status: 'Sent', next: '20 Mar' },
   { client: 'Reed Electrical', title: 'Consumer unit upgrade', value: 980, status: 'Follow-up due', next: 'Today' },
-  { client: 'Walker Homes', title: 'Kitchen repaint and touch-ups', value: 1450, status: 'Won', next: '—' },
+  { client: 'Walker Homes', title: 'Kitchen repaint and touch-ups', value: 1450, status: 'Won', next: 'None' },
 ]
 
 const DEMO_CURRENCIES: WorkspaceCurrency[] = ['GBP', 'USD', 'EUR', 'AUD', 'CAD']
@@ -142,14 +142,14 @@ export function MarketingDemo() {
               <p className="font-medium text-slate-950">Reed Electrical</p>
               <p className="mt-1 text-sm text-slate-500">Consumer unit upgrade · {formatDemoCurrency(980, currencyCode)}</p>
               <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                Due today — send a quick nudge to keep the job moving.
+                Due today. Send a quick nudge to keep the job moving.
               </p>
             </div>
             <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
               <p className="font-medium text-slate-950">Jones Property Lets</p>
               <p className="mt-1 text-sm text-slate-500">Boiler replacement quote · {formatDemoCurrency(2400, currencyCode)}</p>
               <p className="mt-4 rounded-2xl bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                Follow-up due tomorrow — check they received the quote and answer any questions.
+                Follow-up due tomorrow. Check they received the quote and answer any questions.
               </p>
             </div>
           </div>

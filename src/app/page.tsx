@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
 import { MarketingDemo } from '@/components/marketing-demo'
+import { seoPageLinks } from '@/lib/seo-pages'
 
 export const metadata: Metadata = {
   title: 'Quote Follow-Up Software for Trades & Service Businesses',
@@ -206,6 +207,29 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Search-friendly guides</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Browse quote follow-up pages by use case and search intent.</h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              These pages are built around the ways people actually search for quote follow-up help. Pick the one that matches your business or workflow best.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {seoPageLinks.map((page) => (
+              <Link
+                key={page.href}
+                href={page.href}
+                className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-sm font-medium text-slate-800 shadow-sm transition hover:border-sky-300 hover:bg-white hover:text-slate-950"
+              >
+                {page.label}
+              </Link>
+            ))}
           </div>
         </div>
       </section>

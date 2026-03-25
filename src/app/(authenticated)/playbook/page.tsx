@@ -4,19 +4,19 @@ import { messageTemplates } from '@/lib/quotes'
 
 const steps = [
   {
-    title: 'Day 0 — Send the quote cleanly',
+    title: 'Day 0: Send the quote cleanly',
     body: 'Make sure the quote goes out with a clear scope, commercial summary, and direct next step. Weak sends create silent pipelines.',
   },
   {
-    title: 'Day 2 — Soft check-in',
+    title: 'Day 2: Soft check-in',
     body: 'Confirm receipt, offer to answer questions, and remove friction. This should feel helpful, not pushy.',
   },
   {
-    title: 'Day 5 — Commercial nudge',
+    title: 'Day 5: Commercial nudge',
     body: 'Remind them the work is still live, mention availability, and invite a quick decision call if needed.',
   },
   {
-    title: 'Day 9 — Close the loop',
+    title: 'Day 9: Close the loop',
     body: 'Ask whether priorities changed. The goal is a decision, not endless open-ended follow-up.',
   },
 ]

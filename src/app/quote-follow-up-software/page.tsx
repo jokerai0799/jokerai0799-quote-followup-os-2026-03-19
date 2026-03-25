@@ -1,19 +1,38 @@
 import type { Metadata } from 'next'
 import { SeoLandingPage } from '@/components/seo-landing-page'
 import { seoPageLinks } from '@/lib/seo-pages'
+import { DEFAULT_OG_IMAGE, SITE_URL } from '@/lib/site'
+
+const path = '/quote-follow-up-software'
+const title = 'Quote Follow-Up Software'
+const description =
+  'Quote follow-up software for trades and service businesses that want to track sent quotes, follow up on time, and win more booked work.'
 
 export const metadata: Metadata = {
-  title: 'Quote Follow-Up Software',
-  description:
-    'Quote follow-up software for trades and service businesses that want to track sent quotes, follow up on time, and win more booked work.',
+  title,
+  description,
   alternates: {
-    canonical: 'https://quotefollowup.online/quote-follow-up-software',
+    canonical: `${SITE_URL}${path}`,
+  },
+  openGraph: {
+    title: `${title} | QuoteFollowUp`,
+    description,
+    url: `${SITE_URL}${path}`,
+    type: 'website',
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${title} | QuoteFollowUp`,
+    description,
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 
 export default function QuoteFollowUpSoftwarePage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   return (
     <SeoLandingPage
+      pagePath={path}
       searchParams={searchParams}
       eyebrow="Quote Follow-Up Software"
       title="Quote follow-up software for trades and service businesses"

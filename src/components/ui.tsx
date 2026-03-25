@@ -54,7 +54,7 @@ export function QuoteTable({ quotes, currencyCode = 'GBP' }: { quotes: Quote[]; 
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wide text-zinc-500">Next follow-up</p>
-                    <p className="mt-1 font-medium text-zinc-900">{chase.nextDate ? formatDate(chase.nextDate) : '—'}</p>
+                    <p className="mt-1 font-medium text-zinc-900">{chase.nextDate ? formatDate(chase.nextDate) : 'None'}</p>
                     {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
                     {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
                   </div>
@@ -107,7 +107,7 @@ export function QuoteTable({ quotes, currencyCode = 'GBP' }: { quotes: Quote[]; 
                   <td className="px-4 py-4 font-medium text-zinc-900">{formatCurrency(quote.value, currencyCode)}</td>
                   <td className="px-4 py-4"><StatusBadge status={quote.status} /></td>
                   <td className="px-4 py-4 text-zinc-600">
-                    {chase.nextDate ? formatDate(chase.nextDate) : '—'}
+                    {chase.nextDate ? formatDate(chase.nextDate) : 'None'}
                     {chase.overdue ? <div className="text-xs font-medium text-rose-600">Overdue</div> : null}
                     {chase.dueToday ? <div className="text-xs font-medium text-amber-600">Due today</div> : null}
                   </td>
@@ -150,7 +150,7 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
                   <StatusBadge status={quote.status} />
                 </div>
                 <p className="mt-1 text-sm text-zinc-600">{quote.title}</p>
-                <p className="mt-3 text-sm text-zinc-500">Next chase: {chase.nextDate ? formatDate(chase.nextDate) : '—'}</p>
+                <p className="mt-3 text-sm text-zinc-500">Next chase: {chase.nextDate ? formatDate(chase.nextDate) : 'None'}</p>
               </div>
               <Link href={`/quotes/${quote.id}/edit`} className="shrink-0 text-sm font-medium text-zinc-700 underline-offset-4 transition hover:text-zinc-950 hover:underline">
                 Edit

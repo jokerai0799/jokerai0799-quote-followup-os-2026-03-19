@@ -1,19 +1,38 @@
 import type { Metadata } from 'next'
 import { SeoLandingPage } from '@/components/seo-landing-page'
 import { seoPageLinks } from '@/lib/seo-pages'
+import { DEFAULT_OG_IMAGE, SITE_URL } from '@/lib/site'
+
+const path = '/quote-management-software-for-trades'
+const title = 'Quote Management Software for Trades'
+const description =
+  'Quote management software for trades that need a simple pipeline, clear follow-up dates, and better visibility into what is still live.'
 
 export const metadata: Metadata = {
-  title: 'Quote Management Software for Trades',
-  description:
-    'Quote management software for trades that need a simple pipeline, clear follow-up dates, and better visibility into what is still live.',
+  title,
+  description,
   alternates: {
-    canonical: 'https://quotefollowup.online/quote-management-software-for-trades',
+    canonical: `${SITE_URL}${path}`,
+  },
+  openGraph: {
+    title: `${title} | QuoteFollowUp`,
+    description,
+    url: `${SITE_URL}${path}`,
+    type: 'website',
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${title} | QuoteFollowUp`,
+    description,
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 
 export default function QuoteManagementSoftwareForTradesPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   return (
     <SeoLandingPage
+      pagePath={path}
       searchParams={searchParams}
       eyebrow="Quote Management Software for Trades"
       title="Quote management software for trades and small service teams"

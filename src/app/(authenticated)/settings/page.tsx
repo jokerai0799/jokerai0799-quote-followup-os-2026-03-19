@@ -206,7 +206,7 @@ export default async function SettingsPage({ searchParams }: PageProps) {
             <h3 className="mt-2 text-2xl font-semibold text-slate-950">Manage subscription</h3>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               {trial.activeTrial
-                ? 'You’re currently on trial — no paid subscription to manage yet.'
+                ? 'You’re currently on trial. There’s no paid subscription to manage yet.'
                 : trial.canceled
                   ? 'This workspace subscription has already ended.'
                   : trial.cancelScheduled

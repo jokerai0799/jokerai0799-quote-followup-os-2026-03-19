@@ -46,7 +46,7 @@ export const messageTemplates: Record<TemplateKey, string> = {
   nudge:
     'Hi {{contactName}}, following up on the {{title}} quote I sent over. If this is still live, I can hold time this week to walk through it with you.',
   checkin:
-    'Hi {{contactName}}, wanted to see where things stand on {{title}}. If priorities have shifted, no problem — I can update timings or scope if helpful.',
+    'Hi {{contactName}}, wanted to see where things stand on {{title}}. If priorities have shifted, no problem. I can update timings or scope if helpful.',
 }
 
 type QuoteRow = {
@@ -248,7 +248,7 @@ export function formatCurrency(value: number, currency: WorkspaceCurrency = 'GBP
 }
 
 export function formatDate(date: string | null | undefined) {
-  if (!date) return '—'
+  if (!date) return 'None'
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: 'short',
