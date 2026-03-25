@@ -145,7 +145,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
             <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what QuoteFollowUp looks like before you start your trial.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
-              The demo keeps the same dynamic currency behaviour as the homepage, so visitors get a clearer feel for the product straight away.
+              Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
           </div>
 
