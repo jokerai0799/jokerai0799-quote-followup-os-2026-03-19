@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { BrandLogo } from '@/components/brand-logo'
 import { MarketingDemo } from '@/components/marketing-demo'
-import { seoPageLinks } from '@/lib/seo-pages'
 
 export const metadata: Metadata = {
   title: 'Quote Follow-Up Software for Trades & Service Businesses',
@@ -98,7 +97,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               href={session?.user ? '/dashboard' : withRef('/signup', ref)}
               className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
             >
-              {session?.user ? 'Open workspace' : 'Sign up'}
+              {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>
         </header>
@@ -117,7 +116,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
                 href={session?.user ? '/dashboard' : withRef('/signup', ref)}
                 className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
               >
-                {session?.user ? 'Open workspace' : 'Create workspace'}
+                {session?.user ? 'Open workspace' : 'Start 7-day trial'}
               </Link>
               <Link
                 href="#demo"
@@ -160,7 +159,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace looks like before you create yours.</h2>
+            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace looks like before you start your trial.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
               Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
@@ -214,29 +213,6 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Search-friendly guides</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Browse quote follow-up pages by use case and search intent.</h2>
-            <p className="mt-4 text-base leading-7 text-slate-600">
-              These pages are built around the ways people actually search for quote follow-up help. Pick the one that matches your business or workflow best.
-            </p>
-          </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {seoPageLinks.map((page) => (
-              <Link
-                key={page.href}
-                href={page.href}
-                className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-sm font-medium text-slate-800 shadow-sm transition hover:border-sky-300 hover:bg-white hover:text-slate-950"
-              >
-                {page.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">FAQ</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Straight answers before you sign up.</h2>
           </div>
@@ -255,7 +231,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">View the demo, then create your own workspace when you’re ready.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">View the demo, then start your 7-day trial when you’re ready.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
               You can look through the demo first. When you sign up, you get your own separate workspace to add real quotes, contacts, and follow-ups.
             </p>
@@ -265,7 +241,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               View demo
             </Link>
             <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
-              {session?.user ? 'Open workspace' : 'Create workspace'}
+              {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>
         </div>
