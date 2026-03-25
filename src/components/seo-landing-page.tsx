@@ -139,27 +139,6 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why this page exists</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{fitTitle}</h2>
-          <p className="mt-4 text-base leading-7 text-slate-600">{fitBody}</p>
-          <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
-        </div>
-
-        <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What you get</p>
-          <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-700">
-            {benefits.map((item) => (
-              <li key={item} className="flex gap-3">
-                <span className="mt-2 h-2.5 w-2.5 rounded-full bg-sky-500" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
@@ -189,6 +168,27 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
         </div>
       </section>
 
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why this page exists</p>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{fitTitle}</h2>
+          <p className="mt-4 text-base leading-7 text-slate-600">{fitBody}</p>
+          <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
+        </div>
+
+        <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What you get</p>
+          <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-700">
+            {benefits.map((item) => (
+              <li key={item} className="flex gap-3">
+                <span className="mt-2 h-2.5 w-2.5 rounded-full bg-sky-500" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       <section className="border-y border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
@@ -201,22 +201,6 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{item.answer}</p>
               </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Explore more</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Related pages on QuoteFollowUp</h2>
-          </div>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {relatedPages.map((page) => (
-              <Link key={page.href} href={page.href} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 text-sm font-medium text-slate-800 shadow-sm transition hover:border-sky-300 hover:text-slate-950">
-                {page.label}
-              </Link>
             ))}
           </div>
         </div>
