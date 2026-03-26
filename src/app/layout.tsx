@@ -6,6 +6,7 @@ import { DM_Mono, Instrument_Serif } from 'next/font/google'
 import { seoPageLinks } from '@/lib/seo-pages'
 import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site'
 import './globals.css'
+import { BrandLogo } from '@/components/brand-logo'
 
 const instrumentSerif = Instrument_Serif({
   variable: '--font-brand-serif',
@@ -82,7 +83,7 @@ const structuredData = [
     name: SITE_NAME,
     url: SITE_URL,
     email: 'quotefollowup@outlook.com',
-    logo: `${SITE_URL}/google-search-logo.png`,
+    logo: `${SITE_URL}/brand/google-search-logo.svg`,
   },
   {
     '@context': 'https://schema.org',
@@ -95,7 +96,7 @@ const structuredData = [
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: SITE_NAME,
-    image: `${SITE_URL}/google-search-logo.png`,
+    image: `${SITE_URL}/brand/google-search-logo.svg`,
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Quote management and follow-up software',
     operatingSystem: 'Web',
@@ -135,8 +136,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <footer className="border-t border-slate-200 bg-slate-50">
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="space-y-1 text-sm text-slate-500">
-                  <p>QuoteFollowUp</p>
+                <div className="space-y-3 text-sm text-slate-500">
+                  <BrandLogo variant="dark" className="!text-inherit" />
                   <p>
                     Support:{' '}
                     <a href="mailto:quotefollowup@outlook.com" className="font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline">

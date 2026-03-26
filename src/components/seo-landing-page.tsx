@@ -30,6 +30,7 @@ function withRef(path: string, ref?: string) {
 }
 
 export async function SeoLandingPage({ eyebrow, title, intro, description, benefits, fitTitle, fitBody, faqs, relatedPages, searchParams, pagePath }: SeoLandingPageProps) {
+  void relatedPages
   const [session, { ref }] = await Promise.all([auth(), searchParams])
   const pageUrl = `${SITE_URL}${pagePath}`
 
