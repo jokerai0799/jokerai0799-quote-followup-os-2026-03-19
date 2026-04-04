@@ -13,15 +13,14 @@ type DashboardMetricsProps = {
 
 export function DashboardMetrics({ totalQuotes, valueAtRisk, wonRevenue, overdueCount, winRate, currencyCode = 'GBP' }: DashboardMetricsProps) {
   const cards = [
-    { label: 'Open pipeline', value: formatCurrency(valueAtRisk, currencyCode), hint: 'Quotes still in play', href: '/quotes?view=open' },
-    { label: 'Won revenue', value: formatCurrency(wonRevenue, currencyCode), hint: 'Closed business so far', href: '/quotes?status=won' },
-    { label: 'Quotes tracked', value: String(totalQuotes), hint: 'All records in workspace', href: '/quotes' },
-    { label: 'Win rate', value: `${winRate}%`, hint: 'Won vs lost closed quotes', href: '/quotes?view=closed' },
-    { label: 'Needs attention', value: String(overdueCount), hint: 'Overdue follow-ups', href: '/quotes?view=attention' },
+    { label: 'Open pipeline', value: formatCurrency(valueAtRisk, currencyCode), hint: 'Live quote value still in play', href: '/quotes?view=open' },
+    { label: 'Needs attention', value: String(overdueCount), hint: 'Quotes waiting on follow-up', href: '/quotes?view=attention' },
+    { label: 'Quotes tracked', value: String(totalQuotes), hint: 'All records in this workspace', href: '/quotes' },
+    { label: 'Won revenue', value: formatCurrency(wonRevenue, currencyCode), hint: `Closed business · ${winRate}% win rate`, href: '/quotes?status=won' },
   ]
 
   return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
         <Link
           key={card.label}
@@ -30,10 +29,7 @@ export function DashboardMetrics({ totalQuotes, valueAtRisk, wonRevenue, overdue
         >
           <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-slate-500">{card.label}</p>
           <p className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">{card.value}</p>
-          <div className="mt-2 flex items-center justify-between gap-3">
-            <p className="text-sm text-slate-500">{card.hint}</p>
-            <span className="text-xs font-medium text-slate-500">View</span>
-          </div>
+          <p className="mt-2 text-sm leading-6 text-slate-500">{card.hint}</p>
         </Link>
       ))}
     </section>
