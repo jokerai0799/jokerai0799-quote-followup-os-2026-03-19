@@ -135,7 +135,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="flex-1">{children}</div>
           <footer className="border-t border-slate-200 bg-slate-50">
             <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="space-y-5">
                 <div className="space-y-3 text-sm text-slate-500">
                   <BrandLogo variant="dark" className="!text-inherit" />
                   <p>
@@ -146,11 +146,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   </p>
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Related pages</p>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600">
+                <div className="border-t border-slate-200 pt-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">Related pages</p>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-400">
                     {seoPageLinks.map((page) => (
-                      <Link key={page.href} href={page.href} className="underline-offset-4 transition hover:text-slate-950 hover:underline">
+                      <Link key={page.href} href={page.href} className="transition hover:text-slate-600">
                         {page.label}
                       </Link>
                     ))}
