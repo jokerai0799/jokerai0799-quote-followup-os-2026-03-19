@@ -93,8 +93,15 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareStructuredData) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }} />
 
-      <section className="bg-[#0D1520] text-white">
-        <header className="mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden bg-[#0D1520] text-white">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+          style={{ backgroundImage: "url('/hero/hero-grid-bg.jpg')" }}
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,12,22,0.72)_0%,rgba(7,12,22,0.56)_35%,rgba(7,12,22,0.82)_100%)]" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.14),transparent_38%),radial-gradient(circle_at_80%_30%,rgba(14,165,233,0.10),transparent_30%)]" />
+        <header className="relative z-10 mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandLogo />
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link
@@ -112,7 +119,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-24 lg:pt-12">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-4xl">
             <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-sky-300 sm:text-[11px] sm:tracking-[0.35em]">{eyebrow}</p>
             <h1 className="mt-4 font-serif text-[2.25rem] leading-tight italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">{title}</h1>
