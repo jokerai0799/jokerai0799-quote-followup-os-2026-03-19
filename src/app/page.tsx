@@ -84,18 +84,18 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
     <main className="min-h-screen bg-slate-100 text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }} />
       <section className="bg-[#0D1520] text-white">
-        <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+        <header className="mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandLogo />
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link
               href={session?.user ? '#demo' : withRef('/login', ref)}
-              className="rounded-xl border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+              className="rounded-xl border border-white/12 px-4 py-2 text-center text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
             >
               {session?.user ? 'View demo' : 'Log in'}
             </Link>
             <Link
               href={session?.user ? '/dashboard' : withRef('/signup', ref)}
-              className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
+              className="rounded-xl bg-sky-500 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-sky-400"
             >
               {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
@@ -104,23 +104,23 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
 
         <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-3xl">
-            <h1 className="font-serif text-5xl italic tracking-tight text-slate-50 sm:text-6xl">
+            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
               Quote follow-up software for trades and service businesses
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
               Track every quote, follow up on time, and turn more estimates into booked work with a simple system built for small service teams.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href={session?.user ? '/dashboard' : withRef('/signup', ref)}
-                className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
+                className="rounded-xl bg-sky-500 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-sky-400"
               >
                 {session?.user ? 'Open workspace' : 'Start 7-day trial'}
               </Link>
               <Link
                 href="#demo"
-                className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 View demo
               </Link>
@@ -236,11 +236,11 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               You can look through the demo first. When you sign up, you get your own separate workspace to add real quotes, contacts, and follow-ups.
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-center text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
               View demo
             </Link>
-            <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
+            <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
               {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>

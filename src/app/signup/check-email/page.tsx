@@ -21,7 +21,7 @@ export default async function CheckEmailPage({ searchParams }: { searchParams: P
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0D1520] px-4 py-12">
-      <div className="w-full max-w-md space-y-6 rounded-[2rem] border border-slate-800 bg-[#162033] p-8 text-center shadow-[0_20px_80px_rgba(2,6,23,0.45)]">
+      <div className="w-full max-w-md space-y-6 rounded-[2rem] border border-slate-800 bg-[#162033] p-5 text-center shadow-[0_20px_80px_rgba(2,6,23,0.45)] sm:p-8">
         <div className="flex justify-center">
           <BrandLogo compact />
         </div>

@@ -94,18 +94,18 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }} />
 
       <section className="bg-[#0D1520] text-white">
-        <header className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
+        <header className="mx-auto flex max-w-7xl flex-col items-start gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <BrandLogo />
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <Link
               href={session?.user ? '/dashboard' : withRef('/login', ref)}
-              className="rounded-xl border border-white/12 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
+              className="rounded-xl border border-white/12 px-4 py-2 text-center text-sm font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/5 hover:text-white"
             >
               {session?.user ? 'Open workspace' : 'Log in'}
             </Link>
             <Link
               href={session?.user ? '/dashboard' : withRef('/signup', ref)}
-              className="rounded-xl bg-sky-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-400"
+              className="rounded-xl bg-sky-500 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-sky-400"
             >
               {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
@@ -115,19 +115,19 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
         <div className="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-4xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">{eyebrow}</p>
-            <h1 className="mt-4 font-serif text-5xl italic tracking-tight text-slate-50 sm:text-6xl">{title}</h1>
+            <h1 className="mt-4 font-serif text-4xl italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">{title}</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">{intro}</p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href={session?.user ? '/dashboard' : withRef('/signup', ref)}
-                className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
+                className="rounded-xl bg-sky-500 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-sky-400"
               >
                 {session?.user ? 'Open workspace' : 'Start 7-day trial'}
               </Link>
               <Link
                 href="#demo"
-                className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 View demo
               </Link>
@@ -152,16 +152,16 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
 
           <MarketingDemo />
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href={session?.user ? '/dashboard' : withRef('/signup', ref)}
-              className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white"
+              className="rounded-xl bg-slate-950 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800 !text-white"
             >
               {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
             <Link
               href={session?.user ? '/dashboard' : withRef('/login', ref)}
-              className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950"
+              className="rounded-xl border border-slate-300 px-5 py-3 text-center text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950"
             >
               {session?.user ? 'Open workspace' : 'Log in'}
             </Link>
@@ -170,14 +170,14 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why this page exists</p>
           <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{fitTitle}</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">{fitBody}</p>
           <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
         </div>
 
-        <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
+        <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What you get</p>
           <ul className="mt-5 space-y-4 text-sm leading-6 text-slate-700">
             {benefits.map((item) => (
@@ -214,11 +214,11 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Start the 7-day trial when you’re ready.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">You can view the demo first, then create your own workspace to track real quotes, contacts, and follow-ups.</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-center text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">
               View demo
             </Link>
-            <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
+            <Link href={session?.user ? '/dashboard' : withRef('/signup', ref)} className="rounded-xl bg-slate-950 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-slate-800 !text-white">
               {session?.user ? 'Open workspace' : 'Start 7-day trial'}
             </Link>
           </div>
