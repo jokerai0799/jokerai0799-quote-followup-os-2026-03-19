@@ -134,21 +134,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="min-h-full flex flex-col">
           <div className="flex-1">{children}</div>
           <footer className="border-t border-slate-200 bg-slate-50">
-            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-              <div className="space-y-5">
-                <div className="space-y-3 text-sm text-slate-500">
+            <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+              <div className="space-y-4">
+                <div className="space-y-2 text-sm text-slate-500">
                   <BrandLogo variant="dark" className="!text-inherit" />
-                  <p>
+                  <p className="leading-6">
                     Support:{' '}
-                    <a href="mailto:quotefollowup@outlook.com" className="font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline">
+                    <a href="mailto:quotefollowup@outlook.com" className="break-all font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline sm:break-normal">
                       quotefollowup@outlook.com
                     </a>
                   </p>
                 </div>
 
-                <div className="border-t border-slate-200 pt-4">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">Related pages</p>
-                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-400">
+                <div className="border-t border-slate-200 pt-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">Related pages</p>
+                  <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-slate-400 sm:gap-x-4 sm:gap-y-2 sm:text-sm">
                     {seoPageLinks.map((page) => (
                       <Link key={page.href} href={page.href} className="transition hover:text-slate-600">
                         {page.label}

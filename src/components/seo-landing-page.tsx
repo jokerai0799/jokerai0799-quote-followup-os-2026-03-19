@@ -112,11 +112,11 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
           </div>
         </header>
 
-        <div className="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8 lg:pb-24 lg:pt-12">
+        <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-4xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">{eyebrow}</p>
-            <h1 className="mt-4 font-serif text-4xl italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">{title}</h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-300">{intro}</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-sky-300 sm:text-[11px] sm:tracking-[0.35em]">{eyebrow}</p>
+            <h1 className="mt-4 font-serif text-[2.25rem] leading-tight italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">{title}</h1>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">{intro}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
@@ -141,10 +141,10 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       </section>
 
       <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what QuoteFollowUp looks like before you start your trial.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See what QuoteFollowUp looks like before you start your trial.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
               Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
@@ -169,10 +169,10 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why this page exists</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">{fitTitle}</h2>
+          <h2 className="mt-2 text-[1.75rem] font-semibold tracking-tight text-slate-950 sm:text-3xl">{fitTitle}</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">{fitBody}</p>
           <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
         </div>
@@ -191,14 +191,14 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       </section>
 
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">FAQ</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Quick answers</h2>
           </div>
           <div className="mt-8 grid gap-4">
             {faqs.map((item) => (
-              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 sm:p-6">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{item.answer}</p>
               </article>
@@ -208,7 +208,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       </section>
 
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 sm:py-14 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Start the 7-day trial when you’re ready.</h2>

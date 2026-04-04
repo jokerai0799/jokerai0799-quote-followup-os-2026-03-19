@@ -68,8 +68,8 @@ export function SignupForm({ referralCode = '' }: { referralCode?: string }) {
       </div>
 
       <fieldset>
-        <legend className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-400">Workspace currency</legend>
-        <div key={defaultCurrencyCode} className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-5">
+        <legend className="font-mono text-[10px] uppercase tracking-[0.16em] text-slate-400 sm:text-[11px] sm:tracking-[0.2em]">Workspace currency</legend>
+        <div key={defaultCurrencyCode} className="mt-2 grid grid-cols-2 gap-2.5 sm:grid-cols-5 sm:gap-3">
           {WORKSPACE_CURRENCY_OPTIONS.map((currency) => {
             const inputId = `currency-${currency.value}`
 
@@ -77,7 +77,7 @@ export function SignupForm({ referralCode = '' }: { referralCode?: string }) {
               <label
                 key={currency.value}
                 htmlFor={inputId}
-                className="group relative flex cursor-pointer items-center justify-center rounded-xl border border-slate-700 bg-slate-950/40 px-3 py-3 text-sm text-slate-200 transition hover:border-sky-500/70 hover:bg-slate-900/80 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-500/12 has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-sky-500/70"
+                className="group relative flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-slate-700 bg-slate-950/40 px-2.5 py-2.5 text-sm text-slate-200 transition hover:border-sky-500/70 hover:bg-slate-900/80 has-[:checked]:border-sky-500 has-[:checked]:bg-sky-500/12 has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-sky-500/70 sm:px-3 sm:py-3"
               >
                 <input
                   id={inputId}

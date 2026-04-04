@@ -102,12 +102,12 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
           </div>
         </header>
 
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-24 lg:pt-12">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 pb-16 pt-6 sm:px-6 sm:pb-20 sm:pt-8 lg:grid-cols-[1.15fr_0.85fr] lg:px-8 lg:pb-24 lg:pt-12">
           <div className="max-w-3xl">
-            <h1 className="font-serif text-4xl italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-[2.25rem] leading-tight italic tracking-tight text-slate-50 sm:text-5xl lg:text-6xl">
               Quote follow-up software for trades and service businesses
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
               Track every quote, follow up on time, and turn more estimates into booked work with a simple system built for small service teams.
             </p>
 
@@ -127,7 +127,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_20px_80px_rgba(2,6,23,0.35)] backdrop-blur">
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-5 shadow-[0_20px_80px_rgba(2,6,23,0.35)] backdrop-blur sm:rounded-[2rem] sm:p-6">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/8 bg-slate-950/35 p-4">
                 <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">What it gives you</p>
@@ -156,10 +156,10 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       </section>
 
       <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">See what the workspace looks like before you start your trial.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See what the workspace looks like before you start your trial.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
               Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
@@ -169,10 +169,10 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
         <div className="max-w-3xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">What we offer</p>
-          <h2 className="mt-2 text-4xl font-semibold tracking-tight text-slate-950">A focused quote follow-up system for businesses that want better follow-through and more booked work.</h2>
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">A focused quote follow-up system for businesses that want better follow-through and more booked work.</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">
             QuoteFollowUp is built for operators who send estimates regularly but still lose jobs because follow-up is inconsistent, invisible, or left too late.
           </p>
@@ -189,7 +189,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       </section>
 
       <section className="bg-slate-50">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Who it fits</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Built for quote-heavy trades and service businesses.</h2>
@@ -197,7 +197,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
               If your team sends estimates every week and too many go quiet after the first send, QuoteFollowUp gives you a lightweight quote management system focused on follow-through rather than a full CRM rollout.
             </p>
           </div>
-          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm sm:rounded-[1.75rem] sm:p-6">
             <h3 className="text-lg font-semibold text-slate-950">Common use cases</h3>
             <ul className="mt-4 grid gap-3 sm:grid-cols-2">
               {useCases.map((item) => (
@@ -211,14 +211,14 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       </section>
 
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">FAQ</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Straight answers before you sign up.</h2>
           </div>
           <div className="mt-8 grid gap-4">
             {faqs.map((item) => (
-              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6">
+              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 sm:p-6">
                 <h3 className="text-lg font-semibold text-slate-950">{item.question}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{item.answer}</p>
               </article>
@@ -228,7 +228,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       </section>
 
       <section className="border-y border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 sm:py-14 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">View the demo, then start your 7-day trial when you’re ready.</h2>
