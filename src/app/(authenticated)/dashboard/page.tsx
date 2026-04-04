@@ -37,8 +37,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const paginatedQuotes = quotes.slice(quoteStart, quoteStart + DASHBOARD_QUOTES_PER_PAGE)
   return (
     <>
-      <section className="rounded-[2rem] border border-slate-800 bg-[#0F172A] px-6 py-8 text-white shadow-xl sm:px-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <section className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-[#0F172A] px-6 py-8 text-white shadow-xl sm:px-8">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-[0.12]"
+          style={{ backgroundImage: "url('/hero/hero-grid-bg.jpg')" }}
+        />
+        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,23,42,0.92)_0%,rgba(15,23,42,0.84)_45%,rgba(15,23,42,0.94)_100%)]" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(56,189,248,0.12),transparent_32%)]" />
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sky-300">Workspace</p>
             <h1 className="mt-3 font-serif text-4xl italic tracking-tight sm:text-5xl">{displayWorkspaceName}</h1>
@@ -61,7 +68,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <Link href="/quotes?view=open" className="rounded-2xl border border-slate-600/90 bg-slate-900/55 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:border-slate-500 hover:bg-slate-900/65">
+            <Link href="/quotes?view=open" className="rounded-2xl border border-slate-600/90 bg-slate-900/60 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:border-slate-500 hover:bg-slate-900/68">
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Open pipeline</p>
               <p className="mt-2 text-2xl font-semibold text-white">{formatCurrency(metrics.valueAtRisk, workspace?.currencyCode ?? 'GBP')}</p>
               <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-400">
@@ -69,7 +76,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                 <span className="text-xs font-medium text-slate-300">View</span>
               </div>
             </Link>
-            <Link href="/quotes" className="rounded-2xl border border-slate-600/90 bg-slate-900/55 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:border-slate-500 hover:bg-slate-900/65">
+            <Link href="/quotes" className="rounded-2xl border border-slate-600/90 bg-slate-900/60 p-4 shadow-[0_10px_24px_rgba(0,0,0,0.16)] transition hover:border-slate-500 hover:bg-slate-900/68">
               <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Quotes tracked</p>
               <p className="mt-2 text-2xl font-semibold text-white">{metrics.totalQuotes}</p>
               <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-400">
@@ -81,7 +88,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               <Link href="/quotes/new" className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-slate-950 transition hover:bg-slate-200 !text-slate-950">
                 Add quote
               </Link>
-              <Link href="/chase-list" className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20">
+              <Link href="/chase-list" className="rounded-xl border border-white/15 bg-white/12 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20">
                 Open chase list
               </Link>
             </div>

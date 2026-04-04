@@ -36,7 +36,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
   return (
     <main className="min-h-screen bg-slate-100">
-      <header className="border-b border-slate-800 bg-[#162033] text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)]">
+      <header className="sticky top-0 z-30 border-b border-slate-800/90 bg-[#162033]/92 text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-center xl:gap-8">
