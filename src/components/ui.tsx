@@ -128,6 +128,7 @@ export function QuoteTable({ quotes, currencyCode = 'GBP' }: { quotes: Quote[]; 
                         status={quote.status}
                         message={renderTemplate(quote)}
                         compact
+                        subtle
                       />
                     </div>
                   </td>

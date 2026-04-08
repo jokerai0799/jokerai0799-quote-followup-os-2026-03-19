@@ -23,6 +23,7 @@ export function QuoteQuickActions({
   message,
   compact = false,
   dense = false,
+  subtle = false,
 }: {
   quoteId: string
   quoteTitle: string
@@ -31,6 +32,7 @@ export function QuoteQuickActions({
   message: string
   compact?: boolean
   dense?: boolean
+  subtle?: boolean
 }) {
   const [pending, startTransition] = useTransition()
   const mailtoHref = quoteEmail
@@ -48,7 +50,9 @@ export function QuoteQuickActions({
       {mailtoHref ? (
         <Link
           href={mailtoHref}
-          className={`${baseButtonClass} border-sky-300 bg-sky-50 text-sky-700 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-800`}
+          className={`${baseButtonClass} ${subtle
+            ? 'border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50 hover:text-slate-900'
+            : 'border-sky-300 bg-sky-50 text-sky-700 hover:border-sky-400 hover:bg-sky-100 hover:text-sky-800'}`}
         >
           Email client
         </Link>
