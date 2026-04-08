@@ -126,30 +126,16 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Focus</p>
           <h2 className="mt-2 text-2xl font-semibold text-slate-950">What needs attention</h2>
         </div>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <Link href="/quotes?view=closed" className="rounded-3xl border border-slate-300/90 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Conversion</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950">{metrics.winRate}%</p>
-            <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-500">
-              <span>Current win rate from closed quotes</span>
-              <span className="text-xs font-medium text-slate-500">View</span>
-            </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Link href="/quotes?view=attention" className="rounded-3xl border border-slate-300/90 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Follow-up load</p>
+            <p className="mt-2 text-3xl font-semibold text-slate-950">{chaseList.length}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-500">Quotes due or overdue right now.</p>
           </Link>
           <Link href="/quotes?view=closed" className="rounded-3xl border border-slate-300/90 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
             <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Closed quotes</p>
             <p className="mt-2 text-3xl font-semibold text-slate-950">{metrics.wonCount + metrics.lostCount}</p>
-            <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-500">
-              <span>{metrics.wonCount} won · {metrics.lostCount} lost</span>
-              <span className="text-xs font-medium text-slate-500">View</span>
-            </div>
-          </Link>
-          <Link href="/quotes?view=attention" className="rounded-3xl border border-slate-300/90 bg-white p-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-slate-500">Follow-up load</p>
-            <p className="mt-2 text-3xl font-semibold text-slate-950">{chaseList.length}</p>
-            <div className="mt-2 flex items-center justify-between gap-3 text-sm text-slate-500">
-              <span>Quotes due or overdue right now</span>
-              <span className="text-xs font-medium text-slate-500">View</span>
-            </div>
+            <p className="mt-2 text-sm leading-6 text-slate-500">{metrics.wonCount} won · {metrics.lostCount} lost.</p>
           </Link>
         </div>
       </section>
