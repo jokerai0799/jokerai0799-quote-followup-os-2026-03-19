@@ -62,17 +62,22 @@ export function QuoteTable({ quotes, currencyCode = 'GBP' }: { quotes: Quote[]; 
               </div>
 
               <div className="mt-4 space-y-3 border-t border-zinc-100 pt-4">
-                <Link className="inline-flex font-medium text-zinc-900 underline-offset-4 hover:underline" href={`/quotes/${quote.id}/edit`}>
-                  Edit quote
-                </Link>
-                <QuoteQuickActions
-                  quoteId={quote.id}
-                  quoteTitle={quote.title}
-                  quoteEmail={quote.email}
-                  status={quote.status}
-                  message={renderTemplate(quote)}
-                  compact
-                />
+                <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
+                  <Link
+                    className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-100"
+                    href={`/quotes/${quote.id}/edit`}
+                  >
+                    Edit quote
+                  </Link>
+                  <QuoteQuickActions
+                    quoteId={quote.id}
+                    quoteTitle={quote.title}
+                    quoteEmail={quote.email}
+                    status={quote.status}
+                    message={renderTemplate(quote)}
+                    compact
+                  />
+                </div>
               </div>
             </article>
           )
@@ -143,7 +148,7 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
         const chase = getChaseState(quote)
         return (
           <div key={quote.id} className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-lg font-semibold text-zinc-950">{quote.clientName}</h3>
@@ -152,8 +157,11 @@ export function ChaseList({ quotes }: { quotes: Quote[] }) {
                 <p className="mt-1 text-sm text-zinc-600">{quote.title}</p>
                 <p className="mt-3 text-sm text-zinc-500">Next chase: {chase.nextDate ? formatDate(chase.nextDate) : 'None'}</p>
               </div>
-              <Link href={`/quotes/${quote.id}/edit`} className="shrink-0 text-sm font-medium text-zinc-700 underline-offset-4 transition hover:text-zinc-950 hover:underline">
-                Edit
+              <Link
+                href={`/quotes/${quote.id}/edit`}
+                className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-100 sm:shrink-0"
+              >
+                Edit quote
               </Link>
             </div>
             <div className="mt-4 md:max-w-md">

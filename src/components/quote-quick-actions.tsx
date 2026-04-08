@@ -38,13 +38,13 @@ export function QuoteQuickActions({
     : null
 
   const baseButtonClass = compact
-    ? 'rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition'
+    ? 'inline-flex min-h-10 w-full items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition min-[380px]:w-auto'
     : dense
       ? 'rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition'
       : 'rounded-lg border px-3 py-2 text-xs font-medium transition'
 
   return (
-    <div className={compact ? 'flex w-full flex-wrap gap-1.5 md:max-w-[210px] md:justify-end' : dense ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
+    <div className={compact ? 'flex w-full flex-wrap gap-2' : dense ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-2'}>
       {mailtoHref ? (
         <Link
           href={mailtoHref}
