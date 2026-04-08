@@ -72,9 +72,9 @@ export function QuoteForm({ action, quote, submitLabel, currencyCode = 'GBP' }: 
         </label>
       </div>
 
-      <div className="flex items-center justify-between gap-3 border-t border-zinc-100 pt-4">
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-zinc-500">Tip: set a sent date to generate the chase schedule automatically, or mark the quote as Due when it needs attention right away.</p>
-        <button className="rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800" type="submit">
+        <button className="w-full rounded-xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 sm:w-auto" type="submit">
           {submitLabel}
         </button>
       </div>

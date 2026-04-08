@@ -250,12 +250,12 @@ export default async function SettingsPage({ searchParams }: PageProps) {
           <p className="mt-2 text-sm leading-6 text-slate-600">These are the people who currently have access to this workspace. Invited members can use this workspace under its subscription, and the owner can remove members at any time.</p>
           <div className="mt-5 space-y-3">
             {members.map((member) => (
-              <div key={member.userId} className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <div>
+              <div key={member.userId} className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
                   <p className="font-medium text-slate-950">{member.name}</p>
-                  <p className="text-sm text-slate-500">{member.email}</p>
+                  <p className="break-words text-sm text-slate-500">{member.email}</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-start">
                   <span className="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium uppercase tracking-[0.16em] text-white">{member.role}</span>
                   {member.role !== 'owner' ? <RemoveMemberButton memberUserId={member.userId} disabled={!canManageMembers} /> : null}
                 </div>

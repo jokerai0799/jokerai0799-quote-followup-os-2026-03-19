@@ -48,7 +48,7 @@ export function WorkspaceSwitcher({ workspaces, activeWorkspaceId, user }: Works
         <span className="text-xs text-white/60">▾</span>
       </summary>
 
-      <div className="absolute right-0 z-20 mt-2 w-full min-w-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_18px_50px_rgba(15,23,42,0.22)] sm:w-[280px]">
+      <div className="absolute left-0 right-0 z-20 mt-2 w-full max-w-full overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_18px_50px_rgba(15,23,42,0.22)] sm:left-auto sm:right-0 sm:w-[280px] sm:min-w-[280px]">
         <div className="px-2 py-2">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspaces</p>
           <p className="mt-1 text-xs text-slate-500">Switch between your personal workspace and any team workspaces you belong to.</p>
