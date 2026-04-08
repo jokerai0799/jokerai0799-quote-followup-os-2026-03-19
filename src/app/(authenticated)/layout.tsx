@@ -37,21 +37,61 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   return (
     <main className="min-h-screen bg-slate-100">
       <header className="sticky top-0 z-30 border-b border-slate-800/90 bg-[#162033]/92 text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-center xl:gap-8">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+          <div className="flex items-center justify-between gap-3 xl:hidden">
+            <BrandLogo href="/" compact className="min-w-0" />
+
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                href="/quotes/new"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-3 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
+              >
+                New quote
+              </Link>
+
+              <details className="relative">
+                <summary className="flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-white/10 bg-white/5 text-base text-white/85 transition hover:border-white/20 hover:bg-white/10 hover:text-white">
+                  ☰
+                </summary>
+                <div className="absolute right-0 z-20 mt-2 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 text-slate-900 shadow-[0_18px_50px_rgba(15,23,42,0.22)]">
+                  <div className="px-2 py-2">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Workspace</p>
+                    <p className="mt-1 text-xs text-slate-500">Switch workspace or sign out.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <WorkspaceSwitcher workspaces={workspaceOptions} activeWorkspaceId={workspace?.workspaceId} user={user ? { id: user.id, name: user.name, email: user.email } : null} variant="light" />
+                    <form action={signOutAction}>
+                      <button
+                        type="submit"
+                        className="flex w-full items-center justify-center rounded-xl border border-slate-200 px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-950"
+                      >
+                        Sign out
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div className="mt-3 xl:hidden">
+            <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
+          </div>
+
+          <div className="hidden xl:flex xl:items-center xl:justify-between xl:gap-4">
+            <div className="flex min-w-0 items-center gap-8">
               <BrandLogo href="/" />
               <div className="min-w-0">
                 <Nav chaseCount={dueCount} chaseSignature={chaseSignature} />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center xl:flex-nowrap xl:justify-end">
+            <div className="flex items-center gap-2.5 xl:flex-nowrap xl:justify-end">
               <WorkspaceSwitcher workspaces={workspaceOptions} activeWorkspaceId={workspace?.workspaceId} user={user ? { id: user.id, name: user.name, email: user.email } : null} />
 
               <Link
                 href="/quotes/new"
-                className="inline-flex w-full items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500 sm:w-auto"
+                className="inline-flex items-center justify-center rounded-lg border border-sky-500 bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:border-sky-400 hover:bg-sky-500"
               >
                 New quote
               </Link>
@@ -59,7 +99,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white sm:w-auto"
+                  className="inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-white/75 transition hover:bg-white/5 hover:text-white"
                 >
                   Sign out
                 </button>
