@@ -38,7 +38,7 @@ export default function EstimateFollowUpSoftwarePage({ searchParams }: { searchP
       title="Estimate follow-up software for service businesses"
       intro="For teams that call them estimates instead of quotes, the problem is the same: once an estimate is sent, you need a simple way to keep follow-up on track."
       fitTitle="A practical system for estimate tracking and follow-up"
-      fitBody="Some customers search for estimate follow-up software rather than quote follow-up software. This page targets that intent while leading them into the same core product and workflow."
+      fitBody="Some businesses talk about estimates rather than quotes, but they still need the same thing: a clear way to track what was sent, what needs follow-up next, and what is still live."
       description="QuoteFollowUp helps service businesses track estimates, monitor next actions, and keep a repeatable follow-up cadence so more enquiries become booked jobs instead of going stale."
       benefits={[
         'Keep sent estimates visible instead of losing them in inboxes and notes',

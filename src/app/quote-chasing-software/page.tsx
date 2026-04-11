@@ -38,7 +38,7 @@ export default function QuoteChasingSoftwarePage({ searchParams }: { searchParam
       title="Quote chasing software for small teams that need better follow-through"
       intro="If your main problem is not creating quotes but chasing them properly, you need a system that shows what is due, what is overdue, and what still has a chance of closing."
       fitTitle="For businesses that keep losing track after the quote is sent"
-      fitBody="Many businesses search for quote chasing software because that is the real pain. This page targets that intent directly and focuses on the follow-up side of the workflow."
+      fitBody="Many businesses are less concerned with creating quotes than with chasing them properly afterward. This is for teams that want a simpler way to stay on top of follow-up and keep opportunities moving."
       description="QuoteFollowUp helps trades and service businesses chase quotes on time, keep next actions visible, and build a simple process that turns more sent quotes into booked work."
       benefits={[
         'See which quotes need chasing today',

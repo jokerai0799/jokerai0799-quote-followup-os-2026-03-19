@@ -38,7 +38,7 @@ export default function QuoteManagementSoftwareForTradesPage({ searchParams }: {
       title="Quote management software for trades and small service teams"
       intro="Track what has been sent, what needs following up, and which jobs are still in play with a simpler quote management workflow built for trade businesses."
       fitTitle="For trade businesses that need quote visibility without a heavy CRM"
-      fitBody="Many trade businesses search for quote management software when the real need is a clearer pipeline and a better follow-up rhythm. This page speaks directly to that buying intent."
+      fitBody="Many trade businesses need a clearer pipeline and a better follow-up rhythm after quotes are sent. This is for teams that want better visibility without adding a heavy system."
       description="QuoteFollowUp gives trade businesses a focused system to manage quote status, follow-up dates, and today’s chase list so nothing important gets missed after the quote goes out."
       benefits={[
         'Manage quote status in a clear, readable pipeline',

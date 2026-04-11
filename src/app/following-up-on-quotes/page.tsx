@@ -38,7 +38,7 @@ export default function FollowingUpOnQuotesPage({ searchParams }: { searchParams
       title="Following up on quotes without losing track of live jobs"
       intro="If your business is decent at sending quotes but inconsistent at following them up, you need a simple system that shows what is due, what is overdue, and who still needs a reply."
       fitTitle="Built for teams that need a better quote follow-up habit"
-      fitBody="Many businesses do not struggle to create quotes. They struggle to keep following up on quotes consistently once the day gets busy. This page targets that exact problem."
+      fitBody="Many businesses do not struggle to create quotes. They struggle to keep following up consistently once the day gets busy. This is for teams that want a clearer, more repeatable process."
       description="QuoteFollowUp helps you stay on top of following up on quotes by keeping quote status, next follow-up dates, and today’s chase list visible in one simple workflow."
       benefits={[
         'See which quotes need following up today',
