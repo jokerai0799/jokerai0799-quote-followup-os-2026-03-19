@@ -150,8 +150,8 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
       <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See what QuoteFollowUp looks like before you start your trial.</h2>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Preview the workspace</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See how QuoteFollowUp keeps quotes visible and follow-ups organised.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
               Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
@@ -178,7 +178,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
 
       <section className="mx-auto grid max-w-7xl gap-5 px-4 py-14 sm:px-6 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why this page exists</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Why teams use it</p>
           <h2 className="mt-2 text-[1.75rem] font-semibold tracking-tight text-slate-950 sm:text-3xl">{fitTitle}</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">{fitBody}</p>
           <p className="mt-4 text-base leading-7 text-slate-600">{description}</p>
@@ -219,7 +219,7 @@ export async function SeoLandingPage({ eyebrow, title, intro, description, benef
           <div className="max-w-2xl">
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Start the 7-day trial when you’re ready.</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">You can view the demo first, then create your own workspace to track real quotes, contacts, and follow-ups.</p>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Take a quick look through the workspace, then create your own to track real quotes, contacts, and follow-ups.</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link href="#demo" className="rounded-xl border border-slate-300 px-5 py-3 text-center text-sm font-semibold text-slate-800 transition hover:border-slate-900 hover:text-slate-950">

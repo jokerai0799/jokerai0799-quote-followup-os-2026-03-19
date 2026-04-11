@@ -165,8 +165,8 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
       <section id="demo" className="border-y border-slate-200 bg-slate-50 scroll-mt-24">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
           <div className="max-w-3xl">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Product demo</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See what the workspace looks like before you start your trial.</h2>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-700">Preview the workspace</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">See how the workspace keeps quotes clear, visible, and easy to follow up.</h2>
             <p className="mt-4 text-base leading-7 text-slate-600">
               Get a quick feel for the layout, see how quote statuses stand out, and understand how the workspace helps your team stay on top of follow-up day to day.
             </p>
@@ -240,7 +240,7 @@ export default async function MarketingHomePage({ searchParams }: { searchParams
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Get started</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">View the demo, then start your 7-day trial when you’re ready.</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              You can look through the demo first. When you sign up, you get your own separate workspace to add real quotes, contacts, and follow-ups.
+              Take a quick look through the workspace first. When you sign up, you get your own separate workspace to add real quotes, contacts, and follow-ups.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">

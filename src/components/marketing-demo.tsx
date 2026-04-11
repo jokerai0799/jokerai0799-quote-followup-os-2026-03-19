@@ -61,8 +61,8 @@ export function MarketingDemo() {
       <div className="border-b border-sky-100 bg-gradient-to-r from-sky-600 via-blue-500 to-cyan-400 px-5 py-4 text-white sm:px-8 sm:py-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-100/90">Demo workspace</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">How the product looks in use</h3>
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-sky-100/90">Workspace preview</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">How the product looks in daily use</h3>
           </div>
           <p className="max-w-xl text-sm text-sky-50/90">
             A clean quote pipeline, readable status colours, and a chase list that is easy to scan at a glance.
@@ -93,7 +93,7 @@ export function MarketingDemo() {
           <div className="space-y-4">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-slate-500">Pipeline</p>
-              <h3 className="mt-2 text-2xl font-semibold text-slate-950">Sample quote table</h3>
+              <h3 className="mt-2 text-2xl font-semibold text-slate-950">Quote pipeline view</h3>
             </div>
             <div className="space-y-3 md:hidden">
               {demoRows.map((row) => (
