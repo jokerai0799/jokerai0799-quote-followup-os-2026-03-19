@@ -120,6 +120,12 @@ const structuredData = [
   },
 ]
 
+const catalystLink = {
+  href: 'https://quotechaser.online',
+  label: 'Catalyst',
+  description: 'Explore the broader Quote Chaser workflow project.',
+}
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${instrumentSerif.variable} ${dmMono.variable} h-full antialiased`}>
@@ -134,23 +140,47 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <div className="min-h-full flex flex-col">
           <div className="flex-1">{children}</div>
           <footer className="border-t border-slate-200 bg-slate-50">
-            <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-              <div className="space-y-4">
-                <div className="space-y-2 text-sm text-slate-500">
-                  <BrandLogo variant="dark" className="!text-inherit" />
-                  <p className="leading-6">
-                    Support:{' '}
-                    <a href="mailto:quotefollowup@outlook.com" className="break-all font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline sm:break-normal">
-                      quotefollowup@outlook.com
-                    </a>
-                  </p>
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
+              <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-start">
+                <div className="space-y-5">
+                  <div className="space-y-3 text-sm text-slate-500">
+                    <BrandLogo variant="dark" className="!text-inherit" />
+                    <p className="max-w-xl leading-6 text-slate-600">
+                      Simple quote follow-up software for trades and service businesses that want clearer pipeline visibility and more consistent follow-through.
+                    </p>
+                    <p className="leading-6">
+                      Support:{' '}
+                      <a
+                        href="mailto:quotefollowup@outlook.com"
+                        className="break-all font-medium text-slate-700 underline-offset-4 transition hover:text-slate-950 hover:underline sm:break-normal"
+                      >
+                        quotefollowup@outlook.com
+                      </a>
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                    <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">Also from us</p>
+                    <div className="mt-2 space-y-1.5">
+                      <a
+                        href={catalystLink.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-900 transition hover:text-sky-700"
+                      >
+                        {catalystLink.label}
+                        <span aria-hidden="true" className="text-slate-400">↗</span>
+                      </a>
+                      <p className="text-sm leading-6 text-slate-600">{catalystLink.description}</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="border-t border-slate-200 pt-3">
+                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm sm:p-5">
                   <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">Related pages</p>
-                  <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-slate-400 sm:gap-x-4 sm:gap-y-2 sm:text-sm">
+                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2 text-[13px] text-slate-500 sm:gap-x-4 sm:text-sm">
                     {seoPageLinks.map((page) => (
-                      <Link key={page.href} href={page.href} className="transition hover:text-slate-600">
+                      <Link key={page.href} href={page.href} className="transition hover:text-slate-900">
                         {page.label}
                       </Link>
                     ))}
