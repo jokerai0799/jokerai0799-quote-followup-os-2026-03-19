@@ -123,6 +123,14 @@ export async function updateUserName(id: string, name: string) {
   }
 }
 
+export async function touchUserActivity(id: string) {
+  const { error } = await supabase.from('users').update({ updated_at: new Date().toISOString() }).eq('id', id)
+
+  if (error) {
+    throw new Error(`Failed to touch user activity: ${error.message}`)
+  }
+}
+
 export async function upsertUserByEmail({
   email,
   name,

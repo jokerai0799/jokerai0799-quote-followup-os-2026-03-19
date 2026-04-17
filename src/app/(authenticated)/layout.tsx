@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { signOutAction } from '@/app/actions'
 import { startSubscriptionCheckoutAction } from '@/app/(authenticated)/settings/actions'
+import { ActivityHeartbeat } from '@/components/activity-heartbeat'
 import { BrandLogo } from '@/components/brand-logo'
 import { ChaseNotificationStrip } from '@/components/chase-notification-strip'
 import { Nav } from '@/components/nav'
@@ -36,6 +37,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
   return (
     <main className="min-h-screen bg-slate-100">
+      <ActivityHeartbeat />
       <header className="sticky top-0 z-30 border-b border-slate-800/90 bg-[#162033]/92 text-white shadow-[0_1px_0_rgba(255,255,255,0.04),0_4px_24px_rgba(0,0,0,0.35)] backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
           <div className="flex items-center justify-between gap-3 xl:hidden">
