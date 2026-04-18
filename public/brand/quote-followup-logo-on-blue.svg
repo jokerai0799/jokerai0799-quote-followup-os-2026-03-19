@@ -1,34 +1,23 @@
-<svg viewBox="0 0 340 80" xmlns="http://www.w3.org/2000/svg" width="340" height="80">
-  <defs>
-    <style>
-      .wm { font-family: 'Helvetica Neue', Arial, sans-serif; }
-    </style>
-  </defs>
+<svg viewBox="0 0 360 72" xmlns="http://www.w3.org/2000/svg">
+  <defs><style>.wm{font-family:'Helvetica Neue',Arial,sans-serif;}</style></defs>
 
-  <!-- Icon (scaled to 80×80) -->
-  <!-- Outer rounded square -->
-  <rect x="0" y="0" width="80" height="80" rx="17" fill="#0B1E35"/>
-  <!-- Clock circle -->
-  <circle cx="40" cy="40" r="27" fill="#0F2845"/>
-  <circle cx="40" cy="40" r="27" fill="none" stroke="#1E3A5F" stroke-width="1.2"/>
-  <!-- Tick marks -->
-  <line x1="40" y1="15" x2="40" y2="18.5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-  <line x1="65" y1="40" x2="61.5" y2="40" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-  <line x1="40" y1="65" x2="40" y2="61.5" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-  <line x1="15" y1="40" x2="18.5" y2="40" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-  <!-- Hour hand (10 o'clock) -->
-  <line x1="40" y1="40" x2="28" y2="32.5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Minute hand cyan (2 o'clock) -->
-  <line x1="40" y1="40" x2="57" y2="30" stroke="#0EA5E9" stroke-width="2.5" stroke-linecap="round"/>
-  <!-- Centre -->
-  <circle cx="40" cy="40" r="3.5" fill="#0EA5E9"/>
-  <!-- Tick badge -->
-  <circle cx="61" cy="61" r="13" fill="#0B1E35"/>
-  <circle cx="61" cy="61" r="11" fill="#0EA5E9"/>
-  <polyline points="55,61 59,65.5 67,55" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Icon block 72×72 -->
+  <rect width="72" height="72" rx="15" fill="#0B1E35"/>
+  <polyline points="14,20 26,36 14,52"
+    fill="none" stroke="#132D4A" stroke-width="7.5"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="27,20 39,36 27,52"
+    fill="none" stroke="#1A5080" stroke-width="7.5"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="40,20 52,36 40,52"
+    fill="none" stroke="#0EA5E9" stroke-width="7.5"
+    stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Wordmark -->
-  <text x="96" y="34" class="wm" font-size="24" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">Quote</text>
-  <text x="96" y="61" class="wm" font-size="20" font-weight="700" fill="#0EA5E9" letter-spacing="-0.3">FollowUp</text>
-  <text x="96" y="74" class="wm" font-size="10" font-weight="400" fill="#94A3B8" letter-spacing="0.3">.online</text>
+  <text x="86" y="31" class="wm" font-size="23" font-weight="800"
+    fill="#FFFFFF" letter-spacing="-0.6">Quote</text>
+  <text x="86" y="57" class="wm" font-size="19" font-weight="700"
+    fill="#0EA5E9" letter-spacing="-0.2">FollowUp</text>
+  <text x="86" y="69" class="wm" font-size="9" font-weight="400"
+    fill="#475569" letter-spacing="0.5">.online</text>
 </svg>

@@ -1,30 +1,18 @@
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Outer rounded square bg -->
+  <!-- Rounded square bg -->
   <rect width="100" height="100" rx="22" fill="#0B1E35"/>
 
-  <!-- Clock circle -->
-  <circle cx="50" cy="50" r="34" fill="#0F2845"/>
-  <circle cx="50" cy="50" r="34" fill="none" stroke="#1E3A5F" stroke-width="1.5"/>
-
-  <!-- Hour tick marks -->
-  <line x1="50" y1="18" x2="50" y2="22" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-  <line x1="82" y1="50" x2="78" y2="50" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-  <line x1="50" y1="82" x2="50" y2="78" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-  <line x1="18" y1="50" x2="22" y2="50" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
-
-  <!-- Hour hand → pointing to ~10 o'clock -->
-  <!-- 10 o'clock = 300° from 12, sin(300°)=-0.866 cos(300°)=0.5 -->
-  <line x1="50" y1="50" x2="35" y2="41" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- Minute hand → pointing to ~2 o'clock (cyan - the "follow up" hand) -->
-  <!-- 2 o'clock = 60° from 12, sin(60°)=0.866 cos(60°)=0.5 -->
-  <line x1="50" y1="50" x2="71" y2="38" stroke="#0EA5E9" stroke-width="3" stroke-linecap="round"/>
-
-  <!-- Centre dot -->
-  <circle cx="50" cy="50" r="4" fill="#0EA5E9"/>
-
-  <!-- Tick badge — bottom right, overlapping clock circle -->
-  <circle cx="76" cy="76" r="16" fill="#0B1E35"/>
-  <circle cx="76" cy="76" r="14" fill="#0EA5E9"/>
-  <polyline points="69,76 73.5,81 83,68" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Three chevrons: muted → mid → cyan -->
+  <!-- Chevron 1 -->
+  <polyline points="22,28 36,50 22,72"
+    fill="none" stroke="#132D4A" stroke-width="10"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Chevron 2 -->
+  <polyline points="38,28 52,50 38,72"
+    fill="none" stroke="#1A5080" stroke-width="10"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Chevron 3 (cyan — the follow-up) -->
+  <polyline points="54,28 68,50 54,72"
+    fill="none" stroke="#0EA5E9" stroke-width="10"
+    stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

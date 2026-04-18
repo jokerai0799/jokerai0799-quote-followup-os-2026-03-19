@@ -26,8 +26,8 @@ export function BrandLogo({ compact = false, href = '/', variant = 'light', clas
         <Image
           src={logoSrc}
           alt="Quote FollowUp"
-          width={340}
-          height={80}
+          width={360}
+          height={72}
           className="h-10 w-auto sm:h-11"
           priority
         />
