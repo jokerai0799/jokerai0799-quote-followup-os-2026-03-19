@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { DM_Mono, Instrument_Serif } from 'next/font/google'
 import { seoPageLinks } from '@/lib/seo-pages'
-import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site'
+import { DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE, DEFAULT_TWITTER_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site'
 import './globals.css'
 import { BrandLogo } from '@/components/brand-logo'
 
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: DEFAULT_OG_IMAGE,
-        width: 1280,
-        height: 551,
-        alt: 'QuoteFollowUp homepage preview',
+        width: 1200,
+        height: 630,
+        alt: 'QuoteFollowUp social preview',
       },
     ],
   },
@@ -63,12 +63,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Quote Follow-Up Software for Trades & Service Businesses | QuoteFollowUp',
     description: DEFAULT_DESCRIPTION,
-    images: [DEFAULT_OG_IMAGE],
+    images: [DEFAULT_TWITTER_IMAGE],
   },
   icons: {
     icon: [
       { url: '/favicon.ico', type: 'image/x-icon' },
       { url: '/brand/favicon.svg', type: 'image/svg+xml' },
+      { url: '/brand/favicon-16.png', sizes: '16x16', type: 'image/png' },
       { url: '/brand/favicon-32.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
@@ -83,7 +84,7 @@ const structuredData = [
     name: SITE_NAME,
     url: SITE_URL,
     email: 'quotefollowup@outlook.com',
-    logo: `${SITE_URL}/brand/google-search-logo.svg`,
+    logo: `${SITE_URL}/brand/quote-followup-logo-on-white.svg`,
   },
   {
     '@context': 'https://schema.org',
@@ -96,7 +97,7 @@ const structuredData = [
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: SITE_NAME,
-    image: `${SITE_URL}/brand/google-search-logo.svg`,
+    image: `${SITE_URL}/brand/logo-512.png`,
     applicationCategory: 'BusinessApplication',
     applicationSubCategory: 'Quote management and follow-up software',
     operatingSystem: 'Web',
